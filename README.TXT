@@ -3,7 +3,7 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE BUILD ROUTE CONTEXT
+0.0.1 RARE COMPILER BUILD ROUTE SEALED
 EXACT TEMPLEOSTS 1.10 CORPUS
 LCCCompile PIPELINE OWNER SEALED
 EXECUTABLE PASS ORDER SEALED
@@ -11,10 +11,13 @@ PASS CONTRACTS SEALED
 EXACT INSERTION SEAM SEALED
 NO-REWRITE ASSERTION INSTALLED
 WORKSPACE OBSERVED
-BUILD ROUTE CONTEXT OBSERVED
-EXACT BUILD ROUTE UNRESOLVED
+COMPILER-ONLY BUILD ROUTE SEALED
+BOOT LOAD ROUTE SEALED
+MAP LOAD ROUTE SEALED
+HOST BUILD GUARD NOT OBSERVED
+GUEST DELIVERY UNRESOLVED
+BUILD EXECUTION NOT AUTHORIZED
 OPTIMIZER TRANSFORMATION DENIED
-BUILD NOT OBSERVED
 
 ONLY TARGET
 
@@ -31,10 +34,10 @@ RESOURCE
 PATCH AUTHORITY
 
   expanded/   exact historical bytes; immutable evidence
-  raw/        identity and archive evidence
+  raw/        original archive containers and identity evidence
   holy/       normalized navigation only
 
-Authorized changes exist only in a new manifest-verified working tree.
+Authorized changes exist only in a separate manifest-verified working tree.
 
 SEALED EVIDENCE
 
@@ -55,6 +58,12 @@ SEALED EVIDENCE
   pass-boundary context SHA256
     D0D3EE768491C299B072BF3975BD707BA894349633E477D96670A6538E6F44F9
 
+  no-rewrite install report SHA256
+    59B0BB29AA5C088114E38FE27FCF5CB5E2D3F59120CD6FD2678DF9D566C75E32
+
+  build-route display SHA256
+    ED5108F73DE8363E948D559F7625F8752C15B6AD0AED941C40EDD01D0A8488A6
+
 SEALED PIPELINE
 
   file      Compiler/ICLCC.CPP
@@ -73,7 +82,7 @@ SEALED PIPELINE
 
 Compiler/CmpExts.CPP is an extern declaration surface only.
 
-SEALED SEAM
+SEALED INSERTION SEAM
 
   after
     LCCHeaderPut(lx,7,FALSE);
@@ -96,89 +105,127 @@ OBSERVED WORKSPACE
   work root
     D:\TECHNICAL\DBYTE-HOLYC-OPT-WORK\templeosts-1.10-no-rewrite
 
-  manifest files             1057/1057
-  copied files               1057/1057
-  changed files              1
+  files                       1057/1057
+  changed files               1
+  changed path                Compiler/ICLCC.CPP
 
-  evidence Compiler/ICLCC.CPP SHA256
+  evidence ICLCC SHA256
     2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
 
-  patched Compiler/ICLCC.CPP SHA256
+  candidate ICLCC bytes       10527
+  candidate ICLCC SHA256
     DB1C75A5EE71B07ADAEC32E984146602E73D9A0D606E2B76B8CCCC624E0CDCB8
 
-  install report SHA256
-    59B0BB29AA5C088114E38FE27FCF5CB5E2D3F59120CD6FD2678DF9D566C75E32
-
-  workspace status
-    EXACT-COPY-PLUS-ONE-ASSERTION
-
-EXACT BUILD ARTIFACTS
+EXACT PROJECT
 
   Compiler/Compiler.PRJ
     bytes   858
     SHA256  D82BBFE3B9A75B67D5C3E1B6E5EB03628960B81FAC9E3453212AE1163A47F779
 
-  Compiler/CmpMain.CPP
-    bytes   15275
-    SHA256  B4F1DE8EC776EAE47E3FBB77A7E6E23A50FEB9F4EEED6605986D4736283E4B8B
+The project imports the historical compiler implementation through CmpMain.
+No later project, common mirror, normalized tree, or reconstruction is used.
 
-  Compiler/Compiler.BIN
-    bytes   206512
-    SHA256  010F06358F26B5804600EE5BD6E6D313209C006C606E5F72C1E68D4028825AD1
+SEALED COMPILER-ONLY BUILD ROUTE
 
-  Compiler/Compiler.MAP
-    bytes   202757
-    SHA256  8509A6224474915233209975E9D56598FA79E005F616B31B878D4350CED247A5
+Exact source-owned guest invocation:
 
-OBSERVED BUILD ROUTE DISPLAY
+  Cd("/Compiler");
+  if (Cmp("Compiler","Compiler",,':'))
+    throw;
 
-  report
-    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-route.txt
+Resolved objects:
 
-  report SHA256
-    ED5108F73DE8363E948D559F7625F8752C15B6AD0AED941C40EDD01D0A8488A6
+  input     /Compiler/Compiler.PRJ.Z
+  map       /Compiler/Compiler.MAP.Z
+  binary    /Compiler/Compiler.BIN.Z
 
-  manifest files             1057/1057
-  workspace files            1057/1057
-  changed files              1
-  raw build-name references  20
+MakeAll executes this compiler build and then builds the kernel.  It is broader
+than the first no-rewrite proof and remains unauthorized.
 
-  workspace
-    EXACT-COPY-PLUS-ONE-ASSERTION
+MakeOSPrtBootInstall calls MakeAll and continues into boot installation.  It is
+not the first compiler-only route.
 
-  build route
-    RAW-DISPLAY-ONLY
+WRITE ORDER
 
-  build
-    NOT-OBSERVED
+Observed caller-visible order:
 
-The count 20 is a raw exact-literal occurrence count.  It is not a count of
-unique executable build routes.
+  compile and link Compiler.PRJ.Z
+  write Compiler.MAP.Z
+  construct the binary module and checksum
+  write Compiler.BIN.Z
+  return compiler error count
 
-Display record:
+No temporary output name, backup copy, rename-based commit, or explicit rollback
+appears in the displayed Cmp, CmpJoin, MakeAll, or MakeOSPrtBootInstall chain.
+This makes a verified backup and restore contract mandatory before execution.
 
-  TEMPLEOSTS-1.10-COMPILER-BUILD-ROUTE-DISPLAY.TXT
+BOOT LOAD ROUTE
 
-NEXT EVIDENCE
+Kernel boot executes:
 
-Manually review the complete build-route report.  Determine from exact displayed
-Compiler.PRJ, CmpMain.CPP, and raw reference context:
+  ChgDsk(':');
+  Cd("/Compiler");
+  Load("Compiler",LDF_SILENT);
 
-  the actual project loader or compiler entry
-  the required guest path and working directory
-  the build invocation
-  temporary output names
-  Compiler.BIN and Compiler.MAP replacement sequence
-  rollback and failure behavior
+Load resolves Compiler.BIN.Z, validates module alignment and TEMPLEOS_XSUM, then
+runs LoadPass1 and LoadPass2.
 
-No new parser, display tool, guessed build command, compiler invocation, binary
-replacement, or guest execution is authorized before that review.
+MAP LOAD ROUTE
+
+Adam package initialization later executes:
+
+  MapFileLoad("::/Compiler/Compiler");
+
+Compiler.MAP.Z is source and symbol mapping data.  It is not the compiler module
+loaded by the kernel.
+
+Adjudication record:
+
+  TEMPLEOSTS-1.10-COMPILER-BUILD-ROUTE-ADJUDICATION.TXT
+
+NEXT COMMAND
+
+Prepare a host-only guard snapshot.  This does not touch a VM or execute HolyC:
+
+  Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
+  git pull
+
+  .\tools\PREPARE-TEMPLEOSTS-COMPILER-BUILD-GUARD.ps1 `
+      -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
+      -ManifestPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-expanded-manifest.txt `
+      -WorkRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-WORK\templeosts-1.10-no-rewrite `
+      -InstallReportPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-no-rewrite-seam.txt `
+      -BuildRouteReportPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-route.txt `
+      -GuardRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-GUARD\templeosts-1.10-no-rewrite `
+      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-guard.txt
+
+The guard contains:
+
+  exact original Compiler.PRJ.Z
+  exact original Compiler.BIN.Z
+  exact original Compiler.MAP.Z
+  exact original ICLCC.CPP.Z
+  matching expanded baseline objects
+  candidate expanded ICLCC.CPP
+  a non-executable build contract
+  a hash manifest
+
+Expected status:
+
+  HOST GUARD       PREPARED
+  GUEST DELIVERY   UNRESOLVED
+  BUILD            NOT-AUTHORIZED
+  VERDICT          HOST GUARD SNAPSHOT COMPLETE
+
+The tool is statically reviewed only.  Windows PowerShell execution is not yet
+observed.
 
 RULE
 
-RAW REFERENCES ARE NAVIGATION, NOT EXECUTION PROOF.
-WORKSPACE INSTALL IS NOT A BUILD.
-NO EXACT BUILD ROUTE, NO BUILD COMMAND.
+EXACT BUILD ROUTE IS NOT BUILD AUTHORIZATION.
+HOST RECOVERY FILES ARE NOT A GUEST RESTORE PROOF.
+NO OBSERVED DELIVERY, NO GUEST SOURCE CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
 NO OBSERVED BUILD, NO COMPILER CLAIM.
 NO GUEST DIFFERENTIAL, NO SEMANTIC CLAIM.
 REPORTS ARE CLAIMS, NOT EVIDENCE.
