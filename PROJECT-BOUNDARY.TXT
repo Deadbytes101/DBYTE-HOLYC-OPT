@@ -117,6 +117,23 @@ Adam package initialization later loads the map through:
 
 Compiler.MAP.Z is mapping data and is not the boot compiler module.
 
+OBSERVED HOST BUILD GUARD
+
+  root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-GUARD\templeosts-1.10-no-rewrite
+
+  files                   11
+  manifest SHA256
+    792ED470CF151582C81B20C95C588067B2CD41ED74893AB926079DC5D2C76FCA
+
+  observation report SHA256
+    53FC38AC8F84C16AA4657A9EF4CB7BBA94B958217B8C489D481ADEF4137AA297
+
+The guard contains original raw recovery containers, matching expanded
+baselines, the candidate source, a non-executable contract, and a hash manifest.
+It does not prove a guest target, guest delivery, guest backup, restore, VM
+snapshot, or build.
+
 CURRENT STATUS
 
   exact ISO identity                  SEALED
@@ -128,7 +145,9 @@ CURRENT STATUS
   compiler-only build route           SEALED
   compiler boot load route            SEALED
   compiler map load route             SEALED
-  host build guard                    NOT OBSERVED
+  host build guard                    PREPARED / OBSERVED
+  target guest VM                     UNRESOLVED
+  powered-off recovery point          UNRESOLVED
   guest delivery route                UNRESOLVED
   guest backup and restore            UNRESOLVED
   compiler build execution            NOT AUTHORIZED
@@ -138,15 +157,21 @@ CURRENT STATUS
 
 ALLOWED NEXT WORK
 
-  prepare a host-only guard snapshot
-  preserve exact raw Compiler.PRJ.Z, Compiler.BIN.Z, Compiler.MAP.Z, and ICLCC.CPP.Z
-  preserve matching expanded baselines and candidate ICLCC.CPP
-  observe a host-to-guest delivery route
-  observe guest baseline copies and a restore procedure
-  do not invoke Cmp until delivery and restore are proved
+  preserve the guard root and report
+  enumerate known TempleOSTS VirtualBox candidates read-only
+  record exact VM state, UUID, configuration and storage attachments
+  record snapshot-chain and configured shared-folder surfaces
+  hash a VDI only after both state sources prove poweroff
+  select one guest target only after observed evidence
+  do not mutate a VM or invoke Cmp in the preflight pass
 
 NOT AUTHORIZED
 
+  starting or stopping a VM
+  creating, restoring or deleting a snapshot
+  attaching or detaching storage
+  mounting or modifying a VDI
+  delivering candidate source into a guest
   MakeAll
   MakeOSPrtBootInstall
   guest Cmp execution
@@ -162,7 +187,8 @@ NOT AUTHORIZED
 RULE
 
 EXACT BUILD ROUTE IS NOT BUILD AUTHORIZATION.
-HOST RECOVERY FILES ARE NOT A GUEST RESTORE PROOF.
+HOST GUARD IS NOT A GUEST RECOVERY POINT.
+A VIRTUALBOX SHARED-FOLDER CONFIGURATION IS NOT TEMPLEOS GUEST SUPPORT PROOF.
 NO OBSERVED DELIVERY, NO GUEST SOURCE CLAIM.
 NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
 NO OBSERVED BUILD, NO COMPILER CLAIM.
