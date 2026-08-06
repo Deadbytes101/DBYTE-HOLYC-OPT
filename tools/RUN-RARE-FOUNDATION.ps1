@@ -13,6 +13,7 @@ $ExpectedIsoHash = 'DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA
 
 $RepoRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $ParentRoot = Split-Path -Parent $RepoRoot
+$RareIsoSource = 'UNRESOLVED'
 
 function Resolve-HolyToolsRoot {
     if (-not [string]::IsNullOrWhiteSpace($HolyTools)) {
@@ -78,7 +79,29 @@ function Resolve-RareIsoPath {
         if (-not (Test-RareIso -Path $Resolved)) {
             throw "ISO is not the exact TempleOSTS internal artifact: $Resolved"
         }
+        $script:RareIsoSource = 'EXPLICIT'
         return $Resolved
+    }
+
+    $Canonical = Join-Path $script:ToolsRoot 'legacy-input\templeos-v1.10\TempleOSTS.iso'
+    if (Test-Path -LiteralPath $Canonical -PathType Leaf) {
+        $Canonical = (Resolve-Path -LiteralPath $Canonical).Path
+        Write-Host "CHECK CANONICAL ISO: $Canonical"
+        if (-not (Test-RareIso -Path $Canonical)) {
+            throw @"
+Canonical TempleOSTS acquisition source failed identity verification:
+  $Canonical
+
+Expected bytes:  $ExpectedIsoBytes
+Expected SHA256: $ExpectedIsoHash
+
+The runner will not substitute a VM baseline copy for a corrupted canonical source.
+"@
+        }
+
+        $script:RareIsoSource = 'CANONICAL-LEGACY-INPUT'
+        Write-Host 'SELECT ISO: CANONICAL LEGACY INPUT'
+        return $Canonical
     }
 
     $SearchRoots = @(Get-IsoSearchRoots)
@@ -116,6 +139,9 @@ Exact TempleOSTS.iso was not found.
 Required bytes:  $ExpectedIsoBytes
 Required SHA256: $ExpectedIsoHash
 
+Canonical path checked first:
+  $Canonical
+
 Searched roots:
 $RootsText
 
@@ -125,9 +151,10 @@ Locate the original file, then run:
     }
 
     if ($Exact.Count -gt 1) {
-        throw "multiple exact TempleOSTS.iso files found; pass -IsoPath explicitly:`n$($Exact -join "`n")"
+        throw "multiple exact TempleOSTS.iso files found outside the canonical acquisition path; pass -IsoPath explicitly:`n$($Exact -join "`n")"
     }
 
+    $script:RareIsoSource = 'BOUNDED-DISCOVERY'
     return $Exact[0]
 }
 
@@ -156,6 +183,7 @@ foreach ($Script in @($Verifier, $Sealer, $Inspector)) {
 Write-Host "OPT ROOT:      $RepoRoot"
 Write-Host "TOOLS ROOT:    $ToolsRoot"
 Write-Host "RARE ISO:      $RareIso"
+Write-Host "ISO SOURCE:    $RareIsoSource"
 Write-Host "EVIDENCE ROOT: $EvidenceRoot"
 
 & $Verifier -Path $ToolsRoot
@@ -206,6 +234,7 @@ $SeamHash = (Get-FileHash -LiteralPath $SeamPath -Algorithm SHA256).Hash
 
 Write-Host ''
 Write-Host 'FOUNDATION:     PASS'
+Write-Host "ISO SOURCE:     $RareIsoSource"
 Write-Host "MANIFEST:       $ManifestPath"
 Write-Host "MANIFEST SHA256 $ManifestHash"
 Write-Host "SEAM REPORT:    $SeamPath"
