@@ -1,0 +1,140 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VBOX NORMALIZED MISMATCH OBSERVATION
+
+CLASS
+
+LASTSTATECHANGE-ONLY HYPOTHESIS REJECTED.
+VBOX NORMALIZED RELATIONSHIP MISMATCH OBSERVED.
+POWERED-OFF RECOVERY POINT NOT SEALED.
+BUILD EXECUTION NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  a4cf0b519abd9f2c7042971f987168de8f929e91
+
+Command:
+  tools/ADJUDICATE-TEMPLEOSTS-VBOX-DRIFT-R2.ps1
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  resource root
+    D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+  sealed failed inspector report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-adopted-recovery-inspector.txt
+
+  intended output
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vbox-drift-adjudication.txt
+
+OBSERVED RESULT
+
+  terminal failure
+    current and baseline normalized VBOX hashes differ
+
+  source line class
+    normalized VBOX equality gate
+
+  failed inspector report SHA256
+    6393BCD2E0B6E0FCFCC01D74D0B4C3F6F035B5D686CF61ECB349B84E853C0594
+
+  target name
+    Temple1.10
+
+  target UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  VM state
+    poweroff
+
+  VDI attachment key
+    IDE-1-0 / ACCEPTED BEFORE FAILURE
+
+  ISO attachment key
+    IDE-0-1 / ACCEPTED BEFORE FAILURE
+
+  live VDI SHA256
+    90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  live ISO SHA256
+    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+  baseline VBOX SHA256
+    E7A884AD2590BAD05AF4465A22FD857A75F64AB9F91042E4638256E8B21AEB46
+
+  final drift report
+    NOT WRITTEN
+
+ADJUDICATION
+
+The R2 parser normalized quoted machine-readable keys successfully.  The live
+name, UUID, poweroff state, CfgFile, VDI attachment and ISO attachment passed.
+The current VBOX identity remained bound to the previously sealed failed
+inspector report.  The live VDI and ISO and adopted baseline VBOX, VDI and ISO
+were revalidated before normalization.
+
+R2 replaced exactly one lastStateChange attribute in the current VBOX and
+exactly one in the adopted baseline VBOX.  The resulting normalized SHA256
+values did not match.  Therefore the raw VBOX difference is not limited to
+lastStateChange under the pinned normalization contract.
+
+No POST-OBSERVATION recovery classification is authorized.  The additional
+normalized difference must be displayed and classified before deciding whether
+the adopted baseline remains a valid powered-off recovery point.
+
+MUTATION BOUNDARY
+
+The invocation performed read-only Git, VirtualBox and host-file queries and
+hashing.  It stopped before creating the VBOX drift adjudication report.
+
+No VM start, stop, snapshot operation, attachment change, VBOX write, VDI write,
+ISO write, guest delivery or compiler execution occurred.
+
+CURRENT STATUS
+
+  exact corpus                         SEALED
+  target guest VM                      SEALED
+  target VM state                      POWEROFF / OBSERVED
+  machine-readable storage parser      CORRECTED / OBSERVED
+  live VDI attachment                  EXACT / OBSERVED
+  live ISO attachment                  EXACT / OBSERVED
+  adopted baseline VDI                 EXACT / OBSERVED
+  adopted baseline ISO                 EXACT / OBSERVED
+  VBOX lastStateChange-only relation   REJECTED
+  VBOX normalized relationship         MISMATCH / OBSERVED
+  exact normalized differences         NOT YET DISPLAYED
+  powered-off recovery point           NOT SEALED
+  restore execution                    NOT OBSERVED
+  guest delivery                       UNRESOLVED
+  compiler build execution             NOT AUTHORIZED
+  optimizer transformation             DENIED
+
+NEXT ALLOWED WORK
+
+  preserve the failed inspector report SHA256 6393BCD2E0B6E0FCFCC01D74D0B4C3F6F035B5D686CF61ECB349B84E853C0594
+  bind a read-only normalized-difference diagnostic to that report
+  revalidate resource commit and clean tracked tree
+  revalidate target identity, poweroff state and exact attachments
+  revalidate current VBOX raw identity against the failed inspector report
+  normalize exactly one lastStateChange attribute in each VBOX
+  display every normalized line insertion, deletion or replacement
+  record normalized newline and first-difference evidence
+  do not classify the extra difference as harmless without observed evidence
+  do not seal recovery or authorize build
+
+RULE
+
+NORMALIZED HASH INEQUALITY REJECTS LASTSTATECHANGE-ONLY DRIFT.
+DO NOT WIDEN NORMALIZATION TO MAKE THE EVIDENCE PASS.
+DISPLAY THE REMAINING DIFFERENCE BEFORE CLASSIFICATION.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
