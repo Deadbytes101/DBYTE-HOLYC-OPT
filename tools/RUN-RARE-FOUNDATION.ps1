@@ -156,7 +156,7 @@ $ManifestPath = Join-Path $EvidenceRoot 'templeosts-expanded-manifest.txt'
 $DiscoveryPath = Join-Path $EvidenceRoot 'templeosts-compiler-discovery.txt'
 
 $Verifier = Join-Path $PSScriptRoot 'VERIFY-HOLYC-TOOLS-RESOURCE.ps1'
-$Sealer = Join-Path $PSScriptRoot 'SEAL-TEMPLEOSTS-COMPILER.ps1'
+$Sealer = Join-Path $PSScriptRoot 'SEAL-TEMPLEOSTS-CORPUS.ps1'
 $Discoverer = Join-Path $PSScriptRoot 'DISCOVER-TEMPLEOSTS-COMPILER.ps1'
 foreach ($Script in @($Verifier, $Sealer, $Discoverer)) {
     if (-not (Test-Path -LiteralPath $Script -PathType Leaf)) {
