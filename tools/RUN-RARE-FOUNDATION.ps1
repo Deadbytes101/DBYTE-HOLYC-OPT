@@ -38,7 +38,6 @@ Clone or move it there, or run with:
 
 function Get-IsoSearchRoots {
     $Roots = [System.Collections.Generic.List[string]]::new()
-
     foreach ($Candidate in @(
         $ParentRoot,
         (Join-Path $env:USERPROFILE 'Downloads'),
@@ -55,16 +54,10 @@ function Get-IsoSearchRoots {
             }
         }
     }
-
     return @($Roots)
 }
 
-function Test-RareIso {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Path
-    )
-
+function Test-RareIso([string]$Path) {
     $Item = Get-Item -LiteralPath $Path -ErrorAction Stop
     if ($Item.Length -ne $ExpectedIsoBytes) {
         return $false
@@ -77,7 +70,7 @@ function Test-RareIso {
 function Resolve-RareIsoPath {
     if (-not [string]::IsNullOrWhiteSpace($IsoPath)) {
         $Resolved = (Resolve-Path -LiteralPath $IsoPath -ErrorAction Stop).Path
-        if (-not (Test-RareIso -Path $Resolved)) {
+        if (-not (Test-RareIso $Resolved)) {
             throw "ISO is not the exact TempleOSTS internal artifact: $Resolved"
         }
         $script:RareIsoSource = 'EXPLICIT'
@@ -88,7 +81,7 @@ function Resolve-RareIsoPath {
     if (Test-Path -LiteralPath $Canonical -PathType Leaf) {
         $Canonical = (Resolve-Path -LiteralPath $Canonical).Path
         Write-Host "CHECK CANONICAL ISO: $Canonical"
-        if (-not (Test-RareIso -Path $Canonical)) {
+        if (-not (Test-RareIso $Canonical)) {
             throw @"
 Canonical TempleOSTS acquisition source failed identity verification:
   $Canonical
@@ -107,7 +100,6 @@ The runner will not substitute a VM baseline copy for a corrupted canonical sour
 
     $SearchRoots = @(Get-IsoSearchRoots)
     $Named = [System.Collections.Generic.List[string]]::new()
-
     foreach ($Root in $SearchRoots) {
         Write-Host "SEARCH ISO: $Root"
         foreach ($File in @(
@@ -127,32 +119,24 @@ The runner will not substitute a VM baseline copy for a corrupted canonical sour
     $Exact = @(
         foreach ($Candidate in $Named) {
             Write-Host "CHECK ISO:  $Candidate"
-            if (Test-RareIso -Path $Candidate) {
+            if (Test-RareIso $Candidate) {
                 $Candidate
             }
         }
     )
 
     if ($Exact.Count -eq 0) {
-        $RootsText = $SearchRoots -join [Environment]::NewLine
         throw @"
 Exact TempleOSTS.iso was not found.
 Required bytes:  $ExpectedIsoBytes
 Required SHA256: $ExpectedIsoHash
 
-Canonical path checked first:
-  $Canonical
-
-Searched roots:
-$RootsText
-
-Locate the original file, then run:
+Run with the exact source path:
   .\tools\RUN-RARE-FOUNDATION.ps1 -IsoPath D:\actual\path\TempleOSTS.iso
 "@
     }
-
     if ($Exact.Count -gt 1) {
-        throw "multiple exact TempleOSTS.iso files found outside the canonical acquisition path; pass -IsoPath explicitly:`n$($Exact -join "`n")"
+        throw "multiple exact non-canonical ISO files found; pass -IsoPath explicitly:`n$($Exact -join "`n")"
     }
 
     $script:RareIsoSource = 'BOUNDED-DISCOVERY'
@@ -168,14 +152,13 @@ if ([string]::IsNullOrWhiteSpace($EvidenceRoot)) {
 $EvidenceRoot = [System.IO.Path]::GetFullPath($EvidenceRoot)
 
 $ExtractRoot = Join-Path $EvidenceRoot 'templeosts-1.10-internal'
-$ManifestPath = Join-Path $EvidenceRoot 'templeosts-compiler-manifest.txt'
-$SeamPath = Join-Path $EvidenceRoot 'templeosts-compiler-seam.txt'
+$ManifestPath = Join-Path $EvidenceRoot 'templeosts-expanded-manifest.txt'
+$DiscoveryPath = Join-Path $EvidenceRoot 'templeosts-compiler-discovery.txt'
 
 $Verifier = Join-Path $PSScriptRoot 'VERIFY-HOLYC-TOOLS-RESOURCE.ps1'
 $Sealer = Join-Path $PSScriptRoot 'SEAL-TEMPLEOSTS-COMPILER.ps1'
-$Inspector = Join-Path $PSScriptRoot 'INSPECT-TEMPLEOSTS-SEAM.ps1'
-
-foreach ($Script in @($Verifier, $Sealer, $Inspector)) {
+$Discoverer = Join-Path $PSScriptRoot 'DISCOVER-TEMPLEOSTS-COMPILER.ps1'
+foreach ($Script in @($Verifier, $Sealer, $Discoverer)) {
     if (-not (Test-Path -LiteralPath $Script -PathType Leaf)) {
         throw "required script missing: $Script"
     }
@@ -210,11 +193,8 @@ Extract exists:  True
 Manifest exists: False
 No file was removed.
 
-The observed extraction can be revalidated without deletion by running:
+Revalidate the observed extraction by running:
   .\tools\RUN-RARE-FOUNDATION.ps1 -ResumeIncompleteExtraction
-
-Evidence root:
-  $EvidenceRoot
 "@
     }
 
@@ -238,30 +218,32 @@ else {
     Write-Host 'CORPUS:        REUSE SEALED OUTPUT'
 }
 
-if (Test-Path -LiteralPath $SeamPath) {
-    $ExistingHash = (Get-FileHash -LiteralPath $SeamPath -Algorithm SHA256).Hash
+if (Test-Path -LiteralPath $DiscoveryPath) {
+    $ExistingHash = (Get-FileHash -LiteralPath $DiscoveryPath -Algorithm SHA256).Hash
     throw @"
-Seam report already exists and was not overwritten:
-  $SeamPath
+Compiler discovery report already exists and was not overwritten:
+  $DiscoveryPath
   SHA256 $ExistingHash
 
 Preserve it as evidence. Use another -EvidenceRoot for a new run.
 "@
 }
 
-& $Inspector `
+& $Discoverer `
     -ExtractRoot $ExtractRoot `
     -ManifestPath $ManifestPath `
-    -OutPath $SeamPath
+    -OutPath $DiscoveryPath
 
 $ManifestHash = (Get-FileHash -LiteralPath $ManifestPath -Algorithm SHA256).Hash
-$SeamHash = (Get-FileHash -LiteralPath $SeamPath -Algorithm SHA256).Hash
+$DiscoveryHash = (Get-FileHash -LiteralPath $DiscoveryPath -Algorithm SHA256).Hash
 
 Write-Host ''
-Write-Host 'FOUNDATION:     PASS'
-Write-Host "ISO SOURCE:     $RareIsoSource"
-Write-Host "MANIFEST:       $ManifestPath"
-Write-Host "MANIFEST SHA256 $ManifestHash"
-Write-Host "SEAM REPORT:    $SeamPath"
-Write-Host "SEAM SHA256     $SeamHash"
-Write-Host 'PATCH STATUS:   NOT AUTHORIZED'
+Write-Host 'CORPUS FOUNDATION: PASS'
+Write-Host "ISO SOURCE:       $RareIsoSource"
+Write-Host "MANIFEST:         $ManifestPath"
+Write-Host "MANIFEST SHA256   $ManifestHash"
+Write-Host "DISCOVERY:        $DiscoveryPath"
+Write-Host "DISCOVERY SHA256  $DiscoveryHash"
+Write-Host 'COMPILER:         UNRESOLVED'
+Write-Host 'SEAM:             UNRESOLVED'
+Write-Host 'PATCH STATUS:     NOT AUTHORIZED'
