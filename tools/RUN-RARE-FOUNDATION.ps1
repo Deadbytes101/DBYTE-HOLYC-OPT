@@ -2,7 +2,8 @@
 param(
     [string]$HolyTools,
     [string]$IsoPath,
-    [string]$EvidenceRoot
+    [string]$EvidenceRoot,
+    [switch]$ResumeIncompleteExtraction
 )
 
 Set-StrictMode -Version Latest
@@ -191,17 +192,41 @@ Write-Host "EVIDENCE ROOT: $EvidenceRoot"
 $HaveExtract = Test-Path -LiteralPath $ExtractRoot -PathType Container
 $HaveManifest = Test-Path -LiteralPath $ManifestPath -PathType Leaf
 
-if ($HaveExtract -xor $HaveManifest) {
+if (-not $HaveExtract -and $HaveManifest) {
     throw @"
-Incomplete evidence state.
-Extract exists:  $HaveExtract
-Manifest exists: $HaveManifest
-No file was removed. Adjudicate the evidence directory manually:
+Invalid evidence state.
+Extract exists:  False
+Manifest exists: True
+No file was removed. Preserve and adjudicate:
   $EvidenceRoot
 "@
 }
 
-if (-not $HaveExtract) {
+if ($HaveExtract -and -not $HaveManifest) {
+    if (-not $ResumeIncompleteExtraction) {
+        throw @"
+Incomplete evidence state.
+Extract exists:  True
+Manifest exists: False
+No file was removed.
+
+The observed extraction can be revalidated without deletion by running:
+  .\tools\RUN-RARE-FOUNDATION.ps1 -ResumeIncompleteExtraction
+
+Evidence root:
+  $EvidenceRoot
+"@
+    }
+
+    Write-Host 'CORPUS:        RESUME INCOMPLETE EXTRACTION'
+    & $Sealer `
+        -HolyTools $ToolsRoot `
+        -IsoPath $RareIso `
+        -ExtractRoot $ExtractRoot `
+        -ManifestPath $ManifestPath `
+        -ResumeExistingExtraction
+}
+elif (-not $HaveExtract) {
     New-Item -ItemType Directory -Path $EvidenceRoot -Force | Out-Null
     & $Sealer `
         -HolyTools $ToolsRoot `
