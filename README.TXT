@@ -3,12 +3,11 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE SOURCE CONTEXT SEALED
-COMPILER DIRECTORY EXACT CANDIDATE
-RAW PIPELINE TRACE OBSERVED
-SOURCE CONTEXT SEALED
-PIPELINE CANDIDATE ONLY
-SEAM UNRESOLVED
+0.0.1 RARE PIPELINE OWNER SEALED
+EXACT TEMPLEOSTS 1.10 CORPUS
+LCCCompile PIPELINE OWNER SEALED
+EXECUTABLE PASS ORDER SEALED
+SEAM CANDIDATE NOT SEALED
 NO PATCH AUTHORIZED
 NO REWRITE ENABLED
 NO PERFORMANCE CLAIM
@@ -24,13 +23,6 @@ THE INTERMEDIATE CODE REMAINS TERRY'S.
 THE BACKEND REMAINS TERRY'S.
 THE MACHINE CODE REMAINS NATIVE.
 
-RESOURCE
-
-DBYTE-HOLYC-TOOLS is the read-only evidence and archive resource:
-
-  repository  Deadbytes101/DBYTE-HOLYC-TOOLS
-  commit      37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
-
 ONLY TARGET
 
   artifact    TempleOSTS.iso
@@ -38,6 +30,14 @@ ONLY TARGET
   role        T.S. internal distro
   bytes       30558208
   SHA256      DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+RESOURCE
+
+  repository  Deadbytes101/DBYTE-HOLYC-TOOLS
+  commit      37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
+
+DBYTE-HOLYC-TOOLS is read-only evidence and extraction infrastructure.  It is
+not linked into the compiler and is not a runtime dependency.
 
 PATCH AUTHORITY
 
@@ -49,140 +49,149 @@ COMMON MIRRORS ARE NOT TARGETS.
 PUBLIC STANDARD ISO IS NOT THE TARGET.
 LATER FORKS AND PORTS ARE NOT TARGETS.
 
-OBSERVED CORRECTIONS
+OBSERVED EVIDENCE
 
-Later TempleOS 5.03 names were used only as architecture clues.  Exact 1.10
-bytes rejected COCCompile and OptPass789A as required contracts.
+Expanded manifest:
 
-A partial C/C++ quote masker was also rejected after exact Compiler/ bytes
-produced an unterminated quoted-literal boundary.  The accepted trace performs
-raw Latin-1 matching only and makes no code/non-code claim.
+  files       1057/1057
+  SHA256      6556485E4425386687C53F4F626146A2136AE12F38E075E2646C98147D61CB68
 
-OBSERVED CORPUS FOUNDATION
+Compiler discovery:
 
-  expanded files                 1057/1057
-  text-like files                777
-  discovery candidates           45
+  text files  777
+  candidates  45
+  SHA256      66DEED7083CABB292064477ECE15F8AA368A86B47FED1C45C097BFAC0A0F6348
 
-  expanded manifest SHA256
-    6556485E4425386687C53F4F626146A2136AE12F38E075E2646C98147D61CB68
+Exact Compiler/ set:
 
-  compiler discovery SHA256
-    66DEED7083CABB292064477ECE15F8AA368A86B47FED1C45C097BFAC0A0F6348
+  files       31/31
+  SHA256      2F840DD07625B71F55256AF29A6F4FCC263E0AA7301714AC4A36101FBDEEF261
 
-  COCCompile                     0
-  OptPass6                       10
-  OptPass789A                    0
-  CIntermediateCode             169
+Raw pipeline trace:
 
-OBSERVED RAW PIPELINE TRACE
+  occurrences 25
+  files       9
+  SHA256      E32A0F2EF8A68B12ED7C4EC74E08ACCAAC405212A515B25EB32F21470E606924
 
-  Compiler/ files                31/31
+Sealed pipeline context:
 
-  compiler set SHA256
-    2F840DD07625B71F55256AF29A6F4FCC263E0AA7301714AC4A36101FBDEEF261
-
-  pass occurrences               25
-  pipeline files                 9
-
-  pipeline trace SHA256
-    E32A0F2EF8A68B12ED7C4EC74E08ACCAAC405212A515B25EB32F21470E606924
-
-Strongest raw sequence candidate:
+  SHA256      D9C7C4DFB1B8F5CE78CEA0EA3C6F2B56E5274387D6CE3CE3914C2057B1760FC5
 
   Compiler/CmpExts.CPP
-    OptPass012
-    OptPass3
-    OptPass4
-    OptPass5
-    OptPass6
-    OptPass789
-
-Secondary mixed-use candidate:
+    SHA256    002367120BFE4C97F8DCAAD23CE549BB407949558A0BE15076ADD4EF3AEA9CA2
 
   Compiler/ICLCC.CPP
-    OptPass012
-    OptPass012
-    OptPass3
-    OptPass4
-    OptPass5
-    OptPass6
-    OptPass789
-    OptPass789
-    OptPass789
+    SHA256    2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
 
-OBSERVED SEALED SOURCE CONTEXT
+MANUAL PIPELINE ADJUDICATION
 
-  Compiler/CmpExts.CPP SHA256
-    002367120BFE4C97F8DCAAD23CE549BB407949558A0BE15076ADD4EF3AEA9CA2
+Compiler/CmpExts.CPP lines 30 through 36 are extern declarations.  They expose
+pass interfaces but execute no pass.  CmpExts.CPP is not the pipeline owner.
 
-  Compiler/ICLCC.CPP SHA256
-    2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
+Compiler/ICLCC.CPP lines 377 through 444 define LCCCompile.  The displayed
+source proves that LCCCompile owns the low-level optimizer, sizing, allocation,
+and final-emission sequence.
 
-  pipeline context SHA256
-    D9C7C4DFB1B8F5CE78CEA0EA3C6F2B56E5274387D6CE3CE3914C2057B1760FC5
+Executable order observed inside LCCCompile:
 
-  source context status          SEALED-DISPLAY
-  pipeline status                CANDIDATE-ONLY
-  seam status                    UNRESOLVED
-  patch status                   NOT AUTHORIZED
+  line 387  OptPass012
+  line 389  OptPass012
+  line 391  OptPass3
+  line 393  OptPass4
+  line 395  OptPass5
+  line 397  OptPass6
 
-The context report is now the evidence to inspect.  Console summaries prove
-identity and successful report creation, but they do not show whether each raw
-OptPass occurrence is a declaration, definition, comment, string, or executable
-call.
+  lines 400-408
+    forward jump-table labels through OptLabelFwd
+
+  line 411  OptPass789 sizing
+  line 415  OptPass789 sizing until stable
+  lines 422-425
+    allocate AOT or JIT output storage
+  line 427  OptPass789 final emission
+
+LCCCompile is sealed as the owner of this optimizer-to-emission pipeline.  This
+does not claim that it is the top-level parser or language frontend entrypoint.
+
+CANDIDATE SEAM
+
+The strongest semantic boundary is:
+
+  after jump-table label forwarding completes at source line 408
+  before the first OptPass789 sizing call at source line 411
+
+At that point passes 0 through 6 and label forwarding are complete, while
+OptPass789 sizing and emission have not started.
+
+Existing source line 410 calls LCCHeaderPut(lx,7,FALSE).  Its pass-state and
+trace contract must be preserved or explicitly accounted for.  The exact
+insertion point is therefore not sealed and no patch is authorized.
+
+The manual result is recorded in:
+
+  TEMPLEOSTS-1.10-PIPELINE-ADJUDICATION.TXT
 
 CURRENT PIPELINE
 
-  TEMPLEOSTS.ISO EXACT IDENTITY
+  EXACT TEMPLEOSTS.ISO IDENTITY
     -> PINNED HOLYARCHIVE EXTRACTION
     -> HASH ALL 1057 EXPANDED FILES
-    -> DISCOVER Compiler/ CANDIDATES
     -> VERIFY EXACT 31-FILE Compiler/ SET
-    -> RAW OptPass* TRACE
-    -> SEALED CmpExts.CPP AND ICLCC.CPP CONTEXT
-    -> MANUAL CODE VS NON-CODE ADJUDICATION
-    -> MANUAL PIPELINE OWNERSHIP ADJUDICATION
-    -> MANUAL SEAM ADJUDICATION
-    -> NO-REWRITE VERIFIER
+    -> RAW OptPass TRACE
+    -> SEALED SOURCE CONTEXT
+    -> MANUAL LCCCompile OWNERSHIP ADJUDICATION
+    -> DISPLAY EXACT OptPass6 AND OptPass789 CONTRACT CONTEXT
+    -> MANUAL PASS-BOUNDARY ADJUDICATION
+    -> SEAL NO-REWRITE VERIFIER
     -> DIFFERENTIAL HARNESS
     -> FIRST PROVED TRANSFORMATION
 
-NEXT EVIDENCE
+NEXT COMMAND
 
-Preserve every existing file.  Do not run another parser, tracer, source patch,
-or optimizer experiment before manually reviewing:
+Preserve every existing evidence file.  Pull and display only the exact pass
+boundary context:
 
-  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pipeline-context.txt
+  Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
+  git pull
 
-Manual review must decide, from the displayed exact source lines:
+  .\tools\DISPLAY-TEMPLEOSTS-PASS-BOUNDARY.ps1 `
+      -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
+      -ManifestPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-expanded-manifest.txt `
+      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pass-boundary.txt
 
-  which CmpExts occurrences are executable calls
-  which function owns the complete pass sequence
-  what ICLCC repeated occurrences represent
-  whether CmpExts is the real compile pipeline or only an extension path
-  whether any candidate boundary can be stated without inference
+The display tool:
 
-A context report is not seam authorization.
+  verifies the observed manifest hash
+  verifies exact ICLCC.CPP identity
+  verifies OptPass6.CPP and OptPass789.CPP against the manifest
+  re-displays the ICLCC transition between OptPass6 and OptPass789
+  displays raw definition context from OptPass6.CPP and OptPass789.CPP
+  uses no function parser, comment filter, quote filter, or classifier
+  does not authorize an insertion seam or source patch
 
-CURRENT EVIDENCE
+Expected final status:
+
+  PASS CONTEXT       SEALED-DISPLAY
+  PIPELINE OWNER     LCCCompile-SEALED
+  SEAM               CANDIDATE-NOT-SEALED
+  PATCH STATUS       NOT-AUTHORIZED
+
+CURRENT EVIDENCE STATUS
 
   canonical ISO identity                         PASS
-  pinned DBYTE-HOLYC-TOOLS commit               PASS
-  pinned resource blobs                         9/9 PASS
-  resource tracked tree                         CLEAN
-  HolyArchive extraction                        PASS
+  pinned DBYTE-HOLYC-TOOLS resource             PASS
   full expanded manifest                        PASS
-  compiler discovery report                     PASS
-  exact 31-file Compiler/ set                   PASS
-  raw pipeline trace report                     PASS
-  CmpExts complete pass-name sequence           OBSERVED
-  ICLCC repeated pass-name sequence             OBSERVED
-  sealed source context report                  PASS
-  rare compiler entrypoint identity             UNRESOLVED
-  pass ownership and executable order           UNRESOLVED
-  rare compiler insertion seam                  UNRESOLVED
-  patched compiler rebuild                      NOT OBSERVED
+  exact Compiler/ set                           PASS
+  raw pipeline trace                            PASS
+  sealed pipeline source context                PASS
+  CmpExts declaration classification            SEALED
+  LCCCompile pipeline ownership                 SEALED
+  executable pass order                         SEALED
+  post-label-forward boundary                   CANDIDATE
+  OptPass6 output contract                      NOT YET ADJUDICATED
+  OptPass789 input contract                     NOT YET ADJUDICATED
+  insertion seam                                NOT SEALED
+  compiler rebuild                              NOT OBSERVED
   guest semantic run                            NOT OBSERVED
 
 NON-GOALS
@@ -200,7 +209,7 @@ NO PERFORMANCE CLAIM WITHOUT OBSERVED EVIDENCE.
 RULE
 
 NO RARE BYTE IDENTITY, NO TARGET.
-NO COMPILER IDENTITY, NO SEAM.
+NO SEALED PASS CONTRACT, NO SEAM.
 NO SEALED SEAM, NO PATCH.
 UNKNOWN MEANS DO NOT TRANSFORM.
 A SMALLER BINARY IS NOT PROOF.
