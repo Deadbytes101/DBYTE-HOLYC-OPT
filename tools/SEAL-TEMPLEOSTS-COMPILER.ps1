@@ -25,20 +25,16 @@ $ErrorActionPreference = 'Stop'
 $ExpectedIsoBytes = 30558208L
 $ExpectedIsoHash = 'DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC'
 $ExpectedToolsCommit = '37b0457e8735ab8cc34a23f2717fcfb808e6a7a8'
-$Latin1 = [System.Text.Encoding]::GetEncoding(28591)
-$RequiredMarkers = [ordered]@{
-    COCCompile = 'COCCompile('
-    OptPass6 = 'OptPass6('
-    OptPass789A = 'OptPass789A('
-    CIntermediateCode = 'CIntermediateCode'
-}
 
 $ToolsRoot = (Resolve-Path -LiteralPath $HolyTools -ErrorAction Stop).Path
 $Iso = (Resolve-Path -LiteralPath $IsoPath -ErrorAction Stop).Path
 $OutRoot = [System.IO.Path]::GetFullPath($ExtractRoot)
 $OutManifest = [System.IO.Path]::GetFullPath($ManifestPath)
-$ResourceVerifier = Join-Path $PSScriptRoot 'VERIFY-HOLYC-TOOLS-RESOURCE.ps1'
-$ResourceVerifier = (Resolve-Path -LiteralPath $ResourceVerifier -ErrorAction Stop).Path
+$ResourceVerifier = (
+    Resolve-Path `
+        -LiteralPath (Join-Path $PSScriptRoot 'VERIFY-HOLYC-TOOLS-RESOURCE.ps1') `
+        -ErrorAction Stop
+).Path
 
 & $ResourceVerifier -Path $ToolsRoot
 
@@ -51,7 +47,10 @@ if ($IsoHash -cne $ExpectedIsoHash) {
     throw "rare ISO hash mismatch: expected=$ExpectedIsoHash actual=$IsoHash"
 }
 
-$ExtractionExists = Test-Path -LiteralPath $OutRoot -PathType Container
+$ExtractionExists = Test-Path -LiteralPath $OutRoot
+if ($ExtractionExists -and -not (Test-Path -LiteralPath $OutRoot -PathType Container)) {
+    throw "extraction output is not a directory: $OutRoot"
+}
 if ($ExtractionExists -and -not $ResumeExistingExtraction) {
     throw @"
 Extraction output already exists:
@@ -60,6 +59,9 @@ Extraction output already exists:
 To preserve and revalidate an extraction left before manifest creation, rerun with:
   -ResumeExistingExtraction
 "@
+}
+if (-not $ExtractionExists -and $ResumeExistingExtraction) {
+    throw "resume requested but extraction output does not exist: $OutRoot"
 }
 if (Test-Path -LiteralPath $OutManifest) {
     throw "manifest output already exists: $OutManifest"
@@ -105,6 +107,7 @@ if (-not $ExtractionExists) {
     finally {
         Pop-Location
     }
+
     if ($ExtractCode -ne 0) {
         if (Test-Path -LiteralPath $OutRoot) {
             Remove-Item -LiteralPath $OutRoot -Recurse -Force
@@ -117,8 +120,8 @@ else {
     Write-Host 'EXTRACTION:    RESUME / REVALIDATE'
 }
 
-$Expanded = Join-Path $OutRoot 'expanded'
 $Raw = Join-Path $OutRoot 'raw'
+$Expanded = Join-Path $OutRoot 'expanded'
 $Normalized = Join-Path $OutRoot 'holy'
 foreach ($RequiredDirectory in @($Raw, $Expanded, $Normalized)) {
     if (-not (Test-Path -LiteralPath $RequiredDirectory -PathType Container)) {
@@ -151,79 +154,12 @@ if ($Files.Count -eq 0) {
     throw 'expanded rare corpus is empty'
 }
 
-$MarkerHits = [System.Collections.Generic.List[object]]::new()
-foreach ($File in $Files) {
-    if ($File.Length -gt 16MB) {
-        continue
-    }
-
-    $Bytes = [System.IO.File]::ReadAllBytes($File.FullName)
-    $Text = $Latin1.GetString($Bytes)
-
-    foreach ($Marker in $RequiredMarkers.GetEnumerator()) {
-        if ($Text.IndexOf($Marker.Value, [System.StringComparison]::Ordinal) -ge 0) {
-            $Relative = Get-ExpandedRelativePath -Path $File.FullName
-            $MarkerHits.Add([pscustomobject]@{
-                Marker = $Marker.Key
-                RelativePath = $Relative
-                FullPath = $File.FullName
-            })
-        }
-    }
-}
-
-foreach ($Marker in $RequiredMarkers.Keys) {
-    if (@($MarkerHits | Where-Object { $_.Marker -ceq $Marker }).Count -eq 0) {
-        throw "rare compiler marker not found in expanded bytes: $Marker"
-    }
-}
-
-function Find-CompilerRoot {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$FilePath
-    )
-
-    $Directory = [System.IO.DirectoryInfo](Split-Path -Parent $FilePath)
-    while ($null -ne $Directory) {
-        if ($Directory.Name -in @('Compiler', 'COMPILE')) {
-            return $Directory.FullName
-        }
-        if ($Directory.FullName -ceq $Expanded) {
-            break
-        }
-        $Directory = $Directory.Parent
-    }
-
-    return Split-Path -Parent $FilePath
-}
-
-$CompilerRoots = @(
-    $MarkerHits |
-        ForEach-Object { Find-CompilerRoot -FilePath $_.FullPath } |
-        Sort-Object -Unique
-)
-
-$CompilerFiles = @(
-    @(
-        foreach ($Root in $CompilerRoots) {
-            Get-ChildItem -LiteralPath $Root -Recurse -File
-        }
-    ) | Sort-Object FullName -Unique
-)
-
-if ($CompilerFiles.Count -eq 0) {
-    throw 'no rare compiler files were selected'
-}
-
 $Rows = @(
-    foreach ($File in $CompilerFiles) {
-        $Relative = Get-ExpandedRelativePath -Path $File.FullName
-        $Hash = (Get-FileHash -LiteralPath $File.FullName -Algorithm SHA256).Hash
+    foreach ($File in $Files) {
         [pscustomobject]@{
-            Path = $Relative
+            Path = Get-ExpandedRelativePath -Path $File.FullName
             Bytes = $File.Length
-            SHA256 = $Hash
+            SHA256 = (Get-FileHash -LiteralPath $File.FullName -Algorithm SHA256).Hash
         }
     }
 )
@@ -236,28 +172,16 @@ if ($ManifestDirectory) {
 $Lines = [System.Collections.Generic.List[string]]::new()
 foreach ($Line in @(
     'DBYTE-HOLYC-OPT',
-    'TEMPLEOSTS 1.10 INTERNAL COMPILER CORPUS',
+    'TEMPLEOSTS 1.10 INTERNAL EXPANDED CORPUS',
     '',
     "TOOLS_COMMIT`t$ExpectedToolsCommit",
     "ISO_BYTES`t$ExpectedIsoBytes",
     "ISO_SHA256`t$ExpectedIsoHash",
     "EXTRACTION_LAYER`texpanded",
     "PATCH_AUTHORITY`texpanded historical bytes only",
-    "EXTRACTION_MODE`t$(if ($ExtractionExists) { 'RESUMED-AND-REVALIDATED' } else { 'FRESH' })",
+    "FILE_COUNT`t$($Rows.Count)",
     '',
-    'MARKERS',
-    "marker`tpath"
-)) {
-    $Lines.Add($Line)
-}
-
-foreach ($Hit in ($MarkerHits | Sort-Object Marker, RelativePath)) {
-    $Lines.Add("$($Hit.Marker)`t$($Hit.RelativePath)")
-}
-
-foreach ($Line in @(
-    '',
-    'COMPILER FILES',
+    'FILES',
     "path`tbytes`tSHA256"
 )) {
     $Lines.Add($Line)
@@ -270,10 +194,10 @@ foreach ($Row in $Rows) {
 foreach ($Line in @(
     '',
     'BOUNDARY',
-    'No compiler patch has been applied.',
-    'The normalized holy tree is not patch authority.',
+    'This manifest seals every file in the expanded historical corpus.',
+    'It does not identify the compiler, optimizer passes, or an insertion seam.',
+    'The normalized holy tree is navigation only and is not patch authority.',
     'Common public mirrors are not target inputs.',
-    'The insertion seam remains unsealed until reviewed from these exact files.',
     '',
     'REPORTS ARE CLAIMS, NOT EVIDENCE.'
 )) {
@@ -298,12 +222,12 @@ if ($TrackedWorktree.Count -ne 0 -or $TrackedIndex.Count -ne 0) {
 }
 
 $ManifestHash = (Get-FileHash -LiteralPath $OutManifest -Algorithm SHA256).Hash
-Write-Host "RARE ISO:       PASS"
-Write-Host "ROLE:           TS-INTERNAL"
-Write-Host "EXPANDED FILES: $($Files.Count)"
-Write-Host "COMPILER FILES: $($Rows.Count)"
-Write-Host "MARKER HITS:    $($MarkerHits.Count)"
+Write-Host 'RARE ISO:       PASS'
+Write-Host 'ROLE:           TS-INTERNAL'
+Write-Host "EXPANDED FILES: $($Rows.Count)"
 Write-Host "MANIFEST:       $OutManifest"
 Write-Host "MANIFEST SHA256 $ManifestHash"
-Write-Host "PATCH STATUS:   NOT AUTHORIZED"
-Write-Host "VERDICT:        PASS"
+Write-Host 'COMPILER:       UNRESOLVED'
+Write-Host 'SEAM:           UNRESOLVED'
+Write-Host 'PATCH STATUS:   NOT AUTHORIZED'
+Write-Host 'VERDICT:        PASS'
