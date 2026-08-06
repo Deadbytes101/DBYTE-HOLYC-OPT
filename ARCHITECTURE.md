@@ -3,10 +3,10 @@
 ```mermaid
 flowchart LR
     subgraph RESOURCE[READ-ONLY RESOURCE]
-        HT[DBYTE-HOLYC-TOOLS at pinned commit]
-        ISOID[TempleOSTS ISO identity]
+        HT[DBYTE-HOLYC-TOOLS pinned commit]
+        ISOID[TempleOSTS exact identity]
         ARC[HolyArchive extractor]
-        OLD[Compiler archaeology only]
+        OLD[Later compiler archaeology]
         HT --> ISOID
         HT --> ARC
         HT --> OLD
@@ -16,28 +16,33 @@ flowchart LR
         ISO[TempleOSTS.iso]
         RAW[raw archive bytes]
         EXP[expanded historical files]
-        NAV[normalized holy navigation tree]
-        MAN[compiler path byte and SHA256 manifest]
+        NAV[normalized holy navigation]
+        MAN[all expanded paths bytes SHA256]
         ISO --> RAW
         ISO --> EXP
         ISO --> NAV
         EXP --> MAN
     end
 
-    subgraph SEAL[SEAM ADJUDICATION]
-        PIPE[Locate original compile pipeline]
-        PASS[Identify original optimizer passes]
-        POINT[Seal insertion point from exact bytes]
-        PIPE --> PASS --> POINT
+    subgraph DISCOVERY[RARE COMPILER DISCOVERY]
+        CAT[Compiler-like paths and functions]
+        ANCHOR[Later-era anchor counts]
+        ID[Manual compiler identity]
+        PASS[Manual pass identity]
+        POINT[Manual seam identity]
+        MAN --> CAT
+        MAN --> ANCHOR
+        CAT --> ID --> PASS --> POINT
+        ANCHOR --> ID
     end
 
     subgraph TARGET[ORIGINAL INTERNAL COMPILER]
         SRC[Rare original HolyC source]
         FRONT[Original lexer and parser]
-        IC[Original intermediate code]
-        PREPASS[Original early optimizer]
-        POSTPASS[Original sizing fix-up and emission]
-        X64[Original x86-64 JIT or AOT output]
+        IC[Original intermediate form]
+        PREPASS[Original early optimization]
+        POSTPASS[Original sizing fix-up emission]
+        X64[Original x86-64 output]
         SRC --> FRONT --> IC --> PREPASS
         POSTPASS --> X64
     end
@@ -69,8 +74,7 @@ flowchart LR
     ARC --> RAW
     ARC --> EXP
     ARC --> NAV
-    MAN --> PIPE
-    OLD -. architectural clue only .-> PIPE
+    OLD -. naming clue only .-> CAT
     POINT --> VERIFY1
     PREPASS --> VERIFY1
     VERIFY2 --> POSTPASS
@@ -78,9 +82,11 @@ flowchart LR
 ```
 
 Only `expanded` historical files can become a patch base. The normalized
-`holy` tree can help locate symbols but cannot authorize source changes.
-Common public mirrors and later forks are excluded from the target path.
+`holy` tree can help navigation but cannot authorize source changes.
 
-No optimizer source is introduced until the insertion seam is sealed from the
-exact internal compiler files. The semantic judge decides correctness;
-measurements never override a mismatch.
+The exact 1.10 corpus rejected `COCCompile` as a required marker. Later compiler
+names are therefore discovery clues only, not target contracts.
+
+No optimizer source is introduced until the compiler, pass pipeline, and seam
+are identified from exact internal bytes. The semantic judge decides
+correctness; measurements never override a mismatch.
