@@ -286,7 +286,7 @@ foreach ($Line in @(
     'BOUNDARY',
     'This report catalogs exact expanded files and compiler-like function names.',
     'Candidate scores are navigation aids, not proof of compiler ownership.',
-    'Later-era anchor absence is evidence against reusing the 5.03 seam names.',
+    'Later-era anchor counts are observations, never 1.10 requirements.',
     'No compiler source, optimizer pass, or insertion seam is selected here.',
     'No source or archive file is modified by this discovery pass.',
     '',
@@ -315,6 +315,9 @@ Write-Host "TEXT FILES:     $TextFileCount"
 Write-Host "CANDIDATES:     $($OrderedCandidates.Count)"
 foreach ($Anchor in $LaterAnchors) {
     Write-Host ("ANCHOR {0}: {1}" -f $Anchor, $AnchorCounts[$Anchor])
+}
+foreach ($Candidate in @($OrderedCandidates | Select-Object -First 10)) {
+    Write-Host ("CANDIDATE {0}: {1}" -f $Candidate.Score, $Candidate.Path)
 }
 Write-Host "REPORT:         $Output"
 Write-Host "REPORT SHA256:  $ReportHash"
