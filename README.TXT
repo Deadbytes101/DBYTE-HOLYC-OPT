@@ -3,7 +3,7 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE PIPELINE ADJUDICATION
+0.0.1 RARE PIPELINE TRACE
 COMPILER DIRECTORY CANDIDATE OBSERVED
 PIPELINE UNRESOLVED
 SEAM UNRESOLVED
@@ -101,8 +101,8 @@ CURRENT PIPELINE
     -> HASH ALL 1057 EXPANDED FILES
     -> DISCOVER COMPILER-LIKE PATHS AND SYMBOLS
     -> VERIFY THE EXACT Compiler/ FILE SET
-    -> FIND OptPass* DEFINITIONS
-    -> FIND FUNCTION BODIES WITH ORDERED OptPass* CALLS
+    -> TRACE OptPass* OCCURRENCES PER FILE
+    -> DISPLAY CmpMain.CPP SOURCE CONTEXT
     -> MANUAL PIPELINE ADJUDICATION
     -> MANUAL SEAM ADJUDICATION
     -> NO-REWRITE VERIFIER
@@ -112,7 +112,7 @@ CURRENT PIPELINE
 NEXT COMMAND
 
 The manifest and discovery report already exist.  Preserve them and run only
-the read-only pipeline adjudicator:
+the read-only pipeline tracer:
 
   Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
   git pull
@@ -123,22 +123,23 @@ the read-only pipeline adjudicator:
       -DiscoveryPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-discovery.txt `
       -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pipeline-adjudication.txt
 
-The adjudicator:
+The tracer:
 
-  rechecks every selected Compiler/ file against the expanded manifest
+  rechecks every Compiler/ file against the expanded manifest
   requires the observed CmpMain.CPP and OptPass6.CPP candidates
   hashes the sorted exact Compiler/ file set
   masks comments and quoted literals while preserving offsets
-  catalogs OptPass* function definitions
-  catalogs ordered OptPass* calls inside function bodies only
-  records path, lines, function SHA256, IC references, and candidate score
+  records every OptPass* occurrence by path, line, and byte offset
+  reports lexical pass order for each candidate file
+  includes line-numbered context around CmpMain.CPP pass occurrences
+  does not infer function ownership
   does not select an insertion seam
   does not modify source or prior evidence
 
 Expected final status:
 
   COMPILER SET        EXACT-CANDIDATE
-  PIPELINE            CANDIDATE-ONLY
+  PIPELINE            TRACE-ONLY
   SEAM                UNRESOLVED
   PATCH STATUS        NOT AUTHORIZED
 
@@ -152,7 +153,7 @@ CURRENT EVIDENCE
   full expanded manifest                        PASS
   compiler discovery report                     PASS
   Compiler/ directory candidates                OBSERVED
-  pipeline adjudication report                  NOT YET OBSERVED
+  pipeline trace report                         NOT YET OBSERVED
   rare compiler pipeline identity               UNRESOLVED
   rare compiler insertion seam                  UNRESOLVED
   patched compiler rebuild                      NOT OBSERVED
