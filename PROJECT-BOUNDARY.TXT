@@ -29,8 +29,8 @@ SOURCE LAYERS
   expanded  exact historical file contents and patch authority
   holy      normalized navigation only
 
-The expanded evidence tree is immutable.  Every authorized patch must be
-installed into a new working tree copied and verified from the exact manifest.
+The expanded evidence tree is immutable.  Every authorized patch is installed
+into a separate manifest-verified working tree.
 
 REJECTED TARGETS
 
@@ -45,8 +45,6 @@ SEALED PIPELINE
 
   file      Compiler/ICLCC.CPP
   function  LCCCompile
-
-Observed order:
 
   OptPass012
   OptPass012
@@ -68,7 +66,7 @@ LCCHeaderPut preserves the existing trace boundary and always writes the
 supplied pass value into lx->pass.
 
 OptPass6 mutates the existing intermediate-code chain in place and finalizes the
-displayed register and clobber state used by the following backend work.
+displayed register and clobber state used by following backend work.
 
 OptPass789 uses pass 7 for first-time finalization and sizing, pass 8 for
 repeated sizing until stable, and pass 9 for final emission.
@@ -83,20 +81,34 @@ SEALED INSERTION SEAM
 
   original Compiler/ICLCC.CPP lines 410 and 411
 
-The seam is after passes 0 through 6 and jump-table forwarding, and before
-OptPass789 first-time finalization.
+FIRST PATCH
 
-FIRST PATCH AUTHORIZATION
-
-Authorized only:
+Installed only:
 
   if (lx->pass!=7)
     LexExcept(lx,"ST_OPT_INTERNAL_ERROR");
 
-This is a no-rewrite pass-state assertion.  On the valid path it performs no
-write and does not touch intermediate code.
+This is a no-rewrite pass-state assertion.  It performs no valid-path write and
+does not touch intermediate code.
 
-Status:
+OBSERVED WORKSPACE
+
+  work root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-WORK\templeosts-1.10-no-rewrite
+
+  copied manifest files          1057/1057
+  changed workspace files        1
+  changed path                   Compiler/ICLCC.CPP
+
+  patched ICLCC SHA256
+    DB1C75A5EE71B07ADAEC32E984146602E73D9A0D606E2B76B8CCCC624E0CDCB8
+
+  install report SHA256
+    59B0BB29AA5C088114E38FE27FCF5CB5E2D3F59120CD6FD2678DF9D566C75E32
+
+  optimizer transformations      NONE
+
+CURRENT STATUS
 
   exact ISO identity                  SEALED
   expanded manifest                   SEALED
@@ -107,21 +119,27 @@ Status:
   OptPass6 boundary output            SEALED
   OptPass789 entry and convergence    SEALED
   exact insertion seam                SEALED
-  no-rewrite assertion                AUTHORIZED
+  no-rewrite assertion                INSTALLED
+  exact workspace                     OBSERVED
   optimizer transformation            DENIED
+  exact compiler build route          UNRESOLVED
   compiler rebuild                    NOT OBSERVED
   guest semantic differential         NOT OBSERVED
 
 ALLOWED NEXT WORK
 
-  create a fresh manifest-verified working tree
-  install only the authorized no-rewrite assertion
-  verify exactly one working-tree file differs
-  rebuild the rare compiler
-  run representative guest semantic differential tests
+  preserve the installed workspace
+  display exact Compiler/Compiler.PRJ
+  display exact Compiler/CmpMain.CPP
+  locate raw exact references to Compiler.PRJ, Compiler.BIN, and Compiler.MAP
+  adjudicate the rare 1.10 build and loader route
+  run no build command until that route is sealed
 
 NOT AUTHORIZED
 
+  guessing a build command from a later release
+  changing another workspace file
+  replacing Compiler.BIN before the build route is proved
   any intermediate-code transformation
   pass-number changes
   jump-table forwarding changes
@@ -141,7 +159,8 @@ NOT AUTHORIZED
 
 RULE
 
-SEALED SEAM AUTHORIZES ONLY THE NAMED PATCH.
+WORKSPACE INSTALL IS NOT A BUILD.
+NO EXACT BUILD ROUTE, NO BUILD COMMAND.
 NO OBSERVED BUILD, NO COMPILER CLAIM.
 NO GUEST DIFFERENTIAL, NO SEMANTIC CLAIM.
 UNKNOWN MEANS DO NOT TRANSFORM.
