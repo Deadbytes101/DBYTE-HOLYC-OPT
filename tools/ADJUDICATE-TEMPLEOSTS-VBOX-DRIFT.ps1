@@ -38,8 +38,6 @@ $ExpectedIsoHash =
 $ExpectedBaselineVBoxBytes = 2503L
 $ExpectedBaselineVBoxHash =
     'E7A884AD2590BAD05AF4465A22FD857A75F64AB9F91042E4638256E8B21AEB46'
-$ExpectedBaselineVdiHash = $ExpectedVdiHash
-$ExpectedBaselineIsoHash = $ExpectedIsoHash
 $BaselineRelative =
     'vm-output/virtualbox/Temple1.10-adopted-baseline/baseline1'
 $LastStateChangePattern = 'lastStateChange="[^"]*"'
@@ -64,10 +62,18 @@ function Assert-OutsideRoot {
     )
 
     $Full = Get-FullPath -Path $Path
-    if ($Full.StartsWith(
-        (Get-Prefix -Path $Root),
-        [System.StringComparison]::OrdinalIgnoreCase
-    )) {
+    $RootFull = Get-FullPath -Path $Root
+    if (
+        [string]::Equals(
+            $Full,
+            $RootFull,
+            [System.StringComparison]::OrdinalIgnoreCase
+        ) -or
+        $Full.StartsWith(
+            (Get-Prefix -Path $Root),
+            [System.StringComparison]::OrdinalIgnoreCase
+        )
+    ) {
         throw "output is inside read-only resource root: $Full"
     }
 }
@@ -139,11 +145,32 @@ function Get-UniqueInt64 {
     )
 
     $Text = Get-UniqueTabValue -Lines $Lines -Key $Key
-    $Value = 0L
-    if (-not [long]::TryParse($Text, [ref]$Value)) {
+    if ($Text -notmatch '^[0-9]+$') {
         throw "report integer field is invalid: $Key value=$Text"
     }
-    return $Value
+    return [long]$Text
+}
+
+function Assert-FieldEquals {
+    param(
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [string[]]$Lines,
+        [Parameter(Mandatory = $true)][string]$Key,
+        [Parameter(Mandatory = $true)][string]$Expected,
+        [switch]$IgnoreCase
+    )
+
+    $Observed = Get-UniqueTabValue -Lines $Lines -Key $Key
+    $Comparison = if ($IgnoreCase) {
+        [System.StringComparison]::OrdinalIgnoreCase
+    }
+    else {
+        [System.StringComparison]::Ordinal
+    }
+    if (-not [string]::Equals($Observed, $Expected, $Comparison)) {
+        throw "report field mismatch: $Key expected=$Expected observed=$Observed"
+    }
 }
 
 function Assert-HashText {
@@ -218,6 +245,26 @@ function ConvertFrom-VBoxMachineReadable {
     return $Result
 }
 
+function Assert-MachineValue {
+    param(
+        [Parameter(Mandatory = $true)][hashtable]$Info,
+        [Parameter(Mandatory = $true)][string]$Key,
+        [Parameter(Mandatory = $true)][string]$Expected
+    )
+
+    if (-not $Info.ContainsKey($Key)) {
+        throw "live machine field missing: $Key"
+    }
+    $Observed = [string]$Info[$Key]
+    if (-not [string]::Equals(
+        $Observed,
+        $Expected,
+        [System.StringComparison]::OrdinalIgnoreCase
+    )) {
+        throw "live machine field mismatch: $Key=$Observed"
+    }
+}
+
 function Get-NormalizedVBox {
     param(
         [Parameter(Mandatory = $true)][string]$Path,
@@ -256,7 +303,6 @@ function Get-NormalizedVBox {
     }
 
     return [pscustomobject]@{
-        Text = $Text
         NormalizedText = $Normalized
         NormalizedSHA256 = $Hash
         LastStateChangeCount = $Matches.Count
@@ -309,27 +355,40 @@ foreach ($Expected in @(
     Assert-UniqueLine -Lines $Lines -Expected $Expected
 }
 
-foreach ($Pair in @(
-    @('VM name', $ExpectedTargetName),
-    @('VM UUID', $ExpectedTargetUuid),
-    @('observed name', $ExpectedTargetName),
-    @('observed UUID', $ExpectedTargetUuid),
-    @('CfgFile expected', $ExpectedVBoxPath),
-    @('observed CfgFile', $ExpectedVBoxPath),
-    @('VDI expected', $ExpectedVdiPath),
-    @('observed VDI', $ExpectedVdiPath),
-    @('ISO expected', $ExpectedIsoPath),
-    @('observed ISO', $ExpectedIsoPath)
-)) {
-    $Observed = Get-UniqueTabValue -Lines $Lines -Key $Pair[0]
-    if (-not [string]::Equals(
-        $Observed,
-        $Pair[1],
-        [System.StringComparison]::OrdinalIgnoreCase
-    )) {
-        throw "report identity mismatch: $($Pair[0]) value=$Observed"
-    }
-}
+Assert-FieldEquals -Lines $Lines -Key 'VM name' -Expected $ExpectedTargetName
+Assert-FieldEquals -Lines $Lines -Key 'VM UUID' -Expected $ExpectedTargetUuid
+Assert-FieldEquals -Lines $Lines -Key 'observed name' -Expected $ExpectedTargetName
+Assert-FieldEquals -Lines $Lines -Key 'observed UUID' -Expected $ExpectedTargetUuid
+Assert-FieldEquals `
+    -Lines $Lines `
+    -Key 'CfgFile expected' `
+    -Expected $ExpectedVBoxPath `
+    -IgnoreCase
+Assert-FieldEquals `
+    -Lines $Lines `
+    -Key 'observed CfgFile' `
+    -Expected $ExpectedVBoxPath `
+    -IgnoreCase
+Assert-FieldEquals `
+    -Lines $Lines `
+    -Key 'VDI expected' `
+    -Expected $ExpectedVdiPath `
+    -IgnoreCase
+Assert-FieldEquals `
+    -Lines $Lines `
+    -Key 'observed VDI' `
+    -Expected $ExpectedVdiPath `
+    -IgnoreCase
+Assert-FieldEquals `
+    -Lines $Lines `
+    -Key 'ISO expected' `
+    -Expected $ExpectedIsoPath `
+    -IgnoreCase
+Assert-FieldEquals `
+    -Lines $Lines `
+    -Key 'observed ISO' `
+    -Expected $ExpectedIsoPath `
+    -IgnoreCase
 
 $ReportVBoxBytes = Get-UniqueInt64 -Lines $Lines -Key 'VBOX bytes'
 $ReportVBoxHash = Get-UniqueTabValue -Lines $Lines -Key 'VBOX SHA256'
@@ -353,18 +412,24 @@ $ReportBaselineIsoHash = Get-UniqueTabValue `
     -Lines $Lines `
     -Key 'baseline ISO SHA256'
 
-foreach ($HashCheck in @(
-    @($ReportVBoxHash, 'reported current VBOX SHA256'),
-    @($ReportVBoxNormalized, 'reported current normalized VBOX SHA256'),
-    @($ReportBaselineNormalized, 'reported baseline normalized VBOX SHA256'),
-    @($ReportVdiHash, 'reported VDI SHA256'),
-    @($ReportIsoHash, 'reported ISO SHA256'),
-    @($ReportBaselineVBoxHash, 'reported baseline VBOX SHA256'),
-    @($ReportBaselineVdiHash, 'reported baseline VDI SHA256'),
-    @($ReportBaselineIsoHash, 'reported baseline ISO SHA256')
-)) {
-    Assert-HashText -Value $HashCheck[0] -Label $HashCheck[1]
-}
+Assert-HashText -Value $ReportVBoxHash -Label 'reported current VBOX SHA256'
+Assert-HashText `
+    -Value $ReportVBoxNormalized `
+    -Label 'reported current normalized VBOX SHA256'
+Assert-HashText `
+    -Value $ReportBaselineNormalized `
+    -Label 'reported baseline normalized VBOX SHA256'
+Assert-HashText -Value $ReportVdiHash -Label 'reported VDI SHA256'
+Assert-HashText -Value $ReportIsoHash -Label 'reported ISO SHA256'
+Assert-HashText `
+    -Value $ReportBaselineVBoxHash `
+    -Label 'reported baseline VBOX SHA256'
+Assert-HashText `
+    -Value $ReportBaselineVdiHash `
+    -Label 'reported baseline VDI SHA256'
+Assert-HashText `
+    -Value $ReportBaselineIsoHash `
+    -Label 'reported baseline ISO SHA256'
 
 if (
     $ReportVdiBytes -ne $ExpectedVdiBytes -or
@@ -372,8 +437,8 @@ if (
     $ReportIsoBytes -ne $ExpectedIsoBytes -or
     $ReportIsoHash -cne $ExpectedIsoHash -or
     $ReportBaselineVBoxHash -cne $ExpectedBaselineVBoxHash -or
-    $ReportBaselineVdiHash -cne $ExpectedBaselineVdiHash -or
-    $ReportBaselineIsoHash -cne $ExpectedBaselineIsoHash
+    $ReportBaselineVdiHash -cne $ExpectedVdiHash -or
+    $ReportBaselineIsoHash -cne $ExpectedIsoHash
 ) {
     throw 'inspector report artifact identities do not match the sealed contract'
 }
@@ -404,12 +469,12 @@ $BaselineVBox = Assert-ExactFile `
 [void](Assert-ExactFile `
     -Path (Join-Path $BaselineRoot 'Temple1.10.vdi') `
     -Bytes $ExpectedVdiBytes `
-    -SHA256 $ExpectedBaselineVdiHash `
+    -SHA256 $ExpectedVdiHash `
     -Label 'adopted baseline VDI')
 [void](Assert-ExactFile `
     -Path (Join-Path $BaselineRoot 'TempleOSTS.iso') `
     -Bytes $ExpectedIsoBytes `
-    -SHA256 $ExpectedBaselineIsoHash `
+    -SHA256 $ExpectedIsoHash `
     -Label 'adopted baseline ISO')
 
 $Registered = @(
@@ -436,25 +501,12 @@ $Show = @(
         -Label 'target showvminfo'
 )
 $Info = ConvertFrom-VBoxMachineReadable -Lines $Show
-foreach ($Pair in @(
-    @('name', $ExpectedTargetName),
-    @('UUID', $ExpectedTargetUuid),
-    @('VMState', 'poweroff'),
-    @('CfgFile', $ExpectedVBoxPath),
-    @('IDE-1-0', $ExpectedVdiPath),
-    @('IDE-0-1', $ExpectedIsoPath)
-)) {
-    if (-not $Info.ContainsKey($Pair[0])) {
-        throw "live machine field missing: $($Pair[0])"
-    }
-    if (-not [string]::Equals(
-        [string]$Info[$Pair[0]],
-        $Pair[1],
-        [System.StringComparison]::OrdinalIgnoreCase
-    )) {
-        throw "live machine field mismatch: $($Pair[0])=$($Info[$Pair[0]])"
-    }
-}
+Assert-MachineValue -Info $Info -Key 'name' -Expected $ExpectedTargetName
+Assert-MachineValue -Info $Info -Key 'UUID' -Expected $ExpectedTargetUuid
+Assert-MachineValue -Info $Info -Key 'VMState' -Expected 'poweroff'
+Assert-MachineValue -Info $Info -Key 'CfgFile' -Expected $ExpectedVBoxPath
+Assert-MachineValue -Info $Info -Key 'IDE-1-0' -Expected $ExpectedVdiPath
+Assert-MachineValue -Info $Info -Key 'IDE-0-1' -Expected $ExpectedIsoPath
 
 $CurrentVBoxItem = Get-Item -LiteralPath $ExpectedVBoxPath
 $CurrentVBoxHash = (
