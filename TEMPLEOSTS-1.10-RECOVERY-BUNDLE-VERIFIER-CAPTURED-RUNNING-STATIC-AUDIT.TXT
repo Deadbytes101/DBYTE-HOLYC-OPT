@@ -1,0 +1,136 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 RECOVERY BUNDLE VERIFIER CAPTURED RUNNING STATIC AUDIT
+
+CLASS
+
+THE CONFIGURATION-EXACT BUNDLE PREPARATION COMPLETED SUCCESSFULLY.
+THE FIRST READ-ONLY BUNDLE VERIFIER WAS NOT EXECUTED.
+STATIC AUDIT FOUND ONE POWERSHELL PARAMETER CONTRACT DEFECT BEFORE INVOCATION.
+THE DEFECT AFFECTS THE CAPTURED ZERO-RUNNING EVIDENCE FILE ONLY.
+NO BUNDLE, VM, EVIDENCE OR COMPILER MUTATION OCCURRED DURING THIS AUDIT.
+RECOVERY POINT REMAINS NOT SEALED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+REPOSITORY
+
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+BRANCH
+
+  overheaven-foundation
+
+STARTING HEAD
+
+  c1e785db8fcd194ae00a2904a8ab7ed8f5df33a5
+
+VERIFIER
+
+  tools/VERIFY-TEMPLEOSTS-CONFIG-EXACT-RECOVERY-BUNDLE.ps1
+
+VERIFIER BLOB
+
+  8abcae1286332b8b8fc23e1d298b798cbaca614c
+
+PREPARED BUNDLE AUTHORITY
+
+  preparation report SHA256
+    C4182656FC6DFE7CD3173126564415C37745B756B5416557BBCFE7EDA6D948D8
+
+  manifest SHA256
+    3E7C4285920A981BF72AFCD179C467B2DEC35AB1828D21EB4767A1DEB3619F45
+
+  recovery root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2
+
+STATIC FINDING
+
+The prepared bundle contains:
+
+  running-vms.txt
+
+The preparer writes an empty running inventory through Write-Utf8Lines.  For an
+empty collection, that writer serializes one terminal newline.  Reading the file
+with System.IO.File.ReadAllLines can therefore produce a string array containing
+one empty-string element rather than an array with zero elements.
+
+The verifier passes that captured array to Assert-LiveTarget.  Its Running
+parameter declares:
+
+  [AllowEmptyCollection()]
+  [string[]]$Running
+
+AllowEmptyCollection permits a zero-element array.  It does not permit an array
+containing an empty-string element.  The verifier can therefore fail at parameter
+binding before it evaluates that no target VM appears in the running inventory.
+
+This is the same distinction already observed in the recovery-bundle preparation
+path:
+
+  empty collection
+  is not the same PowerShell binding shape as
+  collection containing an empty string
+
+CORRECTION CONTRACT
+
+Preserve the original verifier unchanged.
+Bind its tree and local blob exactly:
+
+  8abcae1286332b8b8fc23e1d298b798cbaca614c
+
+Patch only these two verifier seams in memory:
+
+1. Add AllowEmptyString to Assert-LiveTarget Running while retaining
+   AllowEmptyCollection.
+
+2. Normalize the Running evidence before target matching:
+
+   accept exact empty-string rows as serialized zero inventory
+   reject nonempty whitespace-only rows
+   continue rejecting every row matching the target running pattern
+
+The correction must not alter:
+
+  preparation-report binding
+  manifest binding
+  exact ten-file bundle set
+  bundle payload hashes
+  five evidence-row validations
+  NTFS file-ID checks
+  preserved incomplete-root checks
+  live target identity or poweroff checks
+  exact attachment checks
+  zero-snapshot sentinel handling
+  shared-folder checks
+  output path boundary
+  recovery classification
+  build authorization
+
+EXECUTION BOUNDARY
+
+The verifier was inspected through GitHub source only.  It was not run locally by
+the assistant.  No verification report was created.  No recovery file, VM state,
+attachment, snapshot, guest file or compiler output was modified.
+
+CURRENT STATUS
+
+  configuration-exact bundle preparation  COMPLETE / OBSERVED
+  configuration-exact bundle manifest     WRITTEN / HASH OBSERVED
+  original bundle verifier                STATIC DEFECT / NOT EXECUTED
+  corrected bundle verifier               REQUIRED
+  bundle identity                         NOT YET SEALED
+  powered-off recovery point              NOT SEALED
+  restore route                           UNRESOLVED
+  restore execution                       NOT OBSERVED
+  guest delivery                          UNRESOLVED
+  compiler build execution                NOT AUTHORIZED
+  optimizer transformation                DENIED
+
+RULE
+
+SERIALIZED ZERO-INVENTORY EVIDENCE MAY CONTAIN ONE EMPTY LINE.
+ACCEPT ONLY EXACT EMPTY LINES; DO NOT MASK NONEMPTY OR WHITESPACE-ONLY DATA.
+STATIC REVIEW PREVENTED A REPEATED PARAMETER-BINDING FAILURE.
+A VERIFIED BUNDLE IS STILL NOT AN OBSERVED RESTORE.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
