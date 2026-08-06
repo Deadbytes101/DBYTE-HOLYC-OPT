@@ -55,10 +55,17 @@ if (Test-Path -LiteralPath $OutManifest) {
     throw "manifest output already exists: $OutManifest"
 }
 
-$CheckOutput = @(
-    & cargo -C $ToolsRoot run --quiet --locked -p holyarchive -- check-iso $Iso 2>&1
-)
-if ($LASTEXITCODE -ne 0) {
+Push-Location $ToolsRoot
+try {
+    $CheckOutput = @(
+        & cargo run --quiet --locked -p holyarchive -- check-iso $Iso 2>&1
+    )
+    $CheckCode = $LASTEXITCODE
+}
+finally {
+    Pop-Location
+}
+if ($CheckCode -ne 0) {
     throw "holyarchive check-iso failed:`n$($CheckOutput -join [Environment]::NewLine)"
 }
 
@@ -77,10 +84,17 @@ foreach ($Required in @(
     }
 }
 
-$ExtractOutput = @(
-    & cargo -C $ToolsRoot run --quiet --locked -p holyarchive -- extract-iso $Iso $OutRoot 2>&1
-)
-if ($LASTEXITCODE -ne 0) {
+Push-Location $ToolsRoot
+try {
+    $ExtractOutput = @(
+        & cargo run --quiet --locked -p holyarchive -- extract-iso $Iso $OutRoot 2>&1
+    )
+    $ExtractCode = $LASTEXITCODE
+}
+finally {
+    Pop-Location
+}
+if ($ExtractCode -ne 0) {
     if (Test-Path -LiteralPath $OutRoot) {
         Remove-Item -LiteralPath $OutRoot -Recurse -Force
     }
@@ -158,10 +172,12 @@ $CompilerRoots = @(
 )
 
 $CompilerFiles = @(
-    foreach ($Root in $CompilerRoots) {
-        Get-ChildItem -LiteralPath $Root -Recurse -File
-    }
-) | Sort-Object FullName -Unique
+    @(
+        foreach ($Root in $CompilerRoots) {
+            Get-ChildItem -LiteralPath $Root -Recurse -File
+        }
+    ) | Sort-Object FullName -Unique
+)
 
 if ($CompilerFiles.Count -eq 0) {
     throw 'no rare compiler files were selected'
@@ -237,7 +253,12 @@ foreach ($Line in @(
 )
 
 $TrackedWorktree = @(& git -C $ToolsRoot diff --name-only)
+$WorktreeCode = $LASTEXITCODE
 $TrackedIndex = @(& git -C $ToolsRoot diff --cached --name-only)
+$IndexCode = $LASTEXITCODE
+if ($WorktreeCode -ne 0 -or $IndexCode -ne 0) {
+    throw 'unable to verify resource repository after rare corpus sealing'
+}
 if ($TrackedWorktree.Count -ne 0 -or $TrackedIndex.Count -ne 0) {
     throw 'resource repository changed during rare corpus sealing'
 }
