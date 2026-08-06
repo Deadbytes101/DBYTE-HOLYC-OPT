@@ -23,19 +23,9 @@ $RegexOptions = [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
 $NamePattern = '(?<![A-Za-z0-9_])([A-Za-z_][A-Za-z0-9_]{2,63})\s*\('
 $CompilerWordPattern = '(?i)(compile|compiler|parse|parser|prs|lexer|opcode|codegen|optimizer|optimize|optpass|peephole|intermediate|regalloc|assembler|disasm|jit)'
 $PathPattern = '(?i)(^|[\\/._-])(compiler|compile|parser|prs|lexer|opcode|codegen|optimizer|opt|asm|assembler|jit)([\\/._-]|$)'
-$LaterAnchors = @(
-    'COCCompile',
-    'OptPass6',
-    'OptPass789A',
-    'CIntermediateCode'
-)
+$LaterAnchors = @('COCCompile', 'OptPass6', 'OptPass789A', 'CIntermediateCode')
 
-function Get-TextRatio {
-    param(
-        [Parameter(Mandatory = $true)]
-        [byte[]]$Bytes
-    )
-
+function Get-TextRatio([byte[]]$Bytes) {
     if ($Bytes.Length -eq 0) {
         return 1.0
     }
@@ -51,19 +41,10 @@ function Get-TextRatio {
             $TextBytes++
         }
     }
-
     return [double]$TextBytes / [double]$Bytes.Length
 }
 
-function Count-Ordinal {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Text,
-
-        [Parameter(Mandatory = $true)]
-        [string]$Needle
-    )
-
+function Count-Ordinal([string]$Text, [string]$Needle) {
     $Count = 0
     $Offset = 0
     while ($Offset -lt $Text.Length) {
@@ -102,13 +83,7 @@ foreach ($RequiredLine in @(
     }
 }
 
-$SectionIndex = -1
-for ($Index = 0; $Index -lt $ManifestLines.Length; $Index++) {
-    if ($ManifestLines[$Index] -ceq 'FILES') {
-        $SectionIndex = $Index
-        break
-    }
-}
+$SectionIndex = [Array]::IndexOf($ManifestLines, 'FILES')
 if ($SectionIndex -lt 0 -or $SectionIndex + 1 -ge $ManifestLines.Length) {
     throw 'expanded manifest has no FILES section'
 }
@@ -191,7 +166,7 @@ foreach ($Row in $Rows) {
     }
 
     $Bytes = [System.IO.File]::ReadAllBytes($Row.FullPath)
-    $Ratio = Get-TextRatio -Bytes $Bytes
+    $Ratio = Get-TextRatio $Bytes
     if ($Ratio -lt 0.70) {
         continue
     }
@@ -199,7 +174,7 @@ foreach ($Row in $Rows) {
     $TextFileCount++
     $Text = $Latin1.GetString($Bytes)
     foreach ($Anchor in $LaterAnchors) {
-        $AnchorCounts[$Anchor] += Count-Ordinal -Text $Text -Needle $Anchor
+        $AnchorCounts[$Anchor] += Count-Ordinal $Text $Anchor
     }
 
     $Names = [System.Collections.Generic.Dictionary[string, int]]::new(
@@ -226,9 +201,12 @@ foreach ($Row in $Rows) {
 
     $NameRows = @(
         $Names.GetEnumerator() |
-            Sort-Object Value -Descending, Key |
+            Sort-Object `
+                @{ Expression = 'Value'; Descending = $true },
+                @{ Expression = 'Key'; Descending = $false } |
             Select-Object -First 24
     )
+
     $TotalCalls = 0
     foreach ($NameRow in $NameRows) {
         $TotalCalls += $NameRow.Value
@@ -257,7 +235,9 @@ foreach ($Row in $Rows) {
 
 $OrderedCandidates = @(
     $Candidates |
-        Sort-Object Score -Descending, Path
+        Sort-Object `
+            @{ Expression = 'Score'; Descending = $true },
+            @{ Expression = 'Path'; Descending = $false }
 )
 
 $Report = [System.Collections.Generic.List[string]]::new()
@@ -291,7 +271,10 @@ foreach ($Line in @(
 }
 
 foreach ($Candidate in $OrderedCandidates) {
-    $RatioText = $Candidate.TextRatio.ToString('0.0000', [System.Globalization.CultureInfo]::InvariantCulture)
+    $RatioText = $Candidate.TextRatio.ToString(
+        '0.0000',
+        [System.Globalization.CultureInfo]::InvariantCulture
+    )
     $Report.Add(
         "$($Candidate.Score)`t$($Candidate.Path)`t$($Candidate.Bytes)`t" +
         "$($Candidate.SHA256)`t$RatioText`t$($Candidate.FunctionNames)"
@@ -307,9 +290,9 @@ foreach ($Line in @(
     'No compiler source, optimizer pass, or insertion seam is selected here.',
     'No source or archive file is modified by this discovery pass.',
     '',
-    'COMPILER STATUS`tUNRESOLVED',
-    'SEAM STATUS`tUNRESOLVED',
-    'PATCH STATUS`tNOT-AUTHORIZED',
+    "COMPILER STATUS`tUNRESOLVED",
+    "SEAM STATUS`tUNRESOLVED",
+    "PATCH STATUS`tNOT-AUTHORIZED",
     '',
     'REPORTS ARE CLAIMS, NOT EVIDENCE.'
 )) {
