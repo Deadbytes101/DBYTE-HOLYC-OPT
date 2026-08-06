@@ -209,10 +209,10 @@ foreach ($Line in @(
     "ISO_BYTES`t$ExpectedIsoBytes",
     "ISO_SHA256`t$ExpectedIsoHash",
     "EXTRACTION_LAYER`texpanded",
-    'PATCH_AUTHORITY`texpanded historical bytes only',
+    "PATCH_AUTHORITY`texpanded historical bytes only",
     '',
     'MARKERS',
-    'marker`tpath'
+    "marker`tpath"
 )) {
     $Lines.Add($Line)
 }
@@ -224,7 +224,7 @@ foreach ($Hit in ($MarkerHits | Sort-Object Marker, RelativePath)) {
 foreach ($Line in @(
     '',
     'COMPILER FILES',
-    'path`tbytes`tSHA256'
+    "path`tbytes`tSHA256"
 )) {
     $Lines.Add($Line)
 }
