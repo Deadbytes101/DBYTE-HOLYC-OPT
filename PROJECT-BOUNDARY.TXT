@@ -147,9 +147,45 @@ OBSERVED VM PREFLIGHT AGGREGATE
   snapshot chains            0
   shared folders             0
 
-This aggregate authorizes exact target adjudication only.  It does not expose
-or seal the candidate name, UUID, VDI path, VDI hash, storage slots, recovery
-point, or delivery route.
+The aggregate authorized exact target adjudication only.
+
+OBSERVED GUEST TARGET
+
+  report SHA256
+    0CDEAEF0B877CB4ED4D56860D5160EB28DDF838AE45360133A8CCAE7CF61EC62
+
+  name
+    Temple1.10
+
+  machine UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  state
+    poweroff
+
+  VDI path
+    D:\VirtualBox VMs\Temple1.10\Temple1.10.vdi
+
+  VDI bytes
+    2097152
+
+  VDI SHA256
+    90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  ISO path
+    D:\TempleOSTS.iso
+
+  ISO SHA256
+    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+  snapshot UUID rows
+    0
+
+  shared-folder rows
+    0
+
+The target was selected from the sealed preflight report and a fresh read-only
+VirtualBox inventory.  It was not selected from its name alone.
 
 CURRENT STATUS
 
@@ -164,8 +200,10 @@ CURRENT STATUS
   compiler map load route             SEALED
   host build guard                    PREPARED / OBSERVED
   VM preflight aggregate              OBSERVED
-  target guest VM                     ONE CANDIDATE / NOT SELECTED
-  powered-off recovery point          NOT PREPARED
+  target guest VM                     SEALED
+  target VM state                     POWEROFF / OBSERVED
+  powered-off recovery point          VERIFICATION PENDING
+  restore execution                   NOT OBSERVED
   guest delivery route                UNRESOLVED
   guest backup and restore            UNRESOLVED
   compiler build execution            NOT AUTHORIZED
@@ -175,21 +213,22 @@ CURRENT STATUS
 
 ALLOWED NEXT WORK
 
-  preserve the guard and preflight reports
-  bind target adjudication to preflight SHA256 8F851B21087B470126E343ECBD8258F2A439D2AF3FAE8801451F4FBB63610461
-  parse exactly one candidate block
-  re-query registered and running VM inventories read-only
-  require matching name, UUID and poweroff state
-  re-hash the exact selected VDI and TempleOSTS ISO
-  record attachment keys and current snapshot/shared-folder rows
-  select one guest target only after report and live evidence agree
+  preserve the target report
+  require DBYTE-HOLYC-TOOLS commit 37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
+  require a clean tracked resource tree and exact inspector blob
+  verify the adopted baseline manifest, VBOX, VBOX-PREV, VDI and ISO
+  verify four non-empty baseline inventory evidence files
+  prove the baseline and live VDI have distinct NTFS file IDs
+  run the pinned adopted inspector in PREFLIGHT mode
+  require REGISTERED-EXACT, poweroff, exact VBOX, VDI and ISO
+  write reports outside the read-only resource root
 
 NOT AUTHORIZED
 
-  choosing a target from its name alone
   starting or stopping a VM
   creating, restoring or deleting a snapshot
-  copying, mounting or modifying a VDI
+  copying over the live VDI or VBOX
+  mounting or modifying a VDI
   attaching or detaching storage
   delivering candidate source into a guest
   MakeAll
@@ -206,10 +245,10 @@ NOT AUTHORIZED
 
 RULE
 
-ONE CANDIDATE COUNT IS NOT TARGET IDENTITY.
-NO EXACT UUID AND VDI IDENTITY, NO TARGET SELECTION.
 TARGET SELECTION IS NOT A RECOVERY POINT.
-NO POWERED-OFF RECOVERY COPY OR SNAPSHOT, NO BUILD.
+MATCHING BYTES AT ONE PATH ARE NOT AN INDEPENDENT RECOVERY COPY.
+NO VERIFIED INDEPENDENT BASELINE VDI, NO RECOVERY POINT.
+NO OBSERVED RESTORE, NO RESTORE CLAIM.
 NO OBSERVED DELIVERY, NO GUEST SOURCE CLAIM.
 NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
 NO OBSERVED BUILD, NO COMPILER CLAIM.
