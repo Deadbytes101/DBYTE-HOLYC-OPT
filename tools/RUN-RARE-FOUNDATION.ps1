@@ -226,7 +226,7 @@ Evidence root:
         -ManifestPath $ManifestPath `
         -ResumeExistingExtraction
 }
-elif (-not $HaveExtract) {
+elseif (-not $HaveExtract) {
     New-Item -ItemType Directory -Path $EvidenceRoot -Force | Out-Null
     & $Sealer `
         -HolyTools $ToolsRoot `
