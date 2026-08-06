@@ -14,7 +14,9 @@ param(
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string]$ManifestPath
+    [string]$ManifestPath,
+
+    [switch]$ResumeExistingExtraction
 )
 
 Set-StrictMode -Version Latest
@@ -23,6 +25,7 @@ $ErrorActionPreference = 'Stop'
 $ExpectedIsoBytes = 30558208L
 $ExpectedIsoHash = 'DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC'
 $ExpectedToolsCommit = '37b0457e8735ab8cc34a23f2717fcfb808e6a7a8'
+$Latin1 = [System.Text.Encoding]::GetEncoding(28591)
 $RequiredMarkers = [ordered]@{
     COCCompile = 'COCCompile('
     OptPass6 = 'OptPass6('
@@ -48,8 +51,15 @@ if ($IsoHash -cne $ExpectedIsoHash) {
     throw "rare ISO hash mismatch: expected=$ExpectedIsoHash actual=$IsoHash"
 }
 
-if (Test-Path -LiteralPath $OutRoot) {
-    throw "extraction output already exists: $OutRoot"
+$ExtractionExists = Test-Path -LiteralPath $OutRoot -PathType Container
+if ($ExtractionExists -and -not $ResumeExistingExtraction) {
+    throw @"
+Extraction output already exists:
+  $OutRoot
+
+To preserve and revalidate an extraction left before manifest creation, rerun with:
+  -ResumeExistingExtraction
+"@
 }
 if (Test-Path -LiteralPath $OutManifest) {
     throw "manifest output already exists: $OutManifest"
@@ -84,21 +94,27 @@ foreach ($Required in @(
     }
 }
 
-Push-Location $ToolsRoot
-try {
-    $ExtractOutput = @(
-        & cargo run --quiet --locked -p holyarchive -- extract-iso $Iso $OutRoot 2>&1
-    )
-    $ExtractCode = $LASTEXITCODE
-}
-finally {
-    Pop-Location
-}
-if ($ExtractCode -ne 0) {
-    if (Test-Path -LiteralPath $OutRoot) {
-        Remove-Item -LiteralPath $OutRoot -Recurse -Force
+if (-not $ExtractionExists) {
+    Push-Location $ToolsRoot
+    try {
+        $ExtractOutput = @(
+            & cargo run --quiet --locked -p holyarchive -- extract-iso $Iso $OutRoot 2>&1
+        )
+        $ExtractCode = $LASTEXITCODE
     }
-    throw "holyarchive extract-iso failed:`n$($ExtractOutput -join [Environment]::NewLine)"
+    finally {
+        Pop-Location
+    }
+    if ($ExtractCode -ne 0) {
+        if (Test-Path -LiteralPath $OutRoot) {
+            Remove-Item -LiteralPath $OutRoot -Recurse -Force
+        }
+        throw "holyarchive extract-iso failed:`n$($ExtractOutput -join [Environment]::NewLine)"
+    }
+    Write-Host 'EXTRACTION:    CREATED'
+}
+else {
+    Write-Host 'EXTRACTION:    RESUME / REVALIDATE'
 }
 
 $Expanded = Join-Path $OutRoot 'expanded'
@@ -108,6 +124,23 @@ foreach ($RequiredDirectory in @($Raw, $Expanded, $Normalized)) {
     if (-not (Test-Path -LiteralPath $RequiredDirectory -PathType Container)) {
         throw "extraction directory missing: $RequiredDirectory"
     }
+}
+
+$ExpandedFull = [System.IO.Path]::GetFullPath($Expanded)
+$ExpandedPrefix = $ExpandedFull.TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
+
+function Get-ExpandedRelativePath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    $Full = [System.IO.Path]::GetFullPath($Path)
+    if (-not $Full.StartsWith($ExpandedPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "path escapes expanded corpus: $Full"
+    }
+
+    return $Full.Substring($ExpandedPrefix.Length).Replace('\', '/')
 }
 
 $Files = @(
@@ -125,11 +158,11 @@ foreach ($File in $Files) {
     }
 
     $Bytes = [System.IO.File]::ReadAllBytes($File.FullName)
-    $Text = [System.Text.Encoding]::Latin1.GetString($Bytes)
+    $Text = $Latin1.GetString($Bytes)
 
     foreach ($Marker in $RequiredMarkers.GetEnumerator()) {
         if ($Text.IndexOf($Marker.Value, [System.StringComparison]::Ordinal) -ge 0) {
-            $Relative = [System.IO.Path]::GetRelativePath($Expanded, $File.FullName).Replace('\', '/')
+            $Relative = Get-ExpandedRelativePath -Path $File.FullName
             $MarkerHits.Add([pscustomobject]@{
                 Marker = $Marker.Key
                 RelativePath = $Relative
@@ -185,7 +218,7 @@ if ($CompilerFiles.Count -eq 0) {
 
 $Rows = @(
     foreach ($File in $CompilerFiles) {
-        $Relative = [System.IO.Path]::GetRelativePath($Expanded, $File.FullName).Replace('\', '/')
+        $Relative = Get-ExpandedRelativePath -Path $File.FullName
         $Hash = (Get-FileHash -LiteralPath $File.FullName -Algorithm SHA256).Hash
         [pscustomobject]@{
             Path = $Relative
@@ -210,6 +243,7 @@ foreach ($Line in @(
     "ISO_SHA256`t$ExpectedIsoHash",
     "EXTRACTION_LAYER`texpanded",
     "PATCH_AUTHORITY`texpanded historical bytes only",
+    "EXTRACTION_MODE`t$(if ($ExtractionExists) { 'RESUMED-AND-REVALIDATED' } else { 'FRESH' })",
     '',
     'MARKERS',
     "marker`tpath"
