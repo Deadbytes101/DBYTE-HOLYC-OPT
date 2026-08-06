@@ -94,6 +94,29 @@ Default evidence output is outside Git:
 
   D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE
 
+WINDOWS POWERSHELL
+
+The corpus tools support Windows PowerShell by using ISO-8859-1 code page 28591,
+a local expanded-path containment routine, and BitConverter SHA256 formatting.
+They do not require Encoding.Latin1, Path.GetRelativePath, or Convert.ToHexString.
+
+INCOMPLETE EXTRACTION RECOVERY
+
+A failed post-extraction scan may leave:
+
+  templeosts-1.10-internal\   PRESENT
+  templeosts-compiler-manifest.txt   ABSENT
+
+Nothing is deleted automatically.  After reviewing that this is the observed
+state, revalidate and continue with:
+
+  .\tools\RUN-RARE-FOUNDATION.ps1 -ResumeIncompleteExtraction
+
+The resume switch does not trust the directory blindly.  It repeats resource
+and ISO identity checks, requires raw, expanded, and holy directories, scans the
+expanded corpus for all compiler markers, inventories compiler files, hashes
+them, and only then writes the manifest.
+
 If the ISO is elsewhere, give its real path:
 
   .\tools\RUN-RARE-FOUNDATION.ps1 `
@@ -131,10 +154,13 @@ A PASS report does not authorize a patch.
 CURRENT EVIDENCE
 
   rare ISO identity exists in DBYTE-HOLYC-TOOLS
-  rare ISO extraction was previously observed on Windows
-  resource commit and rare identity verifier present
+  resource verification observed PASS on Windows: commit, 9/9 blobs, clean tree
+  canonical legacy-input ISO selection observed PASS
+  fresh extraction reached expanded-byte scanning
+  partial extraction preserved after Windows PowerShell API incompatibility
+  Windows PowerShell compatibility correction present
+  explicit incomplete-extraction resume gate present
   exact-input foundation runner present
-  canonical legacy-input precedence present
   rare corpus sealer present
   bounded rare seam inspector present
   semantic observation contract present
