@@ -3,9 +3,10 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE RAW PIPELINE TRACE
-COMPILER DIRECTORY CANDIDATE OBSERVED
-PIPELINE UNRESOLVED
+0.0.1 RARE PIPELINE CONTEXT
+COMPILER DIRECTORY EXACT CANDIDATE
+RAW PIPELINE TRACE OBSERVED
+PIPELINE CANDIDATE ONLY
 SEAM UNRESOLVED
 NO PATCH AUTHORIZED
 NO REWRITE ENABLED
@@ -29,9 +30,6 @@ DBYTE-HOLYC-TOOLS is the read-only evidence and archive resource:
   repository  Deadbytes101/DBYTE-HOLYC-TOOLS
   commit      37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
 
-It supplies exact package identity and HolyArchive extraction.  It is not
-linked into the compiler and is not a runtime dependency.
-
 ONLY TARGET
 
   artifact    TempleOSTS.iso
@@ -42,9 +40,9 @@ ONLY TARGET
 
 PATCH AUTHORITY
 
-  expanded/   YES: exact files expanded from the rare ISO
+  expanded/   exact expanded historical bytes
   raw/        identity and archive evidence
-  holy/       navigation only; extensions are normalized
+  holy/       navigation only; never patch authority
 
 COMMON MIRRORS ARE NOT TARGETS.
 PUBLIC STANDARD ISO IS NOT THE TARGET.
@@ -52,24 +50,12 @@ LATER FORKS AND PORTS ARE NOT TARGETS.
 
 OBSERVED CORRECTIONS
 
-The later TempleOS 5.03 compiler uses names including COCCompile, OptPass6,
-OptPass789A, and CIntermediateCode.  Those names were architecture clues only.
+Later TempleOS 5.03 names were used only as architecture clues.  Exact 1.10
+bytes rejected COCCompile and OptPass789A as required contracts.
 
-The exact TempleOSTS 1.10 expanded corpus was scanned on Windows on 2026-08-06.
-COCCompile was absent, while OptPass6 and CIntermediateCode were present.
-Therefore later-era entrypoint and late-pass names are not accepted as 1.10
-contracts, but the original 1.10 optimizer and intermediate-code vocabulary are
-now directly observed in the rare bytes.
-
-The first pipeline tracer attempted to mask C-style comments and quoted
-literals.  Exact 1.10 Compiler/ bytes rejected that assumed quote grammar with:
-
-  unterminated quoted literal at offset 205686
-
-The failure occurred before report creation.  No source or prior evidence was
-modified.  A partial HolyC lexer is not accepted as evidence, so quote and
-comment inference was removed.  The current tracer performs raw Latin-1 text
-matching and labels every result LEXICAL-UNFILTERED.
+A partial C/C++ quote masker was also rejected after exact Compiler/ bytes
+produced an unterminated quoted-literal boundary.  The accepted tracer performs
+raw Latin-1 matching only and makes no code/non-code claim.
 
 OBSERVED CORPUS FOUNDATION
 
@@ -88,33 +74,57 @@ OBSERVED CORPUS FOUNDATION
   OptPass789A                    0
   CIntermediateCode             169
 
-Highest-scoring exact paths included:
+OBSERVED RAW PIPELINE TRACE
 
-  Compiler/StmtParser.CPP
-  Compiler/ExpParser.CPP
+  Compiler/ files                31/31
+
+  compiler set SHA256
+    2F840DD07625B71F55256AF29A6F4FCC263E0AA7301714AC4A36101FBDEEF261
+
+  pass occurrences               25
+  pipeline files                 9
+
+  pipeline trace SHA256
+    E32A0F2EF8A68B12ED7C4EC74E08ACCAAC405212A515B25EB32F21470E606924
+
+Strongest raw sequence candidate:
+
   Compiler/CmpExts.CPP
-  Compiler/Assembler.CPP
-  Compiler/ICLCC.CPP
-  Compiler/OptPass6.CPP
-  Compiler/OptPass012.CPP
-  Compiler/OptPass3.CPP
-  Compiler/CmpMain.CPP
-  Compiler/OptPass4.CPP
+    OptPass012
+    OptPass3
+    OptPass4
+    OptPass5
+    OptPass6
+    OptPass789
 
-These paths are evidence-backed candidates.  Scores are navigation aids only.
+Secondary mixed-use candidate:
+
+  Compiler/ICLCC.CPP
+    OptPass012
+    OptPass012
+    OptPass3
+    OptPass4
+    OptPass5
+    OptPass6
+    OptPass789
+    OptPass789
+    OptPass789
+
+The CmpExts sequence is a pipeline candidate, not yet a proved executable call
+chain.  ICLCC contains repeated occurrences and requires separate context
+adjudication.
 
 CURRENT PIPELINE
 
   TEMPLEOSTS.ISO EXACT IDENTITY
-    -> PINNED DBYTE-HOLYC-TOOLS HOLYARCHIVE
-    -> RAW AND EXPANDED HISTORICAL BYTES
+    -> PINNED HOLYARCHIVE EXTRACTION
     -> HASH ALL 1057 EXPANDED FILES
-    -> DISCOVER COMPILER-LIKE PATHS AND SYMBOLS
-    -> VERIFY THE EXACT Compiler/ FILE SET
-    -> TRACE RAW OptPass* TEXT OCCURRENCES PER FILE
-    -> DISPLAY CmpMain.CPP RAW SOURCE CONTEXT
+    -> DISCOVER Compiler/ CANDIDATES
+    -> VERIFY EXACT 31-FILE Compiler/ SET
+    -> RAW OptPass* TRACE
+    -> SEALED CmpExts.CPP AND ICLCC.CPP CONTEXT
     -> MANUAL CODE VS NON-CODE ADJUDICATION
-    -> MANUAL PIPELINE ADJUDICATION
+    -> MANUAL PIPELINE OWNERSHIP ADJUDICATION
     -> MANUAL SEAM ADJUDICATION
     -> NO-REWRITE VERIFIER
     -> DIFFERENTIAL HARNESS
@@ -122,38 +132,31 @@ CURRENT PIPELINE
 
 NEXT COMMAND
 
-The manifest and discovery report already exist.  Preserve them and run only
-the read-only raw pipeline tracer:
+Preserve all existing evidence.  Pull the context display tool and run it once:
 
   Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
   git pull
 
-  .\tools\ADJUDICATE-TEMPLEOSTS-PIPELINE.ps1 `
+  .\tools\DISPLAY-TEMPLEOSTS-PIPELINE-CONTEXT.ps1 `
       -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
       -ManifestPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-expanded-manifest.txt `
-      -DiscoveryPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-discovery.txt `
-      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pipeline-adjudication.txt
+      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pipeline-context.txt
 
-The tracer:
+The display tool:
 
-  rechecks every Compiler/ file against the expanded manifest
-  requires the observed CmpMain.CPP and OptPass6.CPP candidates
-  hashes the sorted exact Compiler/ file set
-  decodes exact bytes with ISO-8859-1 one byte to one character
-  records every raw OptPass* occurrence by path, line, and byte offset
-  reports raw lexical order for each candidate file
-  includes line-numbered context around CmpMain.CPP occurrences
-  explicitly allows declarations, definitions, comments, and quoted text
-  does not claim that an occurrence is executable code
-  does not infer function ownership
+  requires the observed expanded manifest SHA256
+  rechecks CmpExts.CPP and ICLCC.CPP against exact manifest bytes and hashes
+  requires the observed raw pass orders exactly
+  emits merged line-numbered context windows around every raw occurrence
+  uses no lexer, parser, comment filter, or quote filter
+  does not infer function ownership or executable calls
   does not select an insertion seam
   does not modify source or prior evidence
 
 Expected final status:
 
-  SCAN MODE           RAW-TEXT-LATIN1
-  COMPILER SET        EXACT-CANDIDATE
-  PIPELINE            RAW-TRACE-ONLY
+  SOURCE CONTEXT      SEALED-DISPLAY
+  PIPELINE            CANDIDATE-ONLY
   SEAM                UNRESOLVED
   PATCH STATUS        NOT AUTHORIZED
 
@@ -166,10 +169,13 @@ CURRENT EVIDENCE
   HolyArchive extraction                        PASS
   full expanded manifest                        PASS
   compiler discovery report                     PASS
-  Compiler/ directory candidates                OBSERVED
-  C-style quote-mask assumption                 REJECTED
-  raw pipeline trace report                     NOT YET OBSERVED
-  rare compiler pipeline identity               UNRESOLVED
+  exact 31-file Compiler/ set                   PASS
+  raw pipeline trace report                     PASS
+  CmpExts complete pass-name sequence           OBSERVED
+  ICLCC repeated pass-name sequence             OBSERVED
+  sealed source context report                  NOT YET OBSERVED
+  rare compiler entrypoint identity             UNRESOLVED
+  pass ownership and executable order           UNRESOLVED
   rare compiler insertion seam                  UNRESOLVED
   patched compiler rebuild                      NOT OBSERVED
   guest semantic run                            NOT OBSERVED
