@@ -39,6 +39,7 @@ $ExpectedCandidateHash =
     'DB1C75A5EE71B07ADAEC32E984146602E73D9A0D606E2B76B8CCCC624E0CDCB8'
 $ExpectedCandidateBytes = 10527L
 $ExpectedGuardFiles = 11
+$ExpectedManifestRows = 10
 $ExpectedIsoHash =
     'DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC'
 
@@ -134,11 +135,11 @@ function Get-UniqueTabValue {
     )
 
     $Prefix = "$Key`t"
-    $Matches = @($Lines | Where-Object { $_.StartsWith($Prefix) })
-    if ($Matches.Count -ne 1) {
-        throw "report field count mismatch: $Key count=$($Matches.Count)"
+    $Found = @($Lines | Where-Object { $_.StartsWith($Prefix) })
+    if ($Found.Count -ne 1) {
+        throw "report field count mismatch: $Key count=$($Found.Count)"
     }
-    return $Matches[0].Substring($Prefix.Length)
+    return $Found[0].Substring($Prefix.Length)
 }
 
 $CandidateNames = @(
@@ -214,6 +215,48 @@ if ($GuardFiles.Count -ne $ExpectedGuardFiles) {
     )
 }
 
+$ManifestRows = [System.Collections.Generic.List[object]]::new()
+foreach ($Line in [System.IO.File]::ReadAllLines($GuardManifest)) {
+    if (
+        $Line -match
+        '^(?<path>[^\t]+)\t(?<bytes>[0-9]+)\t(?<hash>[0-9A-F]{64})\t(?<source>[^\t]+)$'
+    ) {
+        $Relative = $Matches.path
+        $Components = @($Relative -split '[\\/]')
+        if (
+            [System.IO.Path]::IsPathRooted($Relative) -or
+            $Components -contains '..'
+        ) {
+            throw "unsafe guard manifest path: $Relative"
+        }
+
+        $ManifestRows.Add(
+            [pscustomobject]@{
+                Path = $Relative
+                Bytes = [long]$Matches.bytes
+                SHA256 = $Matches.hash
+            }
+        )
+    }
+}
+if ($ManifestRows.Count -ne $ExpectedManifestRows) {
+    throw (
+        "guard manifest row count mismatch: expected=$ExpectedManifestRows " +
+        "actual=$($ManifestRows.Count)"
+    )
+}
+foreach ($Row in $ManifestRows) {
+    $Native = $Row.Path.Replace(
+        '/',
+        [System.IO.Path]::DirectorySeparatorChar
+    )
+    Assert-ExactFile `
+        -Path (Join-Path $Guard $Native) `
+        -Bytes $Row.Bytes `
+        -SHA256 $Row.SHA256 `
+        -Label "guard manifest row $($Row.Path)"
+}
+
 $Lines = [System.IO.File]::ReadAllLines($PreflightReport)
 Assert-UniqueLine -Lines $Lines -Expected 'DBYTE-HOLYC-OPT'
 Assert-UniqueLine `
@@ -228,24 +271,26 @@ Assert-UniqueLine `
 Assert-UniqueLine `
     -Lines $Lines `
     -Expected "candidate_iclcc_sha256`t$ExpectedCandidateHash"
-Assert-UniqueLine -Lines $Lines -Expected 'guard_files`t11'
-Assert-UniqueLine -Lines $Lines -Expected 'registered_vms`t1'
-Assert-UniqueLine -Lines $Lines -Expected 'running_vms`t0'
-Assert-UniqueLine -Lines $Lines -Expected 'known_candidates`t1'
+Assert-UniqueLine -Lines $Lines -Expected "guard_files`t11"
+Assert-UniqueLine -Lines $Lines -Expected "registered_vms`t1"
+Assert-UniqueLine -Lines $Lines -Expected "running_vms`t0"
+Assert-UniqueLine -Lines $Lines -Expected "known_candidates`t1"
 Assert-UniqueLine `
     -Lines $Lines `
-    -Expected 'selection_class`tONE-CANDIDATE-OBSERVED'
-Assert-UniqueLine -Lines $Lines -Expected 'powered_off_candidates`t1'
-Assert-UniqueLine -Lines $Lines -Expected 'candidates_with_vdi`t1'
-Assert-UniqueLine -Lines $Lines -Expected 'candidates_with_hashed_vdi`t1'
-Assert-UniqueLine -Lines $Lines -Expected 'candidates_with_exact_iso`t1'
-Assert-UniqueLine -Lines $Lines -Expected 'candidates_with_snapshots`t0'
-Assert-UniqueLine -Lines $Lines -Expected 'candidates_with_shared_folders`t0'
-Assert-UniqueLine -Lines $Lines -Expected 'target_selection`tUNRESOLVED'
-Assert-UniqueLine -Lines $Lines -Expected 'powered_off_recovery_point`tUNRESOLVED'
-Assert-UniqueLine -Lines $Lines -Expected 'guest_delivery_route`tUNRESOLVED'
-Assert-UniqueLine -Lines $Lines -Expected 'build_execution`tNOT-AUTHORIZED'
-Assert-UniqueLine -Lines $Lines -Expected 'build_status`tNOT-OBSERVED'
+    -Expected "selection_class`tONE-CANDIDATE-OBSERVED"
+Assert-UniqueLine -Lines $Lines -Expected "powered_off_candidates`t1"
+Assert-UniqueLine -Lines $Lines -Expected "candidates_with_vdi`t1"
+Assert-UniqueLine -Lines $Lines -Expected "candidates_with_hashed_vdi`t1"
+Assert-UniqueLine -Lines $Lines -Expected "candidates_with_exact_iso`t1"
+Assert-UniqueLine -Lines $Lines -Expected "candidates_with_snapshots`t0"
+Assert-UniqueLine -Lines $Lines -Expected "candidates_with_shared_folders`t0"
+Assert-UniqueLine -Lines $Lines -Expected "target_selection`tUNRESOLVED"
+Assert-UniqueLine `
+    -Lines $Lines `
+    -Expected "powered_off_recovery_point`tUNRESOLVED"
+Assert-UniqueLine -Lines $Lines -Expected "guest_delivery_route`tUNRESOLVED"
+Assert-UniqueLine -Lines $Lines -Expected "build_execution`tNOT-AUTHORIZED"
+Assert-UniqueLine -Lines $Lines -Expected "build_status`tNOT-OBSERVED"
 
 $CandidateIndexes = @()
 for ($Index = 0; $Index -lt $Lines.Length; $Index++) {
@@ -361,21 +406,19 @@ $Running = Invoke-VBoxReadOnly `
     -Arguments @('list', 'runningvms') `
     -Label 'running VM inventory'
 
+$RegisteredPattern = (
+    '^"' + [regex]::Escape($TargetName) + '" \{' +
+    [regex]::Escape($TargetUuid) + '\}$'
+)
 $RegisteredMatch = @(
     $Registered.Lines |
-        Where-Object {
-            $_ -ceq ('"{0}" {{{1}}}' -f $TargetName, $TargetUuid)
-        }
+        Where-Object { $_ -match $RegisteredPattern }
 )
 if ($RegisteredMatch.Count -ne 1) {
     throw "live registered target identity mismatch: count=$($RegisteredMatch.Count)"
 }
-if (
-    @(
-        $Running.Lines |
-            Where-Object { $_ -match ('^"' + [regex]::Escape($TargetName) + '" ') }
-    ).Count -ne 0
-) {
+$RunningPattern = '^"' + [regex]::Escape($TargetName) + '" '
+if (@($Running.Lines | Where-Object { $_ -match $RunningPattern }).Count -ne 0) {
     throw "target is currently listed as running: $TargetName"
 }
 
@@ -387,7 +430,14 @@ $Info = ConvertFrom-VBoxMachineReadable -Lines $Show.Lines
 if (-not $Info.ContainsKey('VMState') -or [string]$Info['VMState'] -cne 'poweroff') {
     throw 'live target state is not poweroff'
 }
-if (-not $Info.ContainsKey('UUID') -or [string]$Info['UUID'] -cne $TargetUuid) {
+if (
+    -not $Info.ContainsKey('UUID') -or
+    -not [string]::Equals(
+        [string]$Info['UUID'],
+        $TargetUuid,
+        [System.StringComparison]::OrdinalIgnoreCase
+    )
+) {
     throw 'live target UUID does not match preflight report'
 }
 
@@ -472,6 +522,7 @@ $Report = @(
     "iso_path`t$($Iso.Path)",
     "iso_bytes`t$($Iso.Bytes)",
     "iso_sha256`t$($Iso.SHA256)",
+    "snapshot_command_exit`t$($Snapshot.ExitCode)",
     "snapshot_uuid_rows`t$($LiveSnapshotRows.Count)",
     "shared_folder_keys`t$($LiveSharedFolderKeys.Count)",
     '',
@@ -509,7 +560,7 @@ Write-Host "VDI BYTES:            $($Vdi.Bytes)"
 Write-Host "VDI SHA256:           $($Vdi.SHA256)"
 Write-Host "ISO PATH:             $($Iso.Path)"
 Write-Host "ISO SHA256:           $($Iso.SHA256)"
-Write-Host "SNAPSHOT CHAINS:      $($LiveSnapshotRows.Count)"
+Write-Host "SNAPSHOT UUID ROWS:   $($LiveSnapshotRows.Count)"
 Write-Host "SHARED FOLDERS:       $($LiveSharedFolderKeys.Count)"
 Write-Host "REPORT:               $Output"
 Write-Host "REPORT SHA256:        $ReportHash"
