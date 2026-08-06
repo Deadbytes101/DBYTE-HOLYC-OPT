@@ -40,8 +40,8 @@ $ExpectedIsoPath = 'D:\TempleOSTS.iso'
 $ExpectedIsoBytes = 30558208L
 $ExpectedIsoHash =
     'DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC'
-$ExpectedBaselineManifestBytes = 2662L
-$ExpectedBaselineManifestHash =
+$ExpectedManifestBytes = 2662L
+$ExpectedManifestHash =
     '1B4DC2EEDC573DFABD8314E304671F868A6924858CDB736FBD244D257499D37C'
 $ExpectedVBoxBytes = 2503L
 $ExpectedVBoxHash =
@@ -49,9 +49,9 @@ $ExpectedVBoxHash =
 $ExpectedVBoxPrevBytes = 2923L
 $ExpectedVBoxPrevHash =
     'C127289608695718B6AF58E9522B525EA9E45EFF26CD39BCB3E9773FB35294A0'
-$InspectorRelativePath =
+$InspectorRelative =
     'scripts/inspect-templeos-ts-110-adopted-current-registry.ps1'
-$BaselineRelativePath =
+$BaselineRelative =
     'vm-output/virtualbox/Temple1.10-adopted-baseline/baseline1'
 
 function Get-FullPath {
@@ -70,14 +70,15 @@ function Get-Prefix {
 function Assert-OutsideRoot {
     param(
         [Parameter(Mandatory = $true)][string]$Path,
-        [Parameter(Mandatory = $true)][string]$Root,
-        [Parameter(Mandatory = $true)][string]$Label
+        [Parameter(Mandatory = $true)][string]$Root
     )
 
     $Full = Get-FullPath -Path $Path
-    $Prefix = Get-Prefix -Path $Root
-    if ($Full.StartsWith($Prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
-        throw "$Label is inside read-only resource root: $Full"
+    if ($Full.StartsWith(
+        (Get-Prefix -Path $Root),
+        [System.StringComparison]::OrdinalIgnoreCase
+    )) {
+        throw "output is inside read-only resource root: $Full"
     }
 }
 
@@ -92,6 +93,7 @@ function Assert-ExactFile {
     if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
         throw "$Label missing: $Path"
     }
+
     $Item = Get-Item -LiteralPath $Path
     $Hash = (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash
     if ($Item.Length -ne $Bytes -or $Hash -cne $SHA256) {
@@ -100,6 +102,7 @@ function Assert-ExactFile {
             "SHA256=$Hash path=$Path"
         )
     }
+
     return [pscustomobject]@{
         Path = $Item.FullName
         Bytes = $Item.Length
@@ -116,10 +119,12 @@ function Assert-NonEmptyFile {
     if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
         throw "$Label missing: $Path"
     }
+
     $Item = Get-Item -LiteralPath $Path
     if ($Item.Length -le 0) {
         throw "$Label is empty: $Path"
     }
+
     return [pscustomobject]@{
         Path = $Item.FullName
         Bytes = $Item.Length
@@ -151,31 +156,10 @@ function Invoke-GitRead {
         & git -C $script:Resource @Arguments 2>&1 |
             ForEach-Object { [string]$_ }
     )
-    $Code = $LASTEXITCODE
-    if ($Code -ne 0) {
-        throw "$Label failed with exit code $Code`n$($Captured -join "`n")"
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Label failed`n$($Captured -join "`n")"
     }
     return $Captured
-}
-
-function Invoke-Inspector {
-    param(
-        [Parameter(Mandatory = $true)][string]$Path,
-        [Parameter(Mandatory = $true)][string]$VBox,
-        [Parameter(Mandatory = $true)][string]$Report
-    )
-
-    $Captured = [System.Collections.Generic.List[string]]::new()
-    & $Path `
-        -VBoxManagePath $VBox `
-        -Phase PREFLIGHT `
-        -ReportPath $Report *>&1 |
-        ForEach-Object {
-            $Text = [string]$_
-            $Captured.Add($Text)
-            Write-Host $Text
-        }
-    return $Captured.ToArray()
 }
 
 function Get-FileId {
@@ -188,21 +172,41 @@ function Get-FileId {
         & fsutil file queryfileid $Path 2>&1 |
             ForEach-Object { [string]$_ }
     )
-    $Code = $LASTEXITCODE
-    if ($Code -ne 0) {
-        throw "$Label file-id query failed with exit code $Code`n$($Captured -join "`n")"
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Label file-id query failed`n$($Captured -join "`n")"
     }
-    $Matches = @(
-        $Captured |
-            ForEach-Object {
-                [regex]::Matches($_, '0x[0-9A-Fa-f]+') |
-                    ForEach-Object { $_.Value.ToUpperInvariant() }
+
+    $Ids = @(
+        foreach ($Line in $Captured) {
+            foreach ($Match in [regex]::Matches($Line, '0x[0-9A-Fa-f]+')) {
+                $Match.Value.ToUpperInvariant()
             }
+        }
     )
-    if ($Matches.Count -ne 1) {
-        throw "$Label file-id parse mismatch: count=$($Matches.Count)"
+    if ($Ids.Count -ne 1) {
+        throw "$Label file-id parse mismatch: count=$($Ids.Count)"
     }
-    return $Matches[0]
+    return $Ids[0]
+}
+
+function Invoke-PinnedInspector {
+    param(
+        [Parameter(Mandatory = $true)][string]$Inspector,
+        [Parameter(Mandatory = $true)][string]$VBox,
+        [Parameter(Mandatory = $true)][string]$Report
+    )
+
+    $Captured = [System.Collections.Generic.List[string]]::new()
+    & $Inspector `
+        -VBoxManagePath $VBox `
+        -Phase PREFLIGHT `
+        -ReportPath $Report *>&1 |
+        ForEach-Object {
+            $Text = [string]$_
+            $Captured.Add($Text)
+            Write-Host $Text
+        }
+    return $Captured.ToArray()
 }
 
 $script:Resource = (Resolve-Path -LiteralPath $ResourceRoot -ErrorAction Stop).Path
@@ -224,38 +228,39 @@ if ([string]::Equals(
     $Output,
     [System.StringComparison]::OrdinalIgnoreCase
 )) {
-    throw 'inspector report and final report paths must be different'
+    throw 'inspector report and final report paths must differ'
 }
 foreach ($Path in @($InspectorReport, $Output)) {
-    Assert-OutsideRoot -Path $Path -Root $script:Resource -Label 'output'
+    Assert-OutsideRoot -Path $Path -Root $script:Resource
     if (Test-Path -LiteralPath $Path) {
         throw "output already exists: $Path"
     }
 }
 
-$TargetReportIdentity = Assert-ExactFile `
+$TargetItem = Get-Item -LiteralPath $TargetReport
+$TargetIdentity = Assert-ExactFile `
     -Path $TargetReport `
-    -Bytes (Get-Item -LiteralPath $TargetReport).Length `
+    -Bytes $TargetItem.Length `
     -SHA256 $ExpectedTargetReportHash `
     -Label 'sealed target report'
 $TargetLines = [System.IO.File]::ReadAllLines($TargetReport)
 foreach ($Expected in @(
     "target_name`t$ExpectedTargetName",
     "target_uuid`t$ExpectedTargetUuid",
-    'vm_state`tpoweroff',
-    'listed_running`tFalse',
+    "vm_state`tpoweroff",
+    "listed_running`tFalse",
     "vdi_path`t$ExpectedVdiPath",
     "vdi_bytes`t$ExpectedVdiBytes",
     "vdi_sha256`t$ExpectedVdiHash",
     "iso_path`t$ExpectedIsoPath",
     "iso_bytes`t$ExpectedIsoBytes",
     "iso_sha256`t$ExpectedIsoHash",
-    'snapshot_uuid_rows`t0',
-    'shared_folder_keys`t0',
-    'TARGET SELECTION`tSEALED',
-    'POWERED-OFF RECOVERY POINT`tNOT-PREPARED',
-    'GUEST DELIVERY ROUTE`tUNRESOLVED',
-    'BUILD EXECUTION`tNOT-AUTHORIZED'
+    "snapshot_uuid_rows`t0",
+    "shared_folder_keys`t0",
+    "TARGET SELECTION`tSEALED",
+    "POWERED-OFF RECOVERY POINT`tNOT-PREPARED",
+    "GUEST DELIVERY ROUTE`tUNRESOLVED",
+    "BUILD EXECUTION`tNOT-AUTHORIZED"
 )) {
     Assert-UniqueLine -Lines $TargetLines -Expected $Expected
 }
@@ -265,117 +270,109 @@ if ($Head.Count -ne 1 -or $Head[0] -cne $ExpectedResourceCommit) {
     throw "resource HEAD mismatch: $($Head -join ' | ')"
 }
 [void](Invoke-GitRead -Arguments @('diff', '--check') -Label 'resource diff check')
-$TrackedWorktree = @(
-    Invoke-GitRead -Arguments @('diff', '--name-only') -Label 'resource worktree diff'
-)
-$TrackedIndex = @(
-    Invoke-GitRead -Arguments @('diff', '--cached', '--name-only') -Label 'resource index diff'
-)
-if ($TrackedWorktree.Count -ne 0 -or $TrackedIndex.Count -ne 0) {
+$Worktree = @(Invoke-GitRead -Arguments @('diff', '--name-only') -Label 'resource worktree diff')
+$Index = @(Invoke-GitRead -Arguments @('diff', '--cached', '--name-only') -Label 'resource index diff')
+if ($Worktree.Count -ne 0 -or $Index.Count -ne 0) {
     throw 'resource tracked tree is not clean'
 }
 
 $InspectorPath = Join-Path $script:Resource (
-    $InspectorRelativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+    $InspectorRelative.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
 )
 if (-not (Test-Path -LiteralPath $InspectorPath -PathType Leaf)) {
     throw "pinned inspector missing: $InspectorPath"
 }
-$TreeObject = @(
+$TreeBlob = @(
     Invoke-GitRead `
-        -Arguments @('rev-parse', "$ExpectedResourceCommit`:$InspectorRelativePath") `
+        -Arguments @('rev-parse', "$ExpectedResourceCommit`:$InspectorRelative") `
         -Label 'pinned inspector blob'
 )
-$LocalObject = @(
+$LocalBlob = @(
     Invoke-GitRead `
-        -Arguments @('hash-object', '--', $InspectorRelativePath) `
+        -Arguments @('hash-object', '--', $InspectorRelative) `
         -Label 'local inspector blob'
 )
 if (
-    $TreeObject.Count -ne 1 -or
-    $LocalObject.Count -ne 1 -or
-    $TreeObject[0] -cne $ExpectedInspectorBlob -or
-    $LocalObject[0] -cne $ExpectedInspectorBlob
+    $TreeBlob.Count -ne 1 -or
+    $LocalBlob.Count -ne 1 -or
+    $TreeBlob[0] -cne $ExpectedInspectorBlob -or
+    $LocalBlob[0] -cne $ExpectedInspectorBlob
 ) {
     throw (
-        "inspector blob mismatch: tree=$($TreeObject -join '|') " +
-        "local=$($LocalObject -join '|')"
+        "inspector blob mismatch: tree=$($TreeBlob -join '|') " +
+        "local=$($LocalBlob -join '|')"
     )
 }
 
 $BaselineRoot = Join-Path $script:Resource (
-    $BaselineRelativePath.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+    $BaselineRelative.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
 )
-$BaselineManifest = Join-Path $BaselineRoot 'ADOPTED-BASELINE-MANIFEST.txt'
-$BaselineVBox = Join-Path $BaselineRoot 'Temple1.10.vbox'
-$BaselineVBoxPrev = Join-Path $BaselineRoot 'Temple1.10.vbox-prev'
-$BaselineVdi = Join-Path $BaselineRoot 'Temple1.10.vdi'
-$BaselineIso = Join-Path $BaselineRoot 'TempleOSTS.iso'
-$BaselineEvidencePaths = @(
-    (Join-Path $BaselineRoot 'registered-vms.txt'),
-    (Join-Path $BaselineRoot 'running-vms.txt'),
-    (Join-Path $BaselineRoot 'Temple1.10-showvminfo-machinereadable.txt'),
-    (Join-Path $BaselineRoot 'Temple1.10-vdi-showmediuminfo.txt')
-)
-
-$ManifestIdentity = Assert-ExactFile `
-    -Path $BaselineManifest `
-    -Bytes $ExpectedBaselineManifestBytes `
-    -SHA256 $ExpectedBaselineManifestHash `
+$Manifest = Assert-ExactFile `
+    -Path (Join-Path $BaselineRoot 'ADOPTED-BASELINE-MANIFEST.txt') `
+    -Bytes $ExpectedManifestBytes `
+    -SHA256 $ExpectedManifestHash `
     -Label 'adopted baseline manifest'
-$BaselineVBoxIdentity = Assert-ExactFile `
-    -Path $BaselineVBox `
+$BaselineVBox = Assert-ExactFile `
+    -Path (Join-Path $BaselineRoot 'Temple1.10.vbox') `
     -Bytes $ExpectedVBoxBytes `
     -SHA256 $ExpectedVBoxHash `
     -Label 'adopted baseline VBOX'
-$BaselineVBoxPrevIdentity = Assert-ExactFile `
-    -Path $BaselineVBoxPrev `
+$BaselineVBoxPrev = Assert-ExactFile `
+    -Path (Join-Path $BaselineRoot 'Temple1.10.vbox-prev') `
     -Bytes $ExpectedVBoxPrevBytes `
     -SHA256 $ExpectedVBoxPrevHash `
     -Label 'adopted baseline VBOX-PREV'
-$BaselineVdiIdentity = Assert-ExactFile `
-    -Path $BaselineVdi `
+$BaselineVdi = Assert-ExactFile `
+    -Path (Join-Path $BaselineRoot 'Temple1.10.vdi') `
     -Bytes $ExpectedVdiBytes `
     -SHA256 $ExpectedVdiHash `
     -Label 'adopted baseline VDI'
-$BaselineIsoIdentity = Assert-ExactFile `
-    -Path $BaselineIso `
+$BaselineIso = Assert-ExactFile `
+    -Path (Join-Path $BaselineRoot 'TempleOSTS.iso') `
     -Bytes $ExpectedIsoBytes `
     -SHA256 $ExpectedIsoHash `
     -Label 'adopted baseline ISO'
-$BaselineEvidence = @(
-    foreach ($Path in $BaselineEvidencePaths) {
-        Assert-NonEmptyFile -Path $Path -Label 'adopted baseline evidence'
+$Evidence = @(
+    foreach ($Name in @(
+        'registered-vms.txt',
+        'running-vms.txt',
+        'Temple1.10-showvminfo-machinereadable.txt',
+        'Temple1.10-vdi-showmediuminfo.txt'
+    )) {
+        Assert-NonEmptyFile `
+            -Path (Join-Path $BaselineRoot $Name) `
+            -Label 'adopted baseline evidence'
     }
 )
 if (Test-Path -LiteralPath (Join-Path $BaselineRoot 'Temple1.10.nvram')) {
     throw 'adopted baseline NVRAM must remain absent'
 }
+
 if ([string]::Equals(
-    (Get-FullPath -Path $BaselineVdi),
+    (Get-FullPath -Path $BaselineVdi.Path),
     (Get-FullPath -Path $ExpectedVdiPath),
     [System.StringComparison]::OrdinalIgnoreCase
 )) {
     throw 'baseline VDI path equals live VDI path'
 }
-
-$BaselineVdiId = Get-FileId -Path $BaselineVdi -Label 'baseline VDI'
-$LiveVdiId = Get-FileId -Path $ExpectedVdiPath -Label 'live VDI'
-if ($BaselineVdiId -ceq $LiveVdiId) {
-    throw "baseline VDI and live VDI share one file ID: $LiveVdiId"
+$BaselineFileId = Get-FileId -Path $BaselineVdi.Path -Label 'baseline VDI'
+$LiveFileId = Get-FileId -Path $ExpectedVdiPath -Label 'live VDI'
+if ($BaselineFileId -ceq $LiveFileId) {
+    throw "baseline and live VDI share one NTFS file ID: $LiveFileId"
 }
 
-$InspectorParent = Split-Path -Parent $InspectorReport
-$OutputParent = Split-Path -Parent $Output
-foreach ($Parent in @($InspectorParent, $OutputParent)) {
+foreach ($Parent in @(
+    (Split-Path -Parent $InspectorReport),
+    (Split-Path -Parent $Output)
+)) {
     if ($Parent) {
         [void][System.IO.Directory]::CreateDirectory($Parent)
     }
 }
 
 $InspectorOutput = @(
-    Invoke-Inspector `
-        -Path $InspectorPath `
+    Invoke-PinnedInspector `
+        -Inspector $InspectorPath `
         -VBox $VBox `
         -Report $InspectorReport
 )
@@ -397,54 +394,54 @@ foreach ($Required in @(
 if (-not (Test-Path -LiteralPath $InspectorReport -PathType Leaf)) {
     throw "nested inspector report missing: $InspectorReport"
 }
-$InspectorReportIdentity = [pscustomobject]@{
-    Path = $InspectorReport
-    Bytes = (Get-Item -LiteralPath $InspectorReport).Length
-    SHA256 = (Get-FileHash -LiteralPath $InspectorReport -Algorithm SHA256).Hash
-}
+$InspectorItem = Get-Item -LiteralPath $InspectorReport
+$InspectorHash = (
+    Get-FileHash -LiteralPath $InspectorReport -Algorithm SHA256
+).Hash
 
 $Report = [System.Collections.Generic.List[string]]::new()
 $Report.Add('DBYTE-HOLYC-OPT')
 $Report.Add('TEMPLEOSTS 1.10 POWERED-OFF RECOVERY POINT')
 $Report.Add('')
-$Report.Add("target_report_sha256`t$($TargetReportIdentity.SHA256)")
+$Report.Add("target_report_sha256`t$($TargetIdentity.SHA256)")
 $Report.Add("resource_commit`t$ExpectedResourceCommit")
 $Report.Add("inspector_blob`t$ExpectedInspectorBlob")
-$Report.Add("inspector_report_sha256`t$($InspectorReportIdentity.SHA256)")
+$Report.Add("inspector_report_bytes`t$($InspectorItem.Length)")
+$Report.Add("inspector_report_sha256`t$InspectorHash")
 $Report.Add('')
 $Report.Add("target_name`t$ExpectedTargetName")
 $Report.Add("target_uuid`t$ExpectedTargetUuid")
-$Report.Add('vm_state`tpoweroff')
+$Report.Add("vm_state`tpoweroff")
 $Report.Add("live_vdi_path`t$ExpectedVdiPath")
 $Report.Add("live_vdi_bytes`t$ExpectedVdiBytes")
 $Report.Add("live_vdi_sha256`t$ExpectedVdiHash")
-$Report.Add("live_vdi_file_id`t$LiveVdiId")
+$Report.Add("live_vdi_file_id`t$LiveFileId")
 $Report.Add("live_iso_path`t$ExpectedIsoPath")
 $Report.Add("live_iso_sha256`t$ExpectedIsoHash")
 $Report.Add('')
 $Report.Add("baseline_root`t$BaselineRoot")
-$Report.Add("baseline_manifest_sha256`t$($ManifestIdentity.SHA256)")
-$Report.Add("baseline_vbox_sha256`t$($BaselineVBoxIdentity.SHA256)")
-$Report.Add("baseline_vbox_prev_sha256`t$($BaselineVBoxPrevIdentity.SHA256)")
-$Report.Add("baseline_vdi_path`t$($BaselineVdiIdentity.Path)")
-$Report.Add("baseline_vdi_bytes`t$($BaselineVdiIdentity.Bytes)")
-$Report.Add("baseline_vdi_sha256`t$($BaselineVdiIdentity.SHA256)")
-$Report.Add("baseline_vdi_file_id`t$BaselineVdiId")
-$Report.Add("baseline_iso_sha256`t$($BaselineIsoIdentity.SHA256)")
-$Report.Add("baseline_evidence_files`t$($BaselineEvidence.Count)")
-$Report.Add('baseline_nvram`tABSENT')
+$Report.Add("baseline_manifest_sha256`t$($Manifest.SHA256)")
+$Report.Add("baseline_vbox_sha256`t$($BaselineVBox.SHA256)")
+$Report.Add("baseline_vbox_prev_sha256`t$($BaselineVBoxPrev.SHA256)")
+$Report.Add("baseline_vdi_path`t$($BaselineVdi.Path)")
+$Report.Add("baseline_vdi_bytes`t$($BaselineVdi.Bytes)")
+$Report.Add("baseline_vdi_sha256`t$($BaselineVdi.SHA256)")
+$Report.Add("baseline_vdi_file_id`t$BaselineFileId")
+$Report.Add("baseline_iso_sha256`t$($BaselineIso.SHA256)")
+$Report.Add("baseline_evidence_files`t$($Evidence.Count)")
+$Report.Add("baseline_nvram`tABSENT")
 $Report.Add('')
 $Report.Add('The baseline and live VDI have equal bytes and SHA256 but distinct NTFS file IDs.')
 $Report.Add('The pinned adopted inspector revalidated the live target as REGISTERED-EXACT and poweroff.')
 $Report.Add('No VM, snapshot, attachment, VDI, ISO, guest file or compiler output was modified.')
 $Report.Add('')
-$Report.Add('TARGET SELECTION`tSEALED')
-$Report.Add('POWERED-OFF RECOVERY POINT`tSEALED')
-$Report.Add('RESTORE EXECUTION`tNOT-OBSERVED')
-$Report.Add('GUEST DELIVERY ROUTE`tUNRESOLVED')
-$Report.Add('GUEST FILE BACKUP RESTORE`tUNRESOLVED')
-$Report.Add('BUILD EXECUTION`tNOT-AUTHORIZED')
-$Report.Add('BUILD STATUS`tNOT-OBSERVED')
+$Report.Add("TARGET SELECTION`tSEALED")
+$Report.Add("POWERED-OFF RECOVERY POINT`tSEALED")
+$Report.Add("RESTORE EXECUTION`tNOT-OBSERVED")
+$Report.Add("GUEST DELIVERY ROUTE`tUNRESOLVED")
+$Report.Add("GUEST FILE BACKUP RESTORE`tUNRESOLVED")
+$Report.Add("BUILD EXECUTION`tNOT-AUTHORIZED")
+$Report.Add("BUILD STATUS`tNOT-OBSERVED")
 $Report.Add('')
 $Report.Add('REPORTS ARE CLAIMS, NOT EVIDENCE.')
 
@@ -455,15 +452,15 @@ $Report.Add('REPORTS ARE CLAIMS, NOT EVIDENCE.')
 )
 $OutputHash = (Get-FileHash -LiteralPath $Output -Algorithm SHA256).Hash
 
-Write-Host "TARGET REPORT:        $($TargetReportIdentity.SHA256)"
+Write-Host "TARGET REPORT:        $($TargetIdentity.SHA256)"
 Write-Host "RESOURCE COMMIT:      $ExpectedResourceCommit"
 Write-Host "INSPECTOR BLOB:       $ExpectedInspectorBlob"
-Write-Host "BASELINE MANIFEST:    $($ManifestIdentity.SHA256)"
-Write-Host "BASELINE VDI:         $($BaselineVdiIdentity.SHA256)"
-Write-Host "BASELINE VDI FILE ID: $BaselineVdiId"
+Write-Host "BASELINE MANIFEST:    $($Manifest.SHA256)"
+Write-Host "BASELINE VDI:         $($BaselineVdi.SHA256)"
+Write-Host "BASELINE VDI FILE ID: $BaselineFileId"
 Write-Host "LIVE VDI:             $ExpectedVdiHash"
-Write-Host "LIVE VDI FILE ID:     $LiveVdiId"
-Write-Host "NESTED REPORT:        $($InspectorReportIdentity.SHA256)"
+Write-Host "LIVE VDI FILE ID:     $LiveFileId"
+Write-Host "NESTED REPORT:        $InspectorHash"
 Write-Host "REPORT:               $Output"
 Write-Host "REPORT SHA256:        $OutputHash"
 Write-Host 'TARGET SELECTION:     SEALED'
