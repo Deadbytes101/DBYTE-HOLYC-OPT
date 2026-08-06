@@ -122,6 +122,7 @@ function ConvertFrom-VBoxMachineReadable {
 function Add-Lines {
     param(
         [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
         [System.Collections.Generic.List[string]]$Target,
         [AllowEmptyCollection()]
         [string[]]$Lines
