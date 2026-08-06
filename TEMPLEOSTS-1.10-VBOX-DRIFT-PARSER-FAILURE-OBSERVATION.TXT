@@ -1,0 +1,141 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VBOX DRIFT PARSER FAILURE OBSERVATION
+
+CLASS
+
+MACHINE-READABLE STORAGE-KEY NORMALIZATION FAILURE.
+VBOX DRIFT NOT ADJUDICATED.
+POWERED-OFF RECOVERY POINT NOT SEALED.
+BUILD EXECUTION NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  9503d4e83531be11f81834fa47c885a59e5ea201
+
+Command:
+  tools/ADJUDICATE-TEMPLEOSTS-VBOX-DRIFT.ps1
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  resource root
+    D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+  sealed failed inspector report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-adopted-recovery-inspector.txt
+
+  intended output
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vbox-drift-adjudication.txt
+
+OBSERVED RESULT
+
+  terminal failure
+    live machine field missing: IDE-1-0
+
+  source line class
+    Assert-MachineValue after machine-readable showvminfo parsing
+
+  target name validation
+    PASSED BEFORE FAILURE
+
+  target UUID validation
+    PASSED BEFORE FAILURE
+
+  VM power state validation
+    poweroff / PASSED BEFORE FAILURE
+
+  CfgFile validation
+    PASSED BEFORE FAILURE
+
+  VDI attachment validation
+    NOT REACHED
+
+  ISO attachment validation
+    NOT REACHED
+
+  current VBOX hash validation
+    NOT REACHED
+
+  normalized VBOX comparison
+    NOT REACHED
+
+  final drift report
+    NOT WRITTEN
+
+ROOT CAUSE
+
+VBoxManage machine-readable storage attachment keys can be emitted with quoted
+keys, for example:
+
+  "IDE-1-0"="D:\VirtualBox VMs\Temple1.10\Temple1.10.vdi"
+
+The parser removed quotes and escapes from values but retained quotes around
+keys.  The resulting hashtable contained the key "IDE-1-0" including quote
+characters, while the assertion requested IDE-1-0 without quote characters.
+
+The failure is a parser representation mismatch.  It is not evidence of a
+missing VDI attachment.
+
+OBSERVED BOUNDARY
+
+Before the failure, the tool bound to inspector report SHA256:
+
+  6393BCD2E0B6E0FCFCC01D74D0B4C3F6F035B5D686CF61ECB349B84E853C0594
+
+It revalidated the pinned resource commit and clean tracked tree, verified the
+adopted baseline VBOX, VDI and ISO identities, queried registered and running
+VM inventories read-only, queried live machine information, and accepted the
+live target name, UUID, poweroff state and CfgFile.
+
+It stopped before live attachment assertions, current artifact rehashing,
+lastStateChange normalization, normalized full-text comparison and output
+report creation.
+
+MUTATION BOUNDARY
+
+No VM start, stop, snapshot operation, attachment change, VDI write, ISO write,
+guest delivery or compiler execution occurred.  No VBOX drift output report was
+created by this invocation.
+
+CORRECTION CONTRACT
+
+  preserve the original failed tool and invocation evidence
+  introduce a second read-only adjudicator
+  normalize one pair of surrounding quotes on machine-readable keys
+  unescape normalized keys and values consistently
+  reject empty normalized keys
+  reject duplicate keys after normalization
+  require exact live VDI and ISO attachment paths
+  retain all report, resource, VBOX and normalized-text gates
+  do not seal recovery in the drift adjudication step
+
+CURRENT STATUS
+
+  exact corpus                         SEALED
+  target guest VM                      SEALED
+  target VM state                      POWEROFF / OBSERVED
+  failed inspector report              SEALED
+  adopted baseline                     EXACT / OBSERVED
+  machine-readable storage parser      CORRECTION REQUIRED
+  VBOX normalized relationship         NOT OBSERVED
+  powered-off recovery point           NOT SEALED
+  restore execution                    NOT OBSERVED
+  guest delivery                       UNRESOLVED
+  compiler build execution             NOT AUTHORIZED
+  optimizer transformation             DENIED
+
+RULE
+
+A PARSER MISS IS NOT AN ATTACHMENT MISS.
+NO NORMALIZED FULL-TEXT EQUALITY, NO VOLATILE-DRIFT CLAIM.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
