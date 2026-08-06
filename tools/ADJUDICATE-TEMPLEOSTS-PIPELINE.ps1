@@ -37,6 +37,10 @@ function Get-Sha256Hex([byte[]]$Bytes) {
 }
 
 function Get-LineNumber([string]$Text, [int]$Offset) {
+    if ($Offset -lt 0 -or $Offset -gt $Text.Length) {
+        throw "line offset outside text: $Offset"
+    }
+
     $Line = 1
     for ($Index = 0; $Index -lt $Offset; $Index++) {
         if ($Text[$Index] -eq "`n") {
@@ -50,96 +54,6 @@ function Get-LineNumber([string]$Text, [int]$Offset) {
         }
     }
     return $Line
-}
-
-function Mask-NonCode([string]$Text) {
-    $Chars = $Text.ToCharArray()
-    $Index = 0
-
-    while ($Index -lt $Chars.Length) {
-        $Ch = $Chars[$Index]
-        $Next = if ($Index + 1 -lt $Chars.Length) { $Chars[$Index + 1] } else { [char]0 }
-
-        if ($Ch -eq '/' -and $Next -eq '/') {
-            $Chars[$Index] = ' '
-            $Chars[$Index + 1] = ' '
-            $Index += 2
-            while (
-                $Index -lt $Chars.Length -and
-                $Chars[$Index] -ne "`r" -and
-                $Chars[$Index] -ne "`n"
-            ) {
-                $Chars[$Index] = ' '
-                $Index++
-            }
-            continue
-        }
-
-        if ($Ch -eq '/' -and $Next -eq '*') {
-            $Start = $Index
-            $Chars[$Index] = ' '
-            $Chars[$Index + 1] = ' '
-            $Index += 2
-            $Closed = $false
-
-            while ($Index + 1 -lt $Chars.Length) {
-                if ($Chars[$Index] -eq '*' -and $Chars[$Index + 1] -eq '/') {
-                    $Chars[$Index] = ' '
-                    $Chars[$Index + 1] = ' '
-                    $Index += 2
-                    $Closed = $true
-                    break
-                }
-                if ($Chars[$Index] -ne "`r" -and $Chars[$Index] -ne "`n") {
-                    $Chars[$Index] = ' '
-                }
-                $Index++
-            }
-
-            if (-not $Closed) {
-                throw "unterminated block comment at offset $Start"
-            }
-            continue
-        }
-
-        if ($Ch -eq '"' -or $Ch -eq "'") {
-            $Quote = $Ch
-            $Start = $Index
-            $Chars[$Index] = ' '
-            $Index++
-            $Escaped = $false
-            $Closed = $false
-
-            while ($Index -lt $Chars.Length) {
-                $Current = $Chars[$Index]
-                if ($Current -ne "`r" -and $Current -ne "`n") {
-                    $Chars[$Index] = ' '
-                }
-
-                if ($Escaped) {
-                    $Escaped = $false
-                }
-                elseif ($Current -eq '\') {
-                    $Escaped = $true
-                }
-                elseif ($Current -eq $Quote) {
-                    $Index++
-                    $Closed = $true
-                    break
-                }
-                $Index++
-            }
-
-            if (-not $Closed) {
-                throw "unterminated quoted literal at offset $Start"
-            }
-            continue
-        }
-
-        $Index++
-    }
-
-    return (-join $Chars)
 }
 
 $Root = (Resolve-Path -LiteralPath $ExtractRoot -ErrorAction Stop).Path
@@ -274,22 +188,22 @@ foreach ($Row in $CompilerRows) {
 
     $Bytes = [System.IO.File]::ReadAllBytes($Row.FullPath)
     $Text = $Latin1.GetString($Bytes)
-    $Masked = Mask-NonCode $Text
     $Lines = [regex]::Split($Text, "\r\n|\n|\r")
 
-    foreach ($Match in [regex]::Matches($Masked, $PassPattern, $RegexOptions)) {
-        $LineNumber = Get-LineNumber $Text $Match.Groups[1].Index
+    foreach ($Match in [regex]::Matches($Text, $PassPattern, $RegexOptions)) {
+        $Offset = $Match.Groups[1].Index
+        $LineNumber = Get-LineNumber $Text $Offset
         $Occurrences.Add([pscustomobject]@{
             Path = $Row.Path
             Name = $Match.Groups[1].Value
             Line = $LineNumber
-            Offset = $Match.Groups[1].Index
+            Offset = $Offset
         })
 
         if ($Row.Path -ceq 'Compiler/CmpMain.CPP') {
-            $Start = [Math]::Max(1, $LineNumber - 3)
-            $End = [Math]::Min($Lines.Length, $LineNumber + 3)
-            $Contexts.Add("--- $($Row.Path) $($Match.Groups[1].Value) line $LineNumber")
+            $Start = [Math]::Max(1, $LineNumber - 4)
+            $End = [Math]::Min($Lines.Length, $LineNumber + 4)
+            $Contexts.Add("--- $($Row.Path) $($Match.Groups[1].Value) line $LineNumber offset $Offset")
             for ($ContextLine = $Start; $ContextLine -le $End; $ContextLine++) {
                 $Display = $Lines[$ContextLine - 1].Replace("`t", '<TAB>')
                 $Contexts.Add(("{0:D6}`t{1}" -f $ContextLine, $Display))
@@ -307,7 +221,7 @@ $PipelineFiles = @(
             $Unique = @($Names | Sort-Object -Unique)
             [pscustomobject]@{
                 Path = $_.Name
-                Calls = $Ordered.Count
+                Occurrences = $Ordered.Count
                 Unique = $Unique.Count
                 OrderedNames = ($Names -join ',')
                 OrderedLines = (@($Ordered | ForEach-Object { "$($_.Name)@$($_.Line)" }) -join ',')
@@ -315,14 +229,14 @@ $PipelineFiles = @(
         } |
         Sort-Object `
             @{ Expression = 'Unique'; Descending = $true },
-            @{ Expression = 'Calls'; Descending = $true },
+            @{ Expression = 'Occurrences'; Descending = $true },
             @{ Expression = 'Path'; Descending = $false }
 )
 
 $Report = [System.Collections.Generic.List[string]]::new()
 foreach ($Line in @(
     'DBYTE-HOLYC-OPT',
-    'TEMPLEOSTS 1.10 COMPILER PIPELINE TRACE',
+    'TEMPLEOSTS 1.10 COMPILER PIPELINE RAW TRACE',
     '',
     'CORPUS',
     "tools_commit`t$ExpectedToolsCommit",
@@ -333,23 +247,25 @@ foreach ($Line in @(
     "discovery_sha256`t$DiscoveryHash",
     "compiler_files_verified`t$($CompilerRows.Count)",
     "compiler_set_sha256`t$CompilerSetHash",
+    "scan_mode`tRAW-TEXT-LATIN1",
+    "filtering`tNONE",
     '',
     'PIPELINE FILE CANDIDATES',
-    "path`tpass_occurrences`tunique_pass_names`tordered_names`tordered_calls"
+    "path`tpass_occurrences`tunique_pass_names`tordered_names`tordered_occurrences"
 )) {
     $Report.Add($Line)
 }
 
 foreach ($File in $PipelineFiles) {
     $Report.Add(
-        "$($File.Path)`t$($File.Calls)`t$($File.Unique)`t" +
+        "$($File.Path)`t$($File.Occurrences)`t$($File.Unique)`t" +
         "$($File.OrderedNames)`t$($File.OrderedLines)"
     )
 }
 
 foreach ($Line in @(
     '',
-    'ALL OptPass OCCURRENCES',
+    'ALL RAW OptPass OCCURRENCES',
     "path`tname`tline`toffset"
 )) {
     $Report.Add($Line)
@@ -359,7 +275,7 @@ foreach ($Hit in ($Occurrences | Sort-Object Path, Offset)) {
 }
 
 $Report.Add('')
-$Report.Add('CmpMain CONTEXT')
+$Report.Add('CmpMain RAW CONTEXT')
 foreach ($Line in $Contexts) {
     $Report.Add($Line)
 }
@@ -368,13 +284,14 @@ foreach ($Line in @(
     '',
     'BOUNDARY',
     'Compiler/ is an exact candidate set verified against the expanded manifest.',
-    'OptPass occurrences exclude comments and quoted literals.',
-    'The trace reports lexical order and source context, not function ownership.',
+    'OptPass occurrences are raw Latin-1 text matches and are not code-only claims.',
+    'Occurrences may include declarations, definitions, comments, or quoted text.',
+    'The trace reports byte order and source context, not function ownership.',
     'No compiler entrypoint, pass boundary, or insertion seam is selected here.',
     'No source, archive, manifest, or discovery file is modified.',
     '',
     "COMPILER SET STATUS`tEXACT-CANDIDATE",
-    "PIPELINE STATUS`tTRACE-ONLY",
+    "PIPELINE STATUS`tRAW-TRACE-ONLY",
     "SEAM STATUS`tUNRESOLVED",
     "PATCH STATUS`tNOT-AUTHORIZED",
     '',
@@ -396,13 +313,14 @@ if ($OutputDirectory) {
 $ReportHash = (Get-FileHash -LiteralPath $Output -Algorithm SHA256).Hash
 Write-Host "COMPILER FILES:      $($CompilerRows.Count)/$($CompilerRows.Count)"
 Write-Host "COMPILER SET SHA256: $CompilerSetHash"
+Write-Host 'SCAN MODE:           RAW-TEXT-LATIN1'
 Write-Host "PASS OCCURRENCES:    $($Occurrences.Count)"
 Write-Host "PIPELINE FILES:      $($PipelineFiles.Count)"
 foreach ($File in @($PipelineFiles | Select-Object -First 10)) {
     Write-Host (
-        "PIPELINE FILE: {0} calls={1} unique={2} order={3}" -f
+        "PIPELINE FILE: {0} occurrences={1} unique={2} order={3}" -f
         $File.Path,
-        $File.Calls,
+        $File.Occurrences,
         $File.Unique,
         $File.OrderedNames
     )
@@ -410,7 +328,7 @@ foreach ($File in @($PipelineFiles | Select-Object -First 10)) {
 Write-Host "REPORT:              $Output"
 Write-Host "REPORT SHA256:       $ReportHash"
 Write-Host 'COMPILER SET:        EXACT-CANDIDATE'
-Write-Host 'PIPELINE:            TRACE-ONLY'
+Write-Host 'PIPELINE:            RAW-TRACE-ONLY'
 Write-Host 'SEAM:                UNRESOLVED'
 Write-Host 'PATCH STATUS:        NOT AUTHORIZED'
 Write-Host 'VERDICT:             TRACE COMPLETE'
