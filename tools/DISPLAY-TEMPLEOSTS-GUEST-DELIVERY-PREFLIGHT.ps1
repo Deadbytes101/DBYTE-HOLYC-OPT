@@ -31,6 +31,7 @@ $ExpectedGuardReportHash =
     '53FC38AC8F84C16AA4657A9EF4CB7BBA94B958217B8C489D481ADEF4137AA297'
 $ExpectedCandidateHash =
     'DB1C75A5EE71B07ADAEC32E984146602E73D9A0D606E2B76B8CCCC624E0CDCB8'
+$ExpectedCandidateBytes = 10527L
 $ExpectedGuardFiles = 11
 $ExpectedManifestRows = 10
 $ExpectedIsoHash =
@@ -131,6 +132,15 @@ function Add-Lines {
     }
 }
 
+$CandidateNames = @(
+    $CandidateNames |
+        Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+        Select-Object -Unique
+)
+if ($CandidateNames.Count -eq 0) {
+    throw 'at least one candidate VM name is required'
+}
+
 $script:VBox = (Resolve-Path -LiteralPath $VBoxManagePath -ErrorAction Stop).Path
 $Guard = (Resolve-Path -LiteralPath $GuardRoot -ErrorAction Stop).Path
 $GuardReport = (
@@ -159,9 +169,7 @@ if (
 }
 
 $GuardManifest = Join-Path $Guard 'GUARD-MANIFEST.TXT'
-$Candidate = Join-Path $Guard (
-    'candidate-expanded\Compiler\ICLCC.CPP'
-)
+$Candidate = Join-Path $Guard 'candidate-expanded\Compiler\ICLCC.CPP'
 
 $GuardManifestHash = (
     Get-FileHash -LiteralPath $GuardManifest -Algorithm SHA256
@@ -169,7 +177,6 @@ $GuardManifestHash = (
 $GuardReportHash = (
     Get-FileHash -LiteralPath $GuardReport -Algorithm SHA256
 ).Hash
-$CandidateHash = (Get-FileHash -LiteralPath $Candidate -Algorithm SHA256).Hash
 
 if ($GuardManifestHash -cne $ExpectedGuardManifestHash) {
     throw "guard manifest hash mismatch: $GuardManifestHash"
@@ -177,9 +184,11 @@ if ($GuardManifestHash -cne $ExpectedGuardManifestHash) {
 if ($GuardReportHash -cne $ExpectedGuardReportHash) {
     throw "guard report hash mismatch: $GuardReportHash"
 }
-if ($CandidateHash -cne $ExpectedCandidateHash) {
-    throw "candidate ICLCC hash mismatch: $CandidateHash"
-}
+Assert-ExactFile `
+    -Path $Candidate `
+    -Bytes $ExpectedCandidateBytes `
+    -SHA256 $ExpectedCandidateHash `
+    -Label 'candidate ICLCC'
 
 $GuardFiles = @(Get-ChildItem -LiteralPath $Guard -Recurse -File)
 if ($GuardFiles.Count -ne $ExpectedGuardFiles) {
@@ -196,9 +205,10 @@ foreach ($Line in [System.IO.File]::ReadAllLines($GuardManifest)) {
         '^(?<path>[^\t]+)\t(?<bytes>[0-9]+)\t(?<hash>[0-9A-F]{64})\t(?<source>[^\t]+)$'
     ) {
         $Relative = $Matches.path
+        $Components = @($Relative -split '[\\/]')
         if (
             [System.IO.Path]::IsPathRooted($Relative) -or
-            $Relative.Split('/', '\') -contains '..'
+            $Components -contains '..'
         ) {
             throw "unsafe guard manifest path: $Relative"
         }
@@ -276,13 +286,14 @@ $Report.Add('TEMPLEOSTS 1.10 GUEST DELIVERY PREFLIGHT DISPLAY')
 $Report.Add('')
 $Report.Add("guard_manifest_sha256`t$GuardManifestHash")
 $Report.Add("guard_report_sha256`t$GuardReportHash")
-$Report.Add("candidate_iclcc_sha256`t$CandidateHash")
+$Report.Add("candidate_iclcc_sha256`t$ExpectedCandidateHash")
 $Report.Add("guard_files`t$($GuardFiles.Count)")
 $Report.Add("vboxmanage_path`t$script:VBox")
 $Report.Add("vboxmanage_version`t$($Version.Lines -join ' ')")
 $Report.Add("registered_vms`t$($RegisteredRows.Count)")
 $Report.Add("running_vms`t$($RunningNames.Count)")
 $Report.Add("known_candidates`t$($Candidates.Count)")
+$Report.Add("candidate_names`t$($CandidateNames -join ',')")
 $Report.Add('')
 $Report.Add('REGISTERED VM INVENTORY RAW')
 $Report.Add('---------------------------')
@@ -294,6 +305,7 @@ Add-Lines -Target $Report -Lines $Running.Lines
 
 $PoweredOffCandidates = 0
 $CandidateWithVdi = 0
+$CandidateWithHashedVdi = 0
 $CandidateWithExactIso = 0
 $CandidateWithSnapshots = 0
 $CandidateWithSharedFolders = 0
@@ -309,12 +321,14 @@ foreach ($Vm in $Candidates) {
         -AllowFailure
 
     $State = if ($Info.ContainsKey('VMState')) {
-        [string]$Info.VMState
+        [string]$Info['VMState']
     }
     else {
         '<missing>'
     }
-    if ($State -ceq 'poweroff' -and -not $RunningNames.Contains($Vm.Name)) {
+    $ListedRunning = $RunningNames.Contains($Vm.Name)
+    $SafeToHashVdi = $State -ceq 'poweroff' -and -not $ListedRunning
+    if ($SafeToHashVdi) {
         $PoweredOffCandidates++
     }
 
@@ -325,34 +339,48 @@ foreach ($Vm in $Candidates) {
             continue
         }
 
+        $Kind = if ($Value -match '(?i)\.vdi$') { 'VDI' } else { 'ISO' }
         $Exists = Test-Path -LiteralPath $Value -PathType Leaf
         $Bytes = $null
         $Hash = $null
+        $HashState = 'MISSING'
         if ($Exists) {
             $Item = Get-Item -LiteralPath $Value
             $Bytes = $Item.Length
-            $Hash = (Get-FileHash -LiteralPath $Value -Algorithm SHA256).Hash
+            if ($Kind -ceq 'VDI' -and -not $SafeToHashVdi) {
+                $HashState = 'NOT-HASHED-VM-NOT-POWEROFF'
+            }
+            else {
+                $Hash = (Get-FileHash -LiteralPath $Value -Algorithm SHA256).Hash
+                $HashState = 'HASHED'
+            }
         }
 
         $Storage.Add(
             [pscustomobject]@{
                 Key = $Key
+                Kind = $Kind
                 Path = $Value
                 Exists = $Exists
                 Bytes = $Bytes
                 SHA256 = $Hash
+                HashState = $HashState
             }
         )
     }
 
-    if (@($Storage | Where-Object { $_.Path -match '(?i)\.vdi$' }).Count -gt 0) {
+    $VdiObjects = @($Storage | Where-Object { $_.Kind -ceq 'VDI' })
+    if ($VdiObjects.Count -gt 0) {
         $CandidateWithVdi++
+    }
+    if (@($VdiObjects | Where-Object { $_.HashState -ceq 'HASHED' }).Count -gt 0) {
+        $CandidateWithHashedVdi++
     }
     if (
         @(
             $Storage |
                 Where-Object {
-                    $_.Path -match '(?i)\.iso$' -and
+                    $_.Kind -ceq 'ISO' -and
                     $_.SHA256 -ceq $ExpectedIsoHash
                 }
         ).Count -gt 0
@@ -382,7 +410,8 @@ foreach ($Vm in $Candidates) {
     $Report.Add("CANDIDATE`t$($Vm.Name)")
     $Report.Add("uuid`t$($Vm.UUID)")
     $Report.Add("vm_state`t$State")
-    $Report.Add("listed_running`t$($RunningNames.Contains($Vm.Name))")
+    $Report.Add("listed_running`t$ListedRunning")
+    $Report.Add("safe_to_hash_vdi`t$SafeToHashVdi")
     $Report.Add("storage_objects`t$($Storage.Count)")
     $Report.Add("snapshot_uuid_rows`t$SnapshotCount")
     $Report.Add("shared_folder_keys`t$($SharedFolderKeys.Count)")
@@ -393,10 +422,12 @@ foreach ($Vm in $Candidates) {
     $Report.Add('')
     $Report.Add('STORAGE IDENTITIES')
     $Report.Add('------------------')
+    $Report.Add('key kind path exists bytes hash_state SHA256')
     foreach ($Object in $Storage) {
         $Report.Add(
-            "$($Object.Key)`t$($Object.Path)`t$($Object.Exists)`t" +
-            "$($Object.Bytes)`t$($Object.SHA256)"
+            "$($Object.Key)`t$($Object.Kind)`t$($Object.Path)`t" +
+            "$($Object.Exists)`t$($Object.Bytes)`t" +
+            "$($Object.HashState)`t$($Object.SHA256)"
         )
     }
     $Report.Add('')
@@ -422,6 +453,7 @@ $Report.Add('-------')
 $Report.Add("selection_class`t$SelectionClass")
 $Report.Add("powered_off_candidates`t$PoweredOffCandidates")
 $Report.Add("candidates_with_vdi`t$CandidateWithVdi")
+$Report.Add("candidates_with_hashed_vdi`t$CandidateWithHashedVdi")
 $Report.Add("candidates_with_exact_iso`t$CandidateWithExactIso")
 $Report.Add("candidates_with_snapshots`t$CandidateWithSnapshots")
 $Report.Add("candidates_with_shared_folders`t$CandidateWithSharedFolders")
@@ -433,6 +465,7 @@ $Report.Add('build_execution`tNOT-AUTHORIZED')
 $Report.Add('build_status`tNOT-OBSERVED')
 $Report.Add('')
 $Report.Add('This tool performed VBoxManage read operations and host file hashing only.')
+$Report.Add('VDI bytes were hashed only when both VM state sources proved poweroff.')
 $Report.Add('It did not start, stop, snapshot, attach, detach, mount, or modify a VM or disk.')
 $Report.Add('A configured shared-folder mapping would not by itself prove TempleOS guest support.')
 $Report.Add('REPORTS ARE CLAIMS, NOT EVIDENCE.')
@@ -455,6 +488,7 @@ Write-Host "REGISTERED VMS:       $($RegisteredRows.Count)"
 Write-Host "KNOWN CANDIDATES:     $($Candidates.Count)"
 Write-Host "POWERED OFF:          $PoweredOffCandidates"
 Write-Host "CANDIDATES WITH VDI:  $CandidateWithVdi"
+Write-Host "HASHED VDI:           $CandidateWithHashedVdi"
 Write-Host "EXACT ISO ATTACHED:   $CandidateWithExactIso"
 Write-Host "SNAPSHOT CHAINS:      $CandidateWithSnapshots"
 Write-Host "SHARED FOLDERS:       $CandidateWithSharedFolders"
