@@ -1,0 +1,206 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 RECOVERY BUNDLE MANIFEST BLANK-LINE BINDING FAILURE OBSERVATION
+
+CLASS
+
+CONFIGURATION-EXACT RECOVERY BUNDLE STAGING WAS CREATED.
+COPIED BUNDLE INPUTS AND READ-ONLY INVENTORY EVIDENCE WERE VERIFIED IN STAGING.
+MANIFEST SERIALIZATION STOPPED AT A POWERSHELL EMPTY-STRING PARAMETER CONTRACT.
+THE INCOMPLETE STAGING ROOT WAS PRESERVED FOR REVIEW.
+THE FINAL RECOVERY ROOT AND PREPARATION REPORT WERE NOT CREATED.
+POWERED-OFF RECOVERY POINT REMAINS NOT SEALED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  95809c90de3042fc12ece8b087d36415611048b4
+
+Command:
+  tools/PREPARE-TEMPLEOSTS-CONFIG-EXACT-RECOVERY-BUNDLE-R4.ps1
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  resource root
+    D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+  sealed normalized difference report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vbox-normalized-diff.txt
+
+  requested final recovery root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2
+
+  requested preparation report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-config-exact-recovery-preparation.txt
+
+OBSERVED WRAPPER BINDING
+
+  original preparer blob
+    33957db6d124f20025be638eb41d74e7e4190bcc
+
+  empty running-inventory guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  zero-snapshot sentinel guard
+    EXACT SENTINEL / INITIAL + FINAL
+
+  bidirectional root-disjoint guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  final zero-snapshot guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  patched source SHA256
+    FAE2BC882FD25C9EA8C105585B4F1232EF18B94719AD3A5C71C35DF2AE1F97EE
+
+OBSERVED RESULT
+
+  preserved incomplete root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2.incomplete-20260806T231912Z-p11460
+
+  terminal failure
+    Cannot bind argument to parameter 'Lines' because it is an empty string.
+
+  failing function
+    Write-Utf8Lines
+
+  failing call
+    Write-Utf8Lines -Path $ManifestPath -Lines $Manifest.ToArray()
+
+  failing data class
+    intentional blank separator strings in RECOVERY-BUNDLE-MANIFEST.txt
+
+  final recovery root
+    NOT CREATED
+
+  recovery manifest
+    NOT WRITTEN
+
+  preparation report
+    NOT WRITTEN
+
+ROOT CAUSE
+
+Write-Utf8Lines declares its Lines parameter as:
+
+  [Parameter(Mandatory = $true)]
+  [AllowEmptyCollection()]
+  [string[]]$Lines
+
+AllowEmptyCollection permits an array with zero elements.  It does not permit an
+array containing empty-string elements.  The deterministic manifest deliberately
+adds empty strings as section separators.  Windows PowerShell therefore rejects
+Manifest.ToArray() during parameter binding before WriteAllText executes.
+
+The correction is to add AllowEmptyString to the Lines parameter while retaining
+AllowEmptyCollection.  This changes only the serialization parameter contract;
+it does not change manifest contents, line ordering, hashes, copy sources,
+VirtualBox state checks or recovery classification.
+
+OBSERVED EXECUTION BOUNDARY
+
+Before the failure, the R4 wrapper and preparer successfully:
+
+  bound the original preparer tree and local blob
+  applied all exact in-memory hardening replacements
+  bound the sealed normalized-difference report
+  revalidated the pinned resource commit and clean tracked tree
+  revalidated the adopted baseline VDI and ISO
+  revalidated registered target identity and zero running target rows
+  revalidated target UUID, poweroff state and exact attachments
+  revalidated zero shared-folder mappings
+  accepted only the exact no-snapshot sentinel as zero snapshot rows
+  revalidated the live VBOX, VDI and ISO identities
+  revalidated absent live NVRAM
+  revalidated distinct live and adopted-baseline VDI NTFS file IDs
+  created a unique incomplete staging root
+  copied and rehashed the exact current VBOX
+  copied and rehashed an exact distinct recovery VDI
+  copied and rehashed the exact TempleOSTS ISO
+  copied and rehashed the sealed normalized-difference report
+  revalidated distinct copied VBOX and VDI NTFS file IDs
+  wrote and hashed five read-only inventory evidence files
+  constructed the manifest lines in memory
+
+The execution stopped while binding the manifest line array.  It had not yet:
+
+  written RECOVERY-BUNDLE-MANIFEST.txt
+  computed a manifest SHA256
+  performed final target and zero-snapshot revalidation
+  renamed staging into the requested final recovery root
+  written the preparation report
+
+PRESERVED STAGING CONTENT CONTRACT
+
+The preserved incomplete root was reached only after successful creation and
+validation of these staged objects:
+
+  Temple1.10.vbox
+  Temple1.10.vdi
+  TempleOSTS.iso
+  templeosts-vbox-normalized-diff.txt
+  registered-vms.txt
+  running-vms.txt
+  Temple1.10-showvminfo-machinereadable.txt
+  Temple1.10-snapshot-list-machinereadable.txt
+  Temple1.10-vdi-showmediuminfo.txt
+
+RECOVERY-BUNDLE-MANIFEST.txt was not written.
+The preserved incomplete root must not be deleted, renamed, reused or treated as
+a sealed recovery point.
+
+MUTATION BOUNDARY
+
+Host-side copies and inventory evidence files were created only inside the
+preserved incomplete staging root.  No VM start, stop, snapshot mutation,
+attachment change, live VBOX write, live VDI write, live ISO write, guest
+delivery or compiler execution occurred.
+
+CORRECTION CONTRACT
+
+  preserve the original preparer and all failed wrappers
+  preserve the incomplete staging root unchanged
+  bind the original preparer tree and local blob exactly
+  retain the empty running-inventory correction
+  retain exact zero-snapshot sentinel handling at initial and final gates
+  retain bidirectional root-disjoint validation
+  add AllowEmptyString only to Write-Utf8Lines Lines
+  retain AllowEmptyCollection on the same parameter
+  create a new timestamped staging root on the next invocation
+  do not reuse the preserved incomplete root
+  do not seal recovery during preparation
+  do not authorize build execution
+
+CURRENT STATUS
+
+  exact TempleOSTS corpus                 SEALED
+  target guest VM                         SEALED
+  target VM state                         POWEROFF / OBSERVED
+  running target rows                     ZERO / OBSERVED
+  shared-folder mappings                  ZERO / OBSERVED
+  snapshot inventory                      ZERO SENTINEL / OBSERVED
+  live VBOX, VDI and ISO                  EXACT / OBSERVED
+  preserved incomplete staging root       PRESENT / NOT SEALED
+  replacement recovery bundle             NOT PREPARED
+  final recovery root                     NOT CREATED
+  restore execution                       NOT OBSERVED
+  guest delivery                          UNRESOLVED
+  compiler build execution                NOT AUTHORIZED
+  optimizer transformation                DENIED
+
+RULE
+
+A BLANK MANIFEST SEPARATOR IS DATA, NOT A MISSING REQUIRED ARGUMENT.
+PRESERVE FAILED STAGING AS EVIDENCE; NEVER PROMOTE IT TO A RECOVERY POINT.
+PREPARATION IS NOT RESTORE PROOF.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
