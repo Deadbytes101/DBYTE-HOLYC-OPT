@@ -100,19 +100,34 @@ function ConvertTo-PresentationSafeText {
     $Builder = [System.Text.StringBuilder]::new()
     foreach ($Character in $Text.ToCharArray()) {
         $Code = [int]$Character
-        switch ($Code) {
-            9  { [void]$Builder.Append('\t'); continue }
-            10 { [void]$Builder.Append('\n'); continue }
-            13 { [void]$Builder.Append('\r'); continue }
-            32 { [void]$Builder.Append('\u0020'); continue }
-            34 { [void]$Builder.Append('\"'); continue }
-            38 { [void]$Builder.Append('\u0026'); continue }
-            60 { [void]$Builder.Append('\u003C'); continue }
-            62 { [void]$Builder.Append('\u003E'); continue }
-            92 { [void]$Builder.Append('\\'); continue }
+        if ($Code -eq 9) {
+            [void]$Builder.Append('\u0009')
         }
-
-        if ($Code -lt 32 -or $Code -gt 126) {
+        elseif ($Code -eq 10) {
+            [void]$Builder.Append('\u000A')
+        }
+        elseif ($Code -eq 13) {
+            [void]$Builder.Append('\u000D')
+        }
+        elseif ($Code -eq 32) {
+            [void]$Builder.Append('\u0020')
+        }
+        elseif ($Code -eq 34) {
+            [void]$Builder.Append('\u0022')
+        }
+        elseif ($Code -eq 38) {
+            [void]$Builder.Append('\u0026')
+        }
+        elseif ($Code -eq 60) {
+            [void]$Builder.Append('\u003C')
+        }
+        elseif ($Code -eq 62) {
+            [void]$Builder.Append('\u003E')
+        }
+        elseif ($Code -eq 92) {
+            [void]$Builder.Append('\u005C')
+        }
+        elseif ($Code -lt 32 -or $Code -gt 126) {
             [void]$Builder.Append(('\u{0:X4}' -f $Code))
         }
         else {
