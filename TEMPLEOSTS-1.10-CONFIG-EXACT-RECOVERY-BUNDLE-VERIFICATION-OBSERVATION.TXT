@@ -1,0 +1,202 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 CONFIGURATION-EXACT RECOVERY BUNDLE VERIFICATION OBSERVATION
+
+CLASS
+
+THE CONFIGURATION-EXACT RECOVERY BUNDLE WAS REOPENED AND VERIFIED.
+THE EXACT TEN-FILE BUNDLE IDENTITY IS SEALED.
+THE LIVE, ADOPTED-BASELINE AND BUNDLE VDI COPIES ARE BYTE-EXACT AND DISTINCT NTFS FILE OBJECTS.
+THE PRESERVED FAILED STAGING ROOT REMAINS PRESENT WITHOUT A MANIFEST.
+THE POWERED-OFF RECOVERY POINT IS NOT YET SEALED BECAUSE THE RESTORE ROUTE AND RESTORE EXECUTION REMAIN UNOBSERVED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  5a330b2d0c8cca777492c1eb5fe535d388afefa5
+
+Command:
+  tools/VERIFY-TEMPLEOSTS-CONFIG-EXACT-RECOVERY-BUNDLE-R2.ps1
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  resource root
+    D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+  sealed normalized-difference report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vbox-normalized-diff.txt
+
+  preparation report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-config-exact-recovery-preparation.txt
+
+  final recovery root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2
+
+  preserved incomplete root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2.incomplete-20260806T231912Z-p11460
+
+  verification report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-config-exact-recovery-verification.txt
+
+OBSERVED WRAPPER BINDING
+
+  original verifier blob
+    8abcae1286332b8b8fc23e1d298b798cbaca614c
+
+  captured running parameter guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  captured running row guard
+    EXACT EMPTY ONLY / EXACT-ONE-REPLACEMENT
+
+  patched source SHA256
+    C655B1D1DAFDF8BB40B314D77BE19426DA34893CE26D3C38A935B1ABE2B87A33
+
+SEALED INPUT CHAIN
+
+  preparation report SHA256
+    C4182656FC6DFE7CD3173126564415C37745B756B5416557BBCFE7EDA6D948D8
+
+  bundle manifest SHA256
+    3E7C4285920A981BF72AFCD179C467B2DEC35AB1828D21EB4767A1DEB3619F45
+
+  verification report SHA256
+    887D93D1869CA321A8A4A11816A7ABA6A74366BBA64D4138E1D7DF223F7A9CEC
+
+VERIFIED BUNDLE
+
+  exact file count
+    10
+
+  VBOX SHA256
+    E537469A1B1A88DE13D18704B5D6299F3AF202DA518FB266F045485A8FC4F1E6
+
+  VBOX NTFS file ID
+    0X00000000000000000003000000060062
+
+  VDI SHA256
+    90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  VDI NTFS file ID
+    0X0000000000000000000100000006007B
+
+  ISO SHA256
+    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+INDEPENDENT VDI IDENTITIES
+
+  adopted-baseline VDI NTFS file ID
+    0X0000000000000000001500000003CF10
+
+  live VDI NTFS file ID
+    0X00000000000000000004000000040293
+
+  bundle VDI NTFS file ID
+    0X0000000000000000000100000006007B
+
+The three VDI files have equal bytes and SHA256 but pairwise-distinct NTFS file IDs.
+
+PRESERVED FAILED STAGING
+
+  exact file count
+    9
+
+  manifest
+    ABSENT
+
+  classification
+    PRESERVED / NOT PROMOTED / NOT SEALED
+
+OBSERVED LIVE STATE
+
+  target name
+    Temple1.10
+
+  target UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  VM state
+    poweroff
+
+  running target rows
+    0
+
+  snapshot rows
+    0
+
+  shared-folder rows
+    0
+
+  live NVRAM
+    ABSENT
+
+  live VBOX, VDI and ISO
+    EXACT / REVALIDATED
+
+VERDICT BOUNDARY
+
+The verifier reopened the exact bundle file set, rehashed bundle payloads,
+validated all five manifest evidence rows, rechecked the preserved incomplete
+root and performed fresh read-only VirtualBox inventory checks.
+
+The bundle source identity is now sealed.  This does not prove that VirtualBox
+can safely restore or register the bundle without collision, path rewrite or
+mutation.  It also does not prove that the guest boots or that a restore can be
+reversed.
+
+ONE DECISION
+
+Preserve the verified bundle and verification report unchanged.
+Do not register, start, clone, attach, detach or restore the sealed bundle.
+Do not rewrite the sealed VBOX or VDI.
+Adjudicate the restore route read-only from:
+
+  the exact bundle VBOX XML
+  the exact bundle VDI and ISO identities
+  the current registered machine and medium identities
+  the pinned machine, VDI and ISO UUID contract
+
+The adjudicator must explicitly classify current-registry side-by-side
+registration, direct use of sealed files, in-place cold restore and an isolated
+disposable rehearsal.  No route may be authorized merely because the bundle
+identity is sealed.
+
+MUTATION BOUNDARY
+
+The verification invocation wrote only its new verification report.
+No VM start, stop, registration, unregistration, snapshot mutation, attachment
+change, live VBOX write, live VDI write, live ISO write, sealed bundle write,
+guest delivery or compiler execution occurred.
+
+CURRENT STATUS
+
+  exact TempleOSTS corpus                 SEALED
+  target guest VM                         SEALED
+  target VM state                         POWEROFF / OBSERVED
+  configuration-exact bundle              VERIFIED / OBSERVED
+  bundle identity                         SEALED
+  preserved incomplete staging root       PRESENT / NOT SEALED
+  restore route                           UNRESOLVED
+  restore execution                       NOT OBSERVED
+  powered-off recovery point              NOT SEALED
+  guest delivery                          UNRESOLVED
+  compiler build execution                NOT AUTHORIZED
+  optimizer transformation                DENIED
+
+RULE
+
+SEALED BUNDLE IDENTITY IS NOT RESTORE PROOF.
+DUPLICATE MACHINE OR MEDIUM UUIDS MUST NOT BE TESTED IN THE LIVE REGISTRY.
+SEALED RECOVERY FILES MUST NOT BE REGISTERED OR REWRITTEN DIRECTLY.
+NO OBSERVED RESTORE, NO RESTORE CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
