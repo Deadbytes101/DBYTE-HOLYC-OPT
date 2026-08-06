@@ -18,13 +18,9 @@ $ErrorActionPreference = 'Stop'
 
 $ExpectedToolsCommit = '37b0457e8735ab8cc34a23f2717fcfb808e6a7a8'
 $ExpectedIsoHash = 'DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC'
+$RegexOptions = [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
 
-function Get-Sha256Hex {
-    param(
-        [Parameter(Mandatory = $true)]
-        [byte[]]$Bytes
-    )
-
+function Get-Sha256Hex([byte[]]$Bytes) {
     $Hasher = [System.Security.Cryptography.SHA256]::Create()
     try {
         return [System.Convert]::ToHexString($Hasher.ComputeHash($Bytes))
@@ -34,15 +30,7 @@ function Get-Sha256Hex {
     }
 }
 
-function Get-LineNumber {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Text,
-
-        [Parameter(Mandatory = $true)]
-        [int]$Offset
-    )
-
+function Get-LineNumber([string]$Text, [int]$Offset) {
     if ($Offset -lt 0 -or $Offset -gt $Text.Length) {
         throw "line offset outside text: $Offset"
     }
@@ -59,68 +47,75 @@ function Get-LineNumber {
             $Line++
         }
     }
-
     return $Line
 }
 
-function Get-CodeTokens {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Text
-    )
-
-    $Tokens = [System.Collections.Generic.List[object]]::new()
-    $Symbols = '(){};'
+function Mask-NonCode([string]$Text) {
+    $Chars = $Text.ToCharArray()
     $Index = 0
 
-    while ($Index -lt $Text.Length) {
-        $Ch = $Text[$Index]
-        $Next = if ($Index + 1 -lt $Text.Length) { $Text[$Index + 1] } else { [char]0 }
-
-        if ([char]::IsWhiteSpace($Ch)) {
-            $Index++
-            continue
-        }
+    while ($Index -lt $Chars.Length) {
+        $Ch = $Chars[$Index]
+        $Next = if ($Index + 1 -lt $Chars.Length) { $Chars[$Index + 1] } else { [char]0 }
 
         if ($Ch -eq '/' -and $Next -eq '/') {
+            $Chars[$Index] = ' '
+            $Chars[$Index + 1] = ' '
             $Index += 2
             while (
-                $Index -lt $Text.Length -and
-                $Text[$Index] -ne "`r" -and
-                $Text[$Index] -ne "`n"
+                $Index -lt $Chars.Length -and
+                $Chars[$Index] -ne "`r" -and
+                $Chars[$Index] -ne "`n"
             ) {
+                $Chars[$Index] = ' '
                 $Index++
             }
             continue
         }
 
         if ($Ch -eq '/' -and $Next -eq '*') {
-            $CommentOffset = $Index
+            $Start = $Index
+            $Chars[$Index] = ' '
+            $Chars[$Index + 1] = ' '
             $Index += 2
             $Closed = $false
-            while ($Index + 1 -lt $Text.Length) {
-                if ($Text[$Index] -eq '*' -and $Text[$Index + 1] -eq '/') {
+
+            while ($Index + 1 -lt $Chars.Length) {
+                $Current = $Chars[$Index]
+                $Following = $Chars[$Index + 1]
+                if ($Current -eq '*' -and $Following -eq '/') {
+                    $Chars[$Index] = ' '
+                    $Chars[$Index + 1] = ' '
                     $Index += 2
                     $Closed = $true
                     break
                 }
+                if ($Current -ne "`r" -and $Current -ne "`n") {
+                    $Chars[$Index] = ' '
+                }
                 $Index++
             }
+
             if (-not $Closed) {
-                throw "unterminated block comment at offset $CommentOffset"
+                throw "unterminated block comment at offset $Start"
             }
             continue
         }
 
         if ($Ch -eq '"' -or $Ch -eq "'") {
             $Quote = $Ch
-            $QuoteOffset = $Index
+            $Start = $Index
+            $Chars[$Index] = ' '
+            $Index++
             $Escaped = $false
             $Closed = $false
-            $Index++
 
-            while ($Index -lt $Text.Length) {
-                $Current = $Text[$Index]
+            while ($Index -lt $Chars.Length) {
+                $Current = $Chars[$Index]
+                if ($Current -ne "`r" -and $Current -ne "`n") {
+                    $Chars[$Index] = ' '
+                }
+
                 if ($Escaped) {
                     $Escaped = $false
                 }
@@ -136,135 +131,15 @@ function Get-CodeTokens {
             }
 
             if (-not $Closed) {
-                throw "unterminated quoted literal at offset $QuoteOffset"
+                throw "unterminated quoted literal at offset $Start"
             }
             continue
-        }
-
-        if ($Ch -eq '_' -or [char]::IsLetter($Ch)) {
-            $Start = $Index
-            $Index++
-            while (
-                $Index -lt $Text.Length -and
-                ($Text[$Index] -eq '_' -or [char]::IsLetterOrDigit($Text[$Index]))
-            ) {
-                $Index++
-            }
-
-            $Tokens.Add([pscustomobject]@{
-                Kind = 'ident'
-                Text = $Text.Substring($Start, $Index - $Start)
-                Offset = $Start
-            })
-            continue
-        }
-
-        if ($Symbols.IndexOf($Ch) -ge 0) {
-            $Tokens.Add([pscustomobject]@{
-                Kind = 'symbol'
-                Text = $Ch.ToString()
-                Offset = $Index
-            })
         }
 
         $Index++
     }
 
-    return $Tokens.ToArray()
-}
-
-function Find-FunctionDefinitions {
-    param(
-        [Parameter(Mandatory = $true)]
-        [object[]]$Tokens,
-
-        [Parameter(Mandatory = $true)]
-        [string]$Name
-    )
-
-    $Definitions = [System.Collections.Generic.List[object]]::new()
-
-    for ($Index = 0; $Index + 1 -lt $Tokens.Count; $Index++) {
-        if (
-            $Tokens[$Index].Kind -cne 'ident' -or
-            $Tokens[$Index].Text -cne $Name -or
-            $Tokens[$Index + 1].Text -cne '('
-        ) {
-            continue
-        }
-
-        $OpenIndex = -1
-        for ($Probe = $Index + 2; $Probe -lt $Tokens.Count; $Probe++) {
-            if ($Tokens[$Probe].Text -ceq ';') {
-                break
-            }
-            if ($Tokens[$Probe].Text -ceq '{') {
-                $OpenIndex = $Probe
-                break
-            }
-        }
-
-        if ($OpenIndex -lt 0) {
-            continue
-        }
-
-        $Depth = 1
-        $CloseIndex = -1
-        for ($Probe = $OpenIndex + 1; $Probe -lt $Tokens.Count; $Probe++) {
-            if ($Tokens[$Probe].Text -ceq '{') {
-                $Depth++
-            }
-            elseif ($Tokens[$Probe].Text -ceq '}') {
-                $Depth--
-                if ($Depth -eq 0) {
-                    $CloseIndex = $Probe
-                    break
-                }
-            }
-        }
-
-        if ($CloseIndex -lt 0) {
-            throw "unterminated function body for $Name at offset $($Tokens[$Index].Offset)"
-        }
-
-        $Definitions.Add([pscustomobject]@{
-            NameTokenIndex = $Index
-            OpenTokenIndex = $OpenIndex
-            CloseTokenIndex = $CloseIndex
-        })
-        $Index = $CloseIndex
-    }
-
-    return $Definitions.ToArray()
-}
-
-function Find-Calls {
-    param(
-        [Parameter(Mandatory = $true)]
-        [object[]]$Tokens,
-
-        [Parameter(Mandatory = $true)]
-        [int]$StartIndex,
-
-        [Parameter(Mandatory = $true)]
-        [int]$EndIndex,
-
-        [Parameter(Mandatory = $true)]
-        [string]$Name
-    )
-
-    $Calls = [System.Collections.Generic.List[int]]::new()
-    for ($Index = $StartIndex; $Index + 1 -le $EndIndex; $Index++) {
-        if (
-            $Tokens[$Index].Kind -ceq 'ident' -and
-            $Tokens[$Index].Text -ceq $Name -and
-            $Tokens[$Index + 1].Text -ceq '('
-        ) {
-            $Calls.Add($Index)
-        }
-    }
-
-    return $Calls.ToArray()
+    return (-join $Chars)
 }
 
 $Root = (Resolve-Path -LiteralPath $ExtractRoot -ErrorAction Stop).Path
@@ -374,18 +249,47 @@ if ($Rows.Count -eq 0) {
 }
 
 $Definitions = [System.Collections.Generic.List[object]]::new()
+$NamePattern = '(?<![A-Za-z0-9_])COCCompile\s*\('
+
 foreach ($Row in $Rows) {
     $FileBytes = [System.IO.File]::ReadAllBytes($Row.FullPath)
     $Text = [System.Text.Encoding]::Latin1.GetString($FileBytes)
-    $Tokens = @(Get-CodeTokens -Text $Text)
+    $Masked = Mask-NonCode $Text
 
-    foreach ($Definition in (Find-FunctionDefinitions -Tokens $Tokens -Name 'COCCompile')) {
+    foreach ($NameMatch in [regex]::Matches($Masked, $NamePattern, $RegexOptions)) {
+        $Probe = $NameMatch.Index + $NameMatch.Length
+        while ($Probe -lt $Masked.Length -and $Masked[$Probe] -ne '{' -and $Masked[$Probe] -ne ';') {
+            $Probe++
+        }
+        if ($Probe -ge $Masked.Length -or $Masked[$Probe] -eq ';') {
+            continue
+        }
+
+        $Depth = 1
+        $Close = -1
+        for ($Cursor = $Probe + 1; $Cursor -lt $Masked.Length; $Cursor++) {
+            if ($Masked[$Cursor] -eq '{') {
+                $Depth++
+            }
+            elseif ($Masked[$Cursor] -eq '}') {
+                $Depth--
+                if ($Depth -eq 0) {
+                    $Close = $Cursor
+                    break
+                }
+            }
+        }
+        if ($Close -lt 0) {
+            throw "unterminated COCCompile body in $($Row.RelativePath)"
+        }
+
         $Definitions.Add([pscustomobject]@{
             Row = $Row
-            FileBytes = $FileBytes
             Text = $Text
-            Tokens = $Tokens
-            Definition = $Definition
+            Masked = $Masked
+            NameOffset = $NameMatch.Index
+            OpenOffset = $Probe
+            CloseOffset = $Close
         })
     }
 }
@@ -394,91 +298,71 @@ if ($Definitions.Count -ne 1) {
     throw "expected one COCCompile definition in rare compiler corpus; found=$($Definitions.Count)"
 }
 
-$Match = $Definitions[0]
-$Tokens = $Match.Tokens
-$Definition = $Match.Definition
-$FunctionStartIndex = $Definition.NameTokenIndex
-$FunctionOpenIndex = $Definition.OpenTokenIndex
-$FunctionCloseIndex = $Definition.CloseTokenIndex
-
-$Pass6Calls = @(
-    Find-Calls `
-        -Tokens $Tokens `
-        -StartIndex ($FunctionOpenIndex + 1) `
-        -EndIndex ($FunctionCloseIndex - 1) `
-        -Name 'OptPass6'
+$Definition = $Definitions[0]
+$BodyLength = $Definition.CloseOffset - $Definition.OpenOffset + 1
+$BodyMasked = $Definition.Masked.Substring($Definition.OpenOffset, $BodyLength)
+$Pass6Matches = [regex]::Matches(
+    $BodyMasked,
+    '(?<![A-Za-z0-9_])OptPass6\s*\(',
+    $RegexOptions
 )
-$Pass789Calls = @(
-    Find-Calls `
-        -Tokens $Tokens `
-        -StartIndex ($FunctionOpenIndex + 1) `
-        -EndIndex ($FunctionCloseIndex - 1) `
-        -Name 'OptPass789A'
+$Pass789Matches = [regex]::Matches(
+    $BodyMasked,
+    '(?<![A-Za-z0-9_])OptPass789A\s*\(',
+    $RegexOptions
 )
 
-if ($Pass6Calls.Count -ne 1) {
-    throw "expected one OptPass6 call in COCCompile; found=$($Pass6Calls.Count)"
+if ($Pass6Matches.Count -ne 1) {
+    throw "expected one OptPass6 call in COCCompile; found=$($Pass6Matches.Count)"
 }
-if ($Pass789Calls.Count -eq 0) {
+if ($Pass789Matches.Count -eq 0) {
     throw 'OptPass789A call not found in COCCompile'
 }
 
-$Pass6TokenIndex = [int]$Pass6Calls[0]
-$FirstPass789TokenIndex = [int]($Pass789Calls | Sort-Object | Select-Object -First 1)
-if ($Pass6TokenIndex -ge $FirstPass789TokenIndex) {
+$Pass6Offset = $Definition.OpenOffset + $Pass6Matches[0].Index
+$Pass789Offset = $Definition.OpenOffset + $Pass789Matches[0].Index
+if ($Pass6Offset -ge $Pass789Offset) {
     throw 'compiler pass order mismatch: OptPass6 is not before OptPass789A'
 }
 
+$OpenParen = $Definition.Masked.IndexOf('(', $Pass6Offset)
 $ParenDepth = 0
-$SawOpenParen = $false
-$Pass6EndTokenIndex = -1
-for ($Index = $Pass6TokenIndex + 1; $Index -lt $FirstPass789TokenIndex; $Index++) {
-    switch ($Tokens[$Index].Text) {
-        '(' {
-            $ParenDepth++
-            $SawOpenParen = $true
-        }
-        ')' {
-            $ParenDepth--
-            if ($ParenDepth -lt 0) {
-                throw 'OptPass6 call has invalid parenthesis depth'
-            }
-        }
-        ';' {
-            if ($SawOpenParen -and $ParenDepth -eq 0) {
-                $Pass6EndTokenIndex = $Index
-                break
-            }
+$CloseParen = -1
+for ($Index = $OpenParen; $Index -lt $Pass789Offset; $Index++) {
+    if ($Definition.Masked[$Index] -eq '(') {
+        $ParenDepth++
+    }
+    elseif ($Definition.Masked[$Index] -eq ')') {
+        $ParenDepth--
+        if ($ParenDepth -eq 0) {
+            $CloseParen = $Index
+            break
         }
     }
-    if ($Pass6EndTokenIndex -ge 0) {
-        break
-    }
 }
-if ($Pass6EndTokenIndex -lt 0) {
-    throw 'unable to find OptPass6 statement end before OptPass789A'
+if ($OpenParen -lt 0 -or $CloseParen -lt 0) {
+    throw 'unable to close OptPass6 call before OptPass789A'
 }
 
-$FunctionStartOffset = [int]$Tokens[$FunctionStartIndex].Offset
-$FunctionCloseOffset = [int]$Tokens[$FunctionCloseIndex].Offset
-$Pass6Offset = [int]$Tokens[$Pass6TokenIndex].Offset
-$Pass6EndOffset = [int]$Tokens[$Pass6EndTokenIndex].Offset
-$Pass789Offset = [int]$Tokens[$FirstPass789TokenIndex].Offset
+$Pass6End = $CloseParen + 1
+while ($Pass6End -lt $Pass789Offset -and [char]::IsWhiteSpace($Definition.Masked[$Pass6End])) {
+    $Pass6End++
+}
+if ($Pass6End -ge $Pass789Offset -or $Definition.Masked[$Pass6End] -ne ';') {
+    throw 'OptPass6 call is not followed by a semicolon before OptPass789A'
+}
 
-$FunctionLength = $FunctionCloseOffset - $FunctionStartOffset + 1
-$FunctionText = $Match.Text.Substring($FunctionStartOffset, $FunctionLength)
-$FunctionHash = Get-Sha256Hex -Bytes ([System.Text.Encoding]::Latin1.GetBytes($FunctionText))
+$FunctionLength = $Definition.CloseOffset - $Definition.NameOffset + 1
+$FunctionText = $Definition.Text.Substring($Definition.NameOffset, $FunctionLength)
+$FunctionHash = Get-Sha256Hex ([System.Text.Encoding]::Latin1.GetBytes($FunctionText))
 
-$FunctionStartLine = Get-LineNumber -Text $Match.Text -Offset $FunctionStartOffset
-$FunctionEndLine = Get-LineNumber -Text $Match.Text -Offset $FunctionCloseOffset
-$Pass6Line = Get-LineNumber -Text $Match.Text -Offset $Pass6Offset
-$Pass789Line = Get-LineNumber -Text $Match.Text -Offset $Pass789Offset
-$SeamLine = Get-LineNumber -Text $Match.Text -Offset ($Pass6EndOffset + 1)
+$FunctionStartLine = Get-LineNumber $Definition.Text $Definition.NameOffset
+$FunctionEndLine = Get-LineNumber $Definition.Text $Definition.CloseOffset
+$Pass6Line = Get-LineNumber $Definition.Text $Pass6Offset
+$Pass789Line = Get-LineNumber $Definition.Text $Pass789Offset
+$SeamLine = Get-LineNumber $Definition.Text ($Pass6End + 1)
 
-$SourceLines = [System.Text.RegularExpressions.Regex]::Split(
-    $Match.Text,
-    "\r\n|\n|\r"
-)
+$SourceLines = [regex]::Split($Definition.Text, "\r\n|\n|\r")
 $ContextStart = [Math]::Max(1, $Pass6Line - 3)
 $ContextEnd = [Math]::Min($SourceLines.Length, $Pass789Line + 3)
 
@@ -495,9 +379,9 @@ foreach ($Line in @(
     "compiler_files_verified`t$($Rows.Count)",
     '',
     'SOURCE',
-    "path`t$($Match.Row.RelativePath)",
-    "bytes`t$($Match.Row.Bytes)",
-    "sha256`t$($Match.Row.SHA256)",
+    "path`t$($Definition.Row.RelativePath)",
+    "bytes`t$($Definition.Row.Bytes)",
+    "sha256`t$($Definition.Row.SHA256)",
     "function`tCOCCompile",
     "function_start_line`t$FunctionStartLine",
     "function_end_line`t$FunctionEndLine",
@@ -506,14 +390,14 @@ foreach ($Line in @(
     'ORDER',
     "OptPass6_line`t$Pass6Line",
     "OptPass6_offset`t$Pass6Offset",
-    "OptPass6_statement_end`t$Pass6EndOffset",
+    "OptPass6_statement_end`t$Pass6End",
     "OptPass789A_first_line`t$Pass789Line",
     "OptPass789A_first_offset`t$Pass789Offset",
-    "OptPass789A_call_count`t$($Pass789Calls.Count)",
+    "OptPass789A_call_count`t$($Pass789Matches.Count)",
     "order_verdict`tPASS6-BEFORE-789A",
     '',
     'CANDIDATE SEAM',
-    "after_OptPass6_statement_offset`t$($Pass6EndOffset + 1)",
+    "after_OptPass6_statement_offset`t$($Pass6End + 1)",
     "after_OptPass6_statement_line`t$SeamLine",
     "before_first_OptPass789A_offset`t$Pass789Offset",
     "authorization`tNOT-AUTHORIZED",
@@ -555,8 +439,8 @@ $ReportHash = (Get-FileHash -LiteralPath $Output -Algorithm SHA256).Hash
 Write-Host "COMPILER FILES: $($Rows.Count)/$($Rows.Count)"
 Write-Host 'COCCOMPILE:     UNIQUE'
 Write-Host 'PASS ORDER:     PASS6-BEFORE-789A'
-Write-Host "SOURCE:         $($Match.Row.RelativePath)"
-Write-Host "SOURCE SHA256:  $($Match.Row.SHA256)"
+Write-Host "SOURCE:         $($Definition.Row.RelativePath)"
+Write-Host "SOURCE SHA256:  $($Definition.Row.SHA256)"
 Write-Host "FUNCTION SHA256 $FunctionHash"
 Write-Host "REPORT:         $Output"
 Write-Host "REPORT SHA256:  $ReportHash"
