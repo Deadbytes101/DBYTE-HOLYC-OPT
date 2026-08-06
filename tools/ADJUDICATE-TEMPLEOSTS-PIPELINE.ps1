@@ -161,10 +161,12 @@ function Mask-NonCode([string]$Text) {
 
 function Get-FunctionExtents([string]$Masked) {
     $Results = [System.Collections.Generic.List[object]]::new()
+    $SeenOffsets = [System.Collections.Generic.HashSet[int]]::new()
 
     foreach ($Match in [regex]::Matches($Masked, $FunctionPattern, $RegexOptions)) {
         $Name = $Match.Groups[1].Value
-        if ($ControlNames.Contains($Name)) {
+        $NameOffset = $Match.Groups[1].Index
+        if ($ControlNames.Contains($Name) -or -not $SeenOffsets.Add($NameOffset)) {
             continue
         }
 
@@ -214,12 +216,12 @@ function Get-FunctionExtents([string]$Masked) {
             }
         }
         if ($CloseBrace -lt 0) {
-            throw "unterminated function body: $Name offset=$($Match.Index)"
+            throw "unterminated function body: $Name offset=$NameOffset"
         }
 
         $Results.Add([pscustomobject]@{
             Name = $Name
-            NameOffset = $Match.Groups[1].Index
+            NameOffset = $NameOffset
             OpenBrace = $Probe
             CloseBrace = $CloseBrace
         })
@@ -268,9 +270,12 @@ foreach ($RequiredLine in @(
     }
 }
 
+$ExpandedPath = [System.IO.Path]::GetFullPath($Expanded)
 $DiscoveryLines = [System.IO.File]::ReadAllLines($Discovery)
 foreach ($RequiredLine in @(
     'TEMPLEOSTS 1.10 COMPILER DISCOVERY',
+    "expanded_root`t$ExpandedPath",
+    "expanded_manifest`t$Manifest",
     "COMPILER STATUS`tUNRESOLVED",
     "SEAM STATUS`tUNRESOLVED",
     "PATCH STATUS`tNOT-AUTHORIZED"
@@ -288,7 +293,6 @@ if ($ManifestLines[$SectionIndex + 1] -cne "path`tbytes`tSHA256") {
     throw 'expanded manifest file header mismatch'
 }
 
-$ExpandedPath = [System.IO.Path]::GetFullPath($Expanded)
 $ExpandedPrefix = $ExpandedPath.TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
 $CompilerRows = [System.Collections.Generic.List[object]]::new()
 $SeenPaths = [System.Collections.Generic.HashSet[string]]::new(
@@ -356,8 +360,12 @@ foreach ($RequiredPath in @(
     'Compiler/CmpMain.CPP',
     'Compiler/OptPass6.CPP'
 )) {
-    if (-not @($CompilerRows | Where-Object { $_.RelativePath -ceq $RequiredPath }).Count) {
-        throw "observed compiler candidate missing from manifest: $RequiredPath"
+    $RequiredCount = @(
+        $CompilerRows |
+            Where-Object { $_.RelativePath -ceq $RequiredPath }
+    ).Count
+    if ($RequiredCount -ne 1) {
+        throw "observed compiler candidate count mismatch: path=$RequiredPath count=$RequiredCount"
     }
 }
 
@@ -366,7 +374,8 @@ $CompilerSetLines = @(
         "$($Row.RelativePath)`t$($Row.Bytes)`t$($Row.SHA256)"
     }
 )
-$CompilerSetHash = Get-Sha256Hex $Latin1.GetBytes(($CompilerSetLines -join "`n") + "`n")
+$CompilerSetBytes = $Latin1.GetBytes(($CompilerSetLines -join "`n") + "`n")
+$CompilerSetHash = Get-Sha256Hex $CompilerSetBytes
 $DiscoveryHash = (Get-FileHash -LiteralPath $Discovery -Algorithm SHA256).Hash
 
 $PassDefinitions = [System.Collections.Generic.List[object]]::new()
@@ -383,17 +392,21 @@ foreach ($Row in $CompilerRows) {
     $Masked = Mask-NonCode $Text
 
     foreach ($Function in (Get-FunctionExtents $Masked)) {
-        $Length = $Function.CloseBrace - $Function.NameOffset + 1
-        $FunctionText = $Text.Substring($Function.NameOffset, $Length)
-        $FunctionMasked = $Masked.Substring($Function.NameOffset, $Length)
-        $FunctionHash = Get-Sha256Hex $Latin1.GetBytes($FunctionText)
+        $FunctionLength = $Function.CloseBrace - $Function.NameOffset + 1
+        $FunctionText = $Text.Substring($Function.NameOffset, $FunctionLength)
+        $FunctionBytes = $Latin1.GetBytes($FunctionText)
+        $FunctionHash = Get-Sha256Hex $FunctionBytes
         $StartLine = Get-LineNumber $Text $Function.NameOffset
         $EndLine = Get-LineNumber $Text $Function.CloseBrace
-        $IcCount = Count-Ordinal $FunctionMasked 'CIntermediateCode'
+
+        $BodyStart = $Function.OpenBrace + 1
+        $BodyLength = $Function.CloseBrace - $BodyStart
+        $BodyMasked = $Masked.Substring($BodyStart, $BodyLength)
+        $IcCount = Count-Ordinal $BodyMasked 'CIntermediateCode'
 
         $PassCalls = [System.Collections.Generic.List[object]]::new()
-        foreach ($Match in [regex]::Matches($FunctionMasked, $PassPattern, $RegexOptions)) {
-            $AbsoluteOffset = $Function.NameOffset + $Match.Groups[1].Index
+        foreach ($Match in [regex]::Matches($BodyMasked, $PassPattern, $RegexOptions)) {
+            $AbsoluteOffset = $BodyStart + $Match.Groups[1].Index
             $PassCalls.Add([pscustomobject]@{
                 Name = $Match.Groups[1].Value
                 Offset = $AbsoluteOffset
@@ -433,7 +446,11 @@ foreach ($Row in $CompilerRows) {
         })
 
         if ($PassCalls.Count -ge 2) {
-            $UniqueCalls = @($PassCalls | Select-Object -ExpandProperty Name -Unique).Count
+            $UniqueCalls = @(
+                $PassCalls |
+                    Select-Object -ExpandProperty Name |
+                    Sort-Object -Unique
+            ).Count
             $Score = $PassCalls.Count * 100 + $UniqueCalls * 20 + [Math]::Min($IcCount, 50)
             if ($Row.RelativePath -ceq 'Compiler/CmpMain.CPP') {
                 $Score += 50
