@@ -13,9 +13,6 @@ AUTHORITY
 Terry A. Davis-authored source and matching historical packages are the
 semantic authority.
 
-DBYTE-HOLYC-TOOLS is read-only resource and extraction infrastructure.  It is
-not linked into the compiler.
-
 FIRST TARGET
 
   artifact  TempleOSTS.iso
@@ -25,12 +22,12 @@ FIRST TARGET
 
 SOURCE LAYERS
 
-  raw       original ISO and archive evidence
+  raw       original archive containers and identity evidence
   expanded  exact historical file contents and patch authority
   holy      normalized navigation only
 
-The expanded evidence tree is immutable.  Every authorized patch is installed
-into a separate manifest-verified working tree.
+The evidence tree is immutable.  Authorized changes exist only in a separate
+manifest-verified workspace.
 
 REJECTED TARGETS
 
@@ -41,126 +38,133 @@ REJECTED TARGETS
   reconstructed or reformatted source
   LLVM or transpiler paths
 
-SEALED PIPELINE
+SEALED OPTIMIZER BOUNDARY
 
-  file      Compiler/ICLCC.CPP
-  function  LCCCompile
+  pipeline owner
+    Compiler/ICLCC.CPP::LCCCompile
 
-  OptPass012
-  OptPass012
-  OptPass3
-  OptPass4
-  OptPass5
-  OptPass6
-  jump-table label forwarding through OptLabelFwd
-  OptPass789 sizing until stable
-  AOT or JIT allocation
-  OptPass789 final emission
+  insertion seam
+    after  LCCHeaderPut(lx,7,FALSE);
+    before code_size=OptPass789(lx,fun_class,reg_offsets,NULL,NULL);
 
-Compiler/CmpExts.CPP is an extern declaration surface and not the pipeline
-owner.
+  installed patch
+    if (lx->pass!=7)
+      LexExcept(lx,"ST_OPT_INTERNAL_ERROR");
 
-SEALED PASS CONTRACTS
-
-LCCHeaderPut preserves the existing trace boundary and always writes the
-supplied pass value into lx->pass.
-
-OptPass6 mutates the existing intermediate-code chain in place and finalizes the
-displayed register and clobber state used by following backend work.
-
-OptPass789 uses pass 7 for first-time finalization and sizing, pass 8 for
-repeated sizing until stable, and pass 9 for final emission.
-
-SEALED INSERTION SEAM
-
-  after
-    LCCHeaderPut(lx,7,FALSE);
-
-  before
-    code_size=OptPass789(lx,fun_class,reg_offsets,NULL,NULL);
-
-  original Compiler/ICLCC.CPP lines 410 and 411
-
-FIRST PATCH
-
-Installed only:
-
-  if (lx->pass!=7)
-    LexExcept(lx,"ST_OPT_INTERNAL_ERROR");
-
-This is a no-rewrite pass-state assertion.  It performs no valid-path write and
-does not touch intermediate code.
+The patch reads pass state and performs no valid-path write.  No optimizer
+transformation is installed or authorized.
 
 OBSERVED WORKSPACE
 
-  work root
+  root
     D:\TECHNICAL\DBYTE-HOLYC-OPT-WORK\templeosts-1.10-no-rewrite
 
-  copied manifest files          1057/1057
-  changed workspace files        1
-  changed path                   Compiler/ICLCC.CPP
-
-  patched ICLCC SHA256
+  files                 1057/1057
+  changed files         1
+  changed path          Compiler/ICLCC.CPP
+  candidate bytes       10527
+  candidate SHA256
     DB1C75A5EE71B07ADAEC32E984146602E73D9A0D606E2B76B8CCCC624E0CDCB8
 
-  install report SHA256
-    59B0BB29AA5C088114E38FE27FCF5CB5E2D3F59120CD6FD2678DF9D566C75E32
+SEALED COMPILER BUILD ROUTE
 
-  optimizer transformations      NONE
+Exact guest working directory:
+  /Compiler
+
+Exact compiler-only invocation:
+
+  Cd("/Compiler");
+  if (Cmp("Compiler","Compiler",,':'))
+    throw;
+
+Resolved files:
+
+  input     /Compiler/Compiler.PRJ.Z
+  map       /Compiler/Compiler.MAP.Z
+  binary    /Compiler/Compiler.BIN.Z
+
+MakeAll builds the compiler and then the kernel.  MakeOSPrtBootInstall calls
+MakeAll and then performs boot installation.  Neither broader route is
+authorized for the first no-rewrite compiler proof.
+
+SEALED WRITE BOUNDARY
+
+Observed Cmp caller sequence:
+
+  compile and link project
+  write Compiler.MAP.Z
+  construct binary and checksum
+  write Compiler.BIN.Z
+  return error count
+
+The displayed route contains no temporary output name, backup copy,
+rename-based commit, or explicit rollback.  Underlying filesystem atomicity is
+not inferred.
+
+SEALED LOAD BOUNDARY
+
+Kernel boot loads:
+
+  Cd("/Compiler");
+  Load("Compiler",LDF_SILENT);
+
+Load resolves Compiler.BIN.Z, checks module alignment and TEMPLEOS_XSUM, and
+executes both loader passes.
+
+Adam package initialization later loads the map through:
+
+  MapFileLoad("::/Compiler/Compiler");
+
+Compiler.MAP.Z is mapping data and is not the boot compiler module.
 
 CURRENT STATUS
 
   exact ISO identity                  SEALED
   expanded manifest                   SEALED
   exact Compiler/ set                 SEALED
-  LCCCompile pipeline ownership       SEALED
-  executable pass order               SEALED
-  LCCHeaderPut boundary contract      SEALED
-  OptPass6 boundary output            SEALED
-  OptPass789 entry and convergence    SEALED
-  exact insertion seam                SEALED
-  no-rewrite assertion                INSTALLED
-  exact workspace                     OBSERVED
-  optimizer transformation            DENIED
-  exact compiler build route          UNRESOLVED
+  optimizer pipeline                  SEALED
+  insertion seam                      SEALED
+  no-rewrite assertion                INSTALLED / OBSERVED
+  compiler-only build route           SEALED
+  compiler boot load route            SEALED
+  compiler map load route             SEALED
+  host build guard                    NOT OBSERVED
+  guest delivery route                UNRESOLVED
+  guest backup and restore            UNRESOLVED
+  compiler build execution            NOT AUTHORIZED
   compiler rebuild                    NOT OBSERVED
   guest semantic differential         NOT OBSERVED
+  optimizer transformation            DENIED
 
 ALLOWED NEXT WORK
 
-  preserve the installed workspace
-  display exact Compiler/Compiler.PRJ
-  display exact Compiler/CmpMain.CPP
-  locate raw exact references to Compiler.PRJ, Compiler.BIN, and Compiler.MAP
-  adjudicate the rare 1.10 build and loader route
-  run no build command until that route is sealed
+  prepare a host-only guard snapshot
+  preserve exact raw Compiler.PRJ.Z, Compiler.BIN.Z, Compiler.MAP.Z, and ICLCC.CPP.Z
+  preserve matching expanded baselines and candidate ICLCC.CPP
+  observe a host-to-guest delivery route
+  observe guest baseline copies and a restore procedure
+  do not invoke Cmp until delivery and restore are proved
 
 NOT AUTHORIZED
 
-  guessing a build command from a later release
-  changing another workspace file
-  replacing Compiler.BIN before the build route is proved
+  MakeAll
+  MakeOSPrtBootInstall
+  guest Cmp execution
+  replacing guest Compiler.BIN.Z
+  replacing guest Compiler.MAP.Z
+  booting from candidate output
+  changing another workspace source file
   any intermediate-code transformation
-  pass-number changes
-  jump-table forwarding changes
-  register-mask contract changes
+  pass-number or jump-table changes
   OptPass789 convergence changes
-  JIT or AOT allocation or emission changes
-  memory load elimination
-  alias speculation
-  call motion
-  floating-point reassociation
-  loop unrolling
-  vectorization
-  function inlining
-  register allocator replacement
-  fix-up rewriting
-  assembly rewriting
+  JIT or AOT backend changes
 
 RULE
 
-WORKSPACE INSTALL IS NOT A BUILD.
-NO EXACT BUILD ROUTE, NO BUILD COMMAND.
+EXACT BUILD ROUTE IS NOT BUILD AUTHORIZATION.
+HOST RECOVERY FILES ARE NOT A GUEST RESTORE PROOF.
+NO OBSERVED DELIVERY, NO GUEST SOURCE CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
 NO OBSERVED BUILD, NO COMPILER CLAIM.
 NO GUEST DIFFERENTIAL, NO SEMANTIC CLAIM.
 UNKNOWN MEANS DO NOT TRANSFORM.
