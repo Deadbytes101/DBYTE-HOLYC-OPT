@@ -57,6 +57,7 @@ CURRENT PIPELINE
     -> PINNED DBYTE-HOLYC-TOOLS HOLYARCHIVE
     -> RAW AND EXPANDED HISTORICAL BYTES
     -> RARE COMPILER FILE MANIFEST
+    -> BOUNDED SEAM INSPECTION
     -> MANUAL SEAM ADJUDICATION
     -> NO-REWRITE VERIFIER
     -> DIFFERENTIAL HARNESS
@@ -70,8 +71,20 @@ COMMANDS
   .\tools\SEAL-TEMPLEOSTS-COMPILER.ps1 `
       -HolyTools D:\src\DBYTE-HOLYC-TOOLS `
       -IsoPath D:\archive\TempleOSTS.iso `
-      -ExtractRoot D:\evidence\templeosts-1.10-expanded `
+      -ExtractRoot D:\evidence\templeosts-1.10-internal `
       -ManifestPath D:\evidence\templeosts-compiler-manifest.txt
+
+  .\tools\INSPECT-TEMPLEOSTS-SEAM.ps1 `
+      -ExtractRoot D:\evidence\templeosts-1.10-internal `
+      -ManifestPath D:\evidence\templeosts-compiler-manifest.txt `
+      -OutPath D:\evidence\templeosts-compiler-seam.txt
+
+The inspector verifies every compiler file against the sealed manifest before
+reading it.  It tokenizes the expanded historical bytes directly, excludes
+comments and quoted literals from the code stream, requires one COCCompile
+definition, and proves only whether OptPass6 occurs before OptPass789A.
+
+A PASS report does not authorize a patch.
 
 CURRENT EVIDENCE
 
@@ -79,6 +92,7 @@ CURRENT EVIDENCE
   rare ISO extraction was previously observed on Windows
   resource commit and rare identity verifier present
   rare corpus sealer present
+  bounded rare seam inspector present
   semantic observation contract present
   baseline/candidate judge present
   common 5.03 patch prototype removed
