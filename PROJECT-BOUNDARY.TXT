@@ -13,46 +13,82 @@ AUTHORITY
 Terry A. Davis-authored source and matching historical packages are the
 semantic authority.
 
-DBYTE-HOLYC-TOOLS is the project resource layer for source maps, compiler
-contracts, codegen archaeology, package identities, and accepted evidence
-boundaries.  It is read-only input to this project.  It is not copied into this
-repository and it is not linked as a runtime dependency.
+DBYTE-HOLYC-TOOLS is the read-only resource layer for exact package identity,
+archive extraction, source maps, compiler archaeology, and accepted evidence
+boundaries.  It is not linked into the compiler.
 
-FIRST SOURCE TARGET
+RARE-CORPUS RULE
 
-Preservation mirror:
-  cia-foundation/TempleOS
+The optimizer target must come from a byte-identified original Terry package.
+A common public source mirror, reconstruction, normalized copy, later fork, or
+community port is not an optimizer target.
 
-Pinned mirror commit:
-  c26482bb6ad3f80106d28504ec5db3c6a360732c
+FIRST TARGET ARTIFACT
 
-Candidate compiler seam:
-  COCCompile
-  after OptPass6(cc)
-  before label forwarding and OptPass789A
+Artifact:
+  TempleOSTS.iso
 
-The seam is not sealed until a matching Terry-authored source package is
-byte-identified and a patched compiler rebuild is observed.
+Classification:
+  TempleOS 1.10 T.S. internal distro
+
+Bytes:
+  30558208
+
+SHA256:
+  DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+Resource extractor:
+  DBYTE-HOLYC-TOOLS holyarchive
+
+Accepted source layers:
+  raw       original ISO file bytes and CArc payloads
+  expanded  exact expanded historical file contents
+
+Navigation-only layer:
+  holy      extension-normalized copy for indexing
+
+The normalized holy tree may locate source.  Patches and semantic comparison
+must be derived from expanded historical bytes, never from the normalized copy.
+
+REJECTED AS TARGETS
+
+  cia-foundation/TempleOS source tree
+  DBYTE-HOLYC-TOOLS/templeos common source tree
+  TempleOSCD public standard distro
+  ZealOS or ZealC
+  HolyC ports
+  LLVM frontends
+  reconstructed or reformatted source
+
+CURRENT SEAM STATUS
+
+The later TempleOS 5.03 source shows a candidate seam after OptPass6 and before
+OptPass789A.  That is archaeology only.  It is not authorization to patch the
+1.10 internal compiler.
+
+The real 1.10 seam must be rediscovered in the expanded TempleOSTS compiler
+bytes and sealed by path, byte count, and SHA256 before code is written.
 
 MODEL
 
-Operate directly on CIntermediateCode.
-Build temporary analysis tables only when needed.
-Discard them after the function is handled.
-Keep Terry's parser, intermediate code, register model, fix-ups, JIT path,
-AOT path, and x86-64 backend.
+Operate directly on the original compiler intermediate code found in the rare
+corpus.  Build temporary analysis tables only when needed.  Discard them after
+the function is handled.  Preserve the original parser, intermediate code,
+register model, fix-ups, JIT path, AOT path, and x86-64 backend.
 
 ALLOWED FIRST WORK
 
-  verify queue and intermediate-code invariants
-  identify basic-block boundaries
-  build predecessor and successor tables
-  mark reachable code
-  prove one integer constant branch
-  remove only the branch arm proved unreachable
+  verify exact TempleOSTS ISO identity
+  extract with pinned DBYTE-HOLYC-TOOLS holyarchive
+  inventory original compiler files
+  hash every compiler source file
+  locate the original compile pipeline
+  prove the insertion seam from rare source bytes
+  create a no-rewrite verifier only after the seam is sealed
 
 NOT YET AUTHORIZED
 
+  patching common mirror source
   memory load elimination
   alias speculation
   call motion
@@ -64,18 +100,10 @@ NOT YET AUTHORIZED
   fix-up rewriting
   assembly rewriting
 
-BARRIERS
-
-  inline assembly
-  unknown or indirect call
-  unknown memory write
-  current-RIP expression
-  exported or patched address
-  relocation uncertainty
-  missing alias proof
-
 RULE
 
+NO RARE BYTE IDENTITY, NO TARGET.
+NO SEALED SEAM, NO PATCH.
 UNKNOWN MEANS DO NOT TRANSFORM.
 A SMALLER BINARY IS NOT PROOF.
 A FASTER RUN IS NOT PROOF.
