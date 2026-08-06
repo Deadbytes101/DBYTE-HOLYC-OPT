@@ -1,0 +1,29 @@
+DBYTE-HOLYC-TOOLS RESOURCE MANIFEST
+
+REPOSITORY	Deadbytes101/DBYTE-HOLYC-TOOLS
+COMMIT	37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
+
+BLOB	README.md	1747a22875a2a5bf98060133d398d6c12dd5650d
+BLOB	Cargo.toml	967b5f2d64045dede4e0075abbd0c9a003c6e663
+BLOB	PROJECT-CLOSURE.txt	6b60a22b63ef188caae5cb49937c30185d559636
+BLOB	docs/LOSETHOS-CODEGEN-MILESTONE.md	9a77331b1a2f0df6a97c8c39bfb29624afee8edb
+BLOB	scripts/run-losethos-deep-archaeology.ps1	71c3e7d22e39cef24a78f75f4f917eeb53f2e3d0
+BLOB	crates/holylex/lib.rs	4ac74cc7f87020c24b3935dbb4a96bb0b7310c0c
+BLOB	crates/holyindex/src/lib.rs	e189c9ebf4ce9ad8d9d5c237b81c010252386722
+
+USE
+
+README.md
+  resource architecture and trust boundary
+
+PROJECT-CLOSURE.txt
+  accepted evidence limits and unresolved claims
+
+docs/LOSETHOS-CODEGEN-MILESTONE.md
+  code-template, table, and fix-up archaeology
+
+scripts/run-losethos-deep-archaeology.ps1
+  reproducible report entrypoint
+
+holylex and holyindex
+  read-only navigation support only; not a compiler frontend dependency
