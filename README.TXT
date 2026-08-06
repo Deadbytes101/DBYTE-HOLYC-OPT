@@ -76,9 +76,19 @@ for the sibling resource repository:
 
   D:\TECHNICAL\DBYTE-HOLYC-TOOLS
 
-It searches the repository parent, Downloads, Desktop, and Documents for a file
-named TempleOSTS.iso.  A candidate is accepted only when both its byte count and
-SHA256 match the internal T.S. artifact.
+ISO SELECTION
+
+The first automatic candidate is the canonical acquisition source:
+
+  DBYTE-HOLYC-TOOLS\legacy-input\templeos-v1.10\TempleOSTS.iso
+
+If that file exists, its byte count and SHA256 must match exactly.  A failed
+canonical identity stops the run; a VM baseline copy is not substituted.
+
+Only when the canonical acquisition file is absent does the runner search the
+repository parent, Downloads, Desktop, and Documents.  A discovered candidate
+is accepted only when both its byte count and SHA256 match.  Multiple exact
+non-canonical candidates require an explicit -IsoPath decision.
 
 Default evidence output is outside Git:
 
@@ -124,6 +134,7 @@ CURRENT EVIDENCE
   rare ISO extraction was previously observed on Windows
   resource commit and rare identity verifier present
   exact-input foundation runner present
+  canonical legacy-input precedence present
   rare corpus sealer present
   bounded rare seam inspector present
   semantic observation contract present
