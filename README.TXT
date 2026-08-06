@@ -3,9 +3,10 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE PIPELINE CONTEXT
+0.0.1 RARE SOURCE CONTEXT SEALED
 COMPILER DIRECTORY EXACT CANDIDATE
 RAW PIPELINE TRACE OBSERVED
+SOURCE CONTEXT SEALED
 PIPELINE CANDIDATE ONLY
 SEAM UNRESOLVED
 NO PATCH AUTHORIZED
@@ -54,7 +55,7 @@ Later TempleOS 5.03 names were used only as architecture clues.  Exact 1.10
 bytes rejected COCCompile and OptPass789A as required contracts.
 
 A partial C/C++ quote masker was also rejected after exact Compiler/ bytes
-produced an unterminated quoted-literal boundary.  The accepted tracer performs
+produced an unterminated quoted-literal boundary.  The accepted trace performs
 raw Latin-1 matching only and makes no code/non-code claim.
 
 OBSERVED CORPUS FOUNDATION
@@ -110,9 +111,26 @@ Secondary mixed-use candidate:
     OptPass789
     OptPass789
 
-The CmpExts sequence is a pipeline candidate, not yet a proved executable call
-chain.  ICLCC contains repeated occurrences and requires separate context
-adjudication.
+OBSERVED SEALED SOURCE CONTEXT
+
+  Compiler/CmpExts.CPP SHA256
+    002367120BFE4C97F8DCAAD23CE549BB407949558A0BE15076ADD4EF3AEA9CA2
+
+  Compiler/ICLCC.CPP SHA256
+    2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
+
+  pipeline context SHA256
+    D9C7C4DFB1B8F5CE78CEA0EA3C6F2B56E5274387D6CE3CE3914C2057B1760FC5
+
+  source context status          SEALED-DISPLAY
+  pipeline status                CANDIDATE-ONLY
+  seam status                    UNRESOLVED
+  patch status                   NOT AUTHORIZED
+
+The context report is now the evidence to inspect.  Console summaries prove
+identity and successful report creation, but they do not show whether each raw
+OptPass occurrence is a declaration, definition, comment, string, or executable
+call.
 
 CURRENT PIPELINE
 
@@ -130,35 +148,22 @@ CURRENT PIPELINE
     -> DIFFERENTIAL HARNESS
     -> FIRST PROVED TRANSFORMATION
 
-NEXT COMMAND
+NEXT EVIDENCE
 
-Preserve all existing evidence.  Pull the context display tool and run it once:
+Preserve every existing file.  Do not run another parser, tracer, source patch,
+or optimizer experiment before manually reviewing:
 
-  Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
-  git pull
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pipeline-context.txt
 
-  .\tools\DISPLAY-TEMPLEOSTS-PIPELINE-CONTEXT.ps1 `
-      -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
-      -ManifestPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-expanded-manifest.txt `
-      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pipeline-context.txt
+Manual review must decide, from the displayed exact source lines:
 
-The display tool:
+  which CmpExts occurrences are executable calls
+  which function owns the complete pass sequence
+  what ICLCC repeated occurrences represent
+  whether CmpExts is the real compile pipeline or only an extension path
+  whether any candidate boundary can be stated without inference
 
-  requires the observed expanded manifest SHA256
-  rechecks CmpExts.CPP and ICLCC.CPP against exact manifest bytes and hashes
-  requires the observed raw pass orders exactly
-  emits merged line-numbered context windows around every raw occurrence
-  uses no lexer, parser, comment filter, or quote filter
-  does not infer function ownership or executable calls
-  does not select an insertion seam
-  does not modify source or prior evidence
-
-Expected final status:
-
-  SOURCE CONTEXT      SEALED-DISPLAY
-  PIPELINE            CANDIDATE-ONLY
-  SEAM                UNRESOLVED
-  PATCH STATUS        NOT AUTHORIZED
+A context report is not seam authorization.
 
 CURRENT EVIDENCE
 
@@ -173,7 +178,7 @@ CURRENT EVIDENCE
   raw pipeline trace report                     PASS
   CmpExts complete pass-name sequence           OBSERVED
   ICLCC repeated pass-name sequence             OBSERVED
-  sealed source context report                  NOT YET OBSERVED
+  sealed source context report                  PASS
   rare compiler entrypoint identity             UNRESOLVED
   pass ownership and executable order           UNRESOLVED
   rare compiler insertion seam                  UNRESOLVED
