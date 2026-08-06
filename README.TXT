@@ -3,7 +3,9 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE-CORPUS FOUNDATION
+0.0.1 RARE-CORPUS DISCOVERY
+NO COMPILER FILE SELECTED
+NO SEAM SEALED
 NO PATCH AUTHORIZED
 NO REWRITE ENABLED
 NO PERFORMANCE CLAIM
@@ -26,9 +28,8 @@ DBYTE-HOLYC-TOOLS is the read-only evidence and archive resource:
   repository  Deadbytes101/DBYTE-HOLYC-TOOLS
   commit      37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
 
-It supplies exact package identity, HolyArchive extraction, compiler
-archaeology, source navigation, and accepted evidence limits.  It is not linked
-into the compiler and is not a runtime dependency.
+It supplies exact package identity and HolyArchive extraction.  It is not
+linked into the compiler and is not a runtime dependency.
 
 ONLY TARGET
 
@@ -48,128 +49,89 @@ COMMON MIRRORS ARE NOT TARGETS.
 PUBLIC STANDARD ISO IS NOT THE TARGET.
 LATER FORKS AND PORTS ARE NOT TARGETS.
 
-The later 5.03 compiler may explain architecture, but no line from that common
-source tree is accepted as a patch base for the internal 1.10 compiler.
+OBSERVED CORRECTION
+
+The later TempleOS 5.03 compiler uses names including COCCompile, OptPass6,
+OptPass789A, and CIntermediateCode.  Those names were architecture clues only.
+
+The exact TempleOSTS 1.10 expanded corpus was scanned on Windows on 2026-08-06.
+The literal COCCompile marker was not present.  Therefore the later-era seam
+names are no longer accepted as a 1.10 discovery gate.
+
+The removed seam inspector made an unproved assumption about 1.10.  It has been
+replaced by a full-corpus manifest and a read-only compiler discovery report.
 
 CURRENT PIPELINE
 
   TEMPLEOSTS.ISO EXACT IDENTITY
     -> PINNED DBYTE-HOLYC-TOOLS HOLYARCHIVE
     -> RAW AND EXPANDED HISTORICAL BYTES
-    -> RARE COMPILER FILE MANIFEST
-    -> BOUNDED SEAM INSPECTION
-    -> MANUAL SEAM ADJUDICATION
+    -> HASH EVERY EXPANDED FILE
+    -> COMPILER-LIKE PATH AND FUNCTION CATALOG
+    -> MANUAL COMPILER ADJUDICATION
+    -> MANUAL PASS AND SEAM ADJUDICATION
     -> NO-REWRITE VERIFIER
     -> DIFFERENTIAL HARNESS
     -> FIRST PROVED TRANSFORMATION
 
 PREFERRED COMMAND
 
-Run from the checked-out overheaven-foundation branch:
+The current evidence directory contains a valid extraction but no manifest.
+Preserve it and revalidate it:
 
   Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
   git pull
-  .\tools\RUN-RARE-FOUNDATION.ps1
+  .\tools\RUN-RARE-FOUNDATION.ps1 `
+      -ResumeIncompleteExtraction
 
-The runner derives this repository path from its own location.  It first looks
-for the sibling resource repository:
+The runner selects the canonical acquisition source first:
 
-  D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+  D:\TECHNICAL\DBYTE-HOLYC-TOOLS\legacy-input\templeos-v1.10\TempleOSTS.iso
 
-ISO SELECTION
-
-The first automatic candidate is the canonical acquisition source:
-
-  DBYTE-HOLYC-TOOLS\legacy-input\templeos-v1.10\TempleOSTS.iso
-
-If that file exists, its byte count and SHA256 must match exactly.  A failed
-canonical identity stops the run; a VM baseline copy is not substituted.
-
-Only when the canonical acquisition file is absent does the runner search the
-repository parent, Downloads, Desktop, and Documents.  A discovered candidate
-is accepted only when both its byte count and SHA256 match.  Multiple exact
-non-canonical candidates require an explicit -IsoPath decision.
-
-Default evidence output is outside Git:
+Default evidence output remains outside Git:
 
   D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE
 
-WINDOWS POWERSHELL
+Expected new files:
 
-The corpus tools support Windows PowerShell by using ISO-8859-1 code page 28591,
-a local expanded-path containment routine, and BitConverter SHA256 formatting.
-They do not require Encoding.Latin1, Path.GetRelativePath, or Convert.ToHexString.
+  templeosts-expanded-manifest.txt
+  templeosts-compiler-discovery.txt
 
-INCOMPLETE EXTRACTION RECOVERY
+The expanded manifest hashes every exact file.  The discovery report rechecks
+every manifest row, counts later-era anchors, and catalogs compiler-like paths
+and function names.  Candidate scores are navigation aids only.
 
-A failed post-extraction scan may leave:
-
-  templeosts-1.10-internal\   PRESENT
-  templeosts-compiler-manifest.txt   ABSENT
-
-Nothing is deleted automatically.  After reviewing that this is the observed
-state, revalidate and continue with:
-
-  .\tools\RUN-RARE-FOUNDATION.ps1 -ResumeIncompleteExtraction
-
-The resume switch does not trust the directory blindly.  It repeats resource
-and ISO identity checks, requires raw, expanded, and holy directories, scans the
-expanded corpus for all compiler markers, inventories compiler files, hashes
-them, and only then writes the manifest.
-
-If the ISO is elsewhere, give its real path:
-
-  .\tools\RUN-RARE-FOUNDATION.ps1 `
-      -IsoPath D:\actual\location\TempleOSTS.iso
-
-If DBYTE-HOLYC-TOOLS is not beside this repository, give both paths:
-
-  .\tools\RUN-RARE-FOUNDATION.ps1 `
-      -HolyTools D:\actual\location\DBYTE-HOLYC-TOOLS `
-      -IsoPath D:\actual\location\TempleOSTS.iso
+A discovery PASS does not identify the compiler or authorize a source patch.
 
 MANUAL COMMANDS
 
-  .\tools\VERIFY-HOLYC-TOOLS-RESOURCE.ps1 `
-      -Path D:\actual\location\DBYTE-HOLYC-TOOLS
-
   .\tools\SEAL-TEMPLEOSTS-COMPILER.ps1 `
-      -HolyTools D:\actual\location\DBYTE-HOLYC-TOOLS `
-      -IsoPath D:\actual\location\TempleOSTS.iso `
-      -ExtractRoot D:\actual\evidence\templeosts-1.10-internal `
-      -ManifestPath D:\actual\evidence\templeosts-compiler-manifest.txt
+      -HolyTools D:\TECHNICAL\DBYTE-HOLYC-TOOLS `
+      -IsoPath D:\TECHNICAL\DBYTE-HOLYC-TOOLS\legacy-input\templeos-v1.10\TempleOSTS.iso `
+      -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
+      -ManifestPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-expanded-manifest.txt `
+      -ResumeExistingExtraction
 
-  .\tools\INSPECT-TEMPLEOSTS-SEAM.ps1 `
-      -ExtractRoot D:\actual\evidence\templeosts-1.10-internal `
-      -ManifestPath D:\actual\evidence\templeosts-compiler-manifest.txt `
-      -OutPath D:\actual\evidence\templeosts-compiler-seam.txt
-
-The inspector verifies every compiler file against the sealed manifest before
-reading it.  It tokenizes the expanded historical bytes directly, excludes
-comments and quoted literals from the code stream, requires one COCCompile
-definition, and proves only whether OptPass6 occurs before OptPass789A.
-
-A PASS report does not authorize a patch.
+  .\tools\DISCOVER-TEMPLEOSTS-COMPILER.ps1 `
+      -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
+      -ManifestPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-expanded-manifest.txt `
+      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-discovery.txt
 
 CURRENT EVIDENCE
 
-  rare ISO identity exists in DBYTE-HOLYC-TOOLS
-  resource verification observed PASS on Windows: commit, 9/9 blobs, clean tree
-  canonical legacy-input ISO selection observed PASS
-  fresh extraction reached expanded-byte scanning
-  partial extraction preserved after Windows PowerShell API incompatibility
-  Windows PowerShell compatibility correction present
-  explicit incomplete-extraction resume gate present
-  exact-input foundation runner present
-  rare corpus sealer present
-  bounded rare seam inspector present
-  semantic observation contract present
-  baseline/candidate judge present
-  common 5.03 patch prototype removed
-  rare compiler manifest not yet observed in this project
-  rare compiler insertion seam not yet sealed
-  patched compiler rebuild not yet observed
-  guest semantic run not yet observed
+  canonical ISO identity                         PASS
+  pinned DBYTE-HOLYC-TOOLS commit               PASS
+  pinned resource blobs                         9/9 PASS
+  resource tracked tree                         CLEAN
+  HolyArchive extraction                        OBSERVED
+  expanded-byte scanning                        OBSERVED
+  COCCompile literal in exact 1.10 expanded     NOT FOUND
+  full expanded manifest                        NOT YET OBSERVED
+  compiler discovery report                     NOT YET OBSERVED
+  rare compiler identity                        UNRESOLVED
+  rare compiler insertion seam                  UNRESOLVED
+  patched compiler rebuild                      NOT OBSERVED
+  guest semantic run                            NOT OBSERVED
 
 NON-GOALS
 
@@ -186,10 +148,12 @@ NO PERFORMANCE CLAIM WITHOUT OBSERVED EVIDENCE.
 RULE
 
 NO RARE BYTE IDENTITY, NO TARGET.
+NO COMPILER IDENTITY, NO SEAM.
 NO SEALED SEAM, NO PATCH.
-A TRANSFORMATION IS NOT ACCEPTED BECAUSE IT LOOKS CORRECT.
-BASELINE AND CANDIDATE MUST PRODUCE EQUIVALENT SEMANTIC OBSERVATIONS.
-MEASUREMENTS NEVER OVERRIDE A MISMATCH.
+UNKNOWN MEANS DO NOT TRANSFORM.
+A SMALLER BINARY IS NOT PROOF.
+A FASTER RUN IS NOT PROOF.
+BASELINE AND CANDIDATE MUST AGREE.
 
 REPORTS ARE CLAIMS, NOT EVIDENCE.
 NO COSTUME RIGOR.
