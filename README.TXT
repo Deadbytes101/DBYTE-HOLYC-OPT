@@ -3,7 +3,7 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE PIPELINE TRACE
+0.0.1 RARE RAW PIPELINE TRACE
 COMPILER DIRECTORY CANDIDATE OBSERVED
 PIPELINE UNRESOLVED
 SEAM UNRESOLVED
@@ -50,7 +50,7 @@ COMMON MIRRORS ARE NOT TARGETS.
 PUBLIC STANDARD ISO IS NOT THE TARGET.
 LATER FORKS AND PORTS ARE NOT TARGETS.
 
-OBSERVED CORRECTION
+OBSERVED CORRECTIONS
 
 The later TempleOS 5.03 compiler uses names including COCCompile, OptPass6,
 OptPass789A, and CIntermediateCode.  Those names were architecture clues only.
@@ -60,6 +60,16 @@ COCCompile was absent, while OptPass6 and CIntermediateCode were present.
 Therefore later-era entrypoint and late-pass names are not accepted as 1.10
 contracts, but the original 1.10 optimizer and intermediate-code vocabulary are
 now directly observed in the rare bytes.
+
+The first pipeline tracer attempted to mask C-style comments and quoted
+literals.  Exact 1.10 Compiler/ bytes rejected that assumed quote grammar with:
+
+  unterminated quoted literal at offset 205686
+
+The failure occurred before report creation.  No source or prior evidence was
+modified.  A partial HolyC lexer is not accepted as evidence, so quote and
+comment inference was removed.  The current tracer performs raw Latin-1 text
+matching and labels every result LEXICAL-UNFILTERED.
 
 OBSERVED CORPUS FOUNDATION
 
@@ -101,8 +111,9 @@ CURRENT PIPELINE
     -> HASH ALL 1057 EXPANDED FILES
     -> DISCOVER COMPILER-LIKE PATHS AND SYMBOLS
     -> VERIFY THE EXACT Compiler/ FILE SET
-    -> TRACE OptPass* OCCURRENCES PER FILE
-    -> DISPLAY CmpMain.CPP SOURCE CONTEXT
+    -> TRACE RAW OptPass* TEXT OCCURRENCES PER FILE
+    -> DISPLAY CmpMain.CPP RAW SOURCE CONTEXT
+    -> MANUAL CODE VS NON-CODE ADJUDICATION
     -> MANUAL PIPELINE ADJUDICATION
     -> MANUAL SEAM ADJUDICATION
     -> NO-REWRITE VERIFIER
@@ -112,7 +123,7 @@ CURRENT PIPELINE
 NEXT COMMAND
 
 The manifest and discovery report already exist.  Preserve them and run only
-the read-only pipeline tracer:
+the read-only raw pipeline tracer:
 
   Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
   git pull
@@ -128,18 +139,21 @@ The tracer:
   rechecks every Compiler/ file against the expanded manifest
   requires the observed CmpMain.CPP and OptPass6.CPP candidates
   hashes the sorted exact Compiler/ file set
-  masks comments and quoted literals while preserving offsets
-  records every OptPass* occurrence by path, line, and byte offset
-  reports lexical pass order for each candidate file
-  includes line-numbered context around CmpMain.CPP pass occurrences
+  decodes exact bytes with ISO-8859-1 one byte to one character
+  records every raw OptPass* occurrence by path, line, and byte offset
+  reports raw lexical order for each candidate file
+  includes line-numbered context around CmpMain.CPP occurrences
+  explicitly allows declarations, definitions, comments, and quoted text
+  does not claim that an occurrence is executable code
   does not infer function ownership
   does not select an insertion seam
   does not modify source or prior evidence
 
 Expected final status:
 
+  SCAN MODE           RAW-TEXT-LATIN1
   COMPILER SET        EXACT-CANDIDATE
-  PIPELINE            TRACE-ONLY
+  PIPELINE            RAW-TRACE-ONLY
   SEAM                UNRESOLVED
   PATCH STATUS        NOT AUTHORIZED
 
@@ -153,7 +167,8 @@ CURRENT EVIDENCE
   full expanded manifest                        PASS
   compiler discovery report                     PASS
   Compiler/ directory candidates                OBSERVED
-  pipeline trace report                         NOT YET OBSERVED
+  C-style quote-mask assumption                 REJECTED
+  raw pipeline trace report                     NOT YET OBSERVED
   rare compiler pipeline identity               UNRESOLVED
   rare compiler insertion seam                  UNRESOLVED
   patched compiler rebuild                      NOT OBSERVED
