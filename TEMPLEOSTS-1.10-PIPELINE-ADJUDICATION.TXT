@@ -28,6 +28,9 @@ Pipeline trace SHA256:
 Pipeline context SHA256:
   D9C7C4DFB1B8F5CE78CEA0EA3C6F2B56E5274387D6CE3CE3914C2057B1760FC5
 
+Pass-boundary context SHA256:
+  D0D3EE768491C299B072BF3975BD707BA894349633E477D96670A6538E6F44F9
+
 SOURCE IDENTITIES
 
 Compiler/CmpExts.CPP
@@ -37,6 +40,12 @@ Compiler/CmpExts.CPP
 Compiler/ICLCC.CPP
   bytes   10465
   SHA256  2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
+
+Compiler/OptPass6.CPP
+  SHA256  1A960B56AB366DC821F1AE26045DC822B8FB81CCD3A653C52ECEADA689902487
+
+Compiler/OptPass789.CPP
+  SHA256  7AEB06CD2850BA6F7CDBC6B9B4076BE26EE14260388EFBD660DA6584B823667F
 
 ADJUDICATION: CmpExts.CPP
 
@@ -114,24 +123,59 @@ The insertion point is therefore not yet authorized.  Before sealing it, inspect
 the exact OptPass6 and OptPass789 definitions and preserve the LCCHeaderPut
 transition contract.
 
+OBSERVED PASS-BOUNDARY DISPLAY
+
+Host execution on 2026-08-06 re-verified the expanded manifest and exact source
+identities for ICLCC.CPP, OptPass6.CPP, and OptPass789.CPP.  It produced:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pass-boundary.txt
+
+Report SHA256:
+  D0D3EE768491C299B072BF3975BD707BA894349633E477D96670A6538E6F44F9
+
+Observed console status:
+
+  PASS CONTEXT    SEALED-DISPLAY
+  PIPELINE OWNER  LCCCompile-SEALED
+  SEAM            CANDIDATE-NOT-SEALED
+  PATCH STATUS    NOT-AUTHORIZED
+  VERDICT         PASS CONTEXT COMPLETE
+
+This proves exact source identity and deterministic report creation.  The console
+does not expose the displayed source lines, so it does not by itself establish:
+
+  the exact OptPass6 output state
+  the exact OptPass789 input assumptions
+  the OptPass789 sizing and convergence invariants
+  the LCCHeaderPut transition contract
+  a sealed insertion seam
+
+Those decisions require manual review of the pass-boundary report content.
+
 STATUS
 
   CmpExts declaration classification   SEALED
   LCCCompile pipeline ownership        SEALED
   executable pass order                SEALED
+  pass-boundary context display        SEALED-DISPLAY
   post-label-forward boundary          CANDIDATE
+  OptPass6 output contract             UNRESOLVED
+  OptPass789 input contract            UNRESOLVED
+  LCCHeaderPut transition contract     UNRESOLVED
   insertion seam                       NOT SEALED
   patch authorization                  DENIED
 
 NEXT ALLOWED WORK
 
-  display exact OptPass6.CPP definition context
-  display exact OptPass789.CPP definition context
-  adjudicate data and state contracts across the candidate boundary
+  manually review templeosts-pass-boundary.txt
+  adjudicate OptPass6 output state from exact displayed source
+  adjudicate OptPass789 input, sizing, and convergence state
+  preserve the LCCHeaderPut transition contract
   seal a no-rewrite verifier only after those contracts are understood
 
 NOT AUTHORIZED
 
+  running another parser or semantic classifier
   copying common mirror source
   creating an optimizer source patch
   inserting a new pass
