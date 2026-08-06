@@ -98,14 +98,15 @@ Expected new files:
   templeosts-compiler-discovery.txt
 
 The expanded manifest hashes every exact file.  The discovery report rechecks
-every manifest row, counts later-era anchors, and catalogs compiler-like paths
-and function names.  Candidate scores are navigation aids only.
+every manifest row, counts later-era anchors, catalogs compiler-like paths and
+function names, and prints the ten highest-scoring candidates.
 
-A discovery PASS does not identify the compiler or authorize a source patch.
+Candidate scores are navigation aids only.  A discovery PASS does not identify
+the compiler or authorize a source patch.
 
 MANUAL COMMANDS
 
-  .\tools\SEAL-TEMPLEOSTS-COMPILER.ps1 `
+  .\tools\SEAL-TEMPLEOSTS-CORPUS.ps1 `
       -HolyTools D:\TECHNICAL\DBYTE-HOLYC-TOOLS `
       -IsoPath D:\TECHNICAL\DBYTE-HOLYC-TOOLS\legacy-input\templeos-v1.10\TempleOSTS.iso `
       -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
