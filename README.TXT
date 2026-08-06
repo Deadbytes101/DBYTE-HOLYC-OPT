@@ -3,10 +3,11 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE PIPELINE OWNER SEALED
+0.0.1 RARE PASS BOUNDARY CONTEXT
 EXACT TEMPLEOSTS 1.10 CORPUS
 LCCCompile PIPELINE OWNER SEALED
 EXECUTABLE PASS ORDER SEALED
+PASS CONTEXT SEALED DISPLAY
 SEAM CANDIDATE NOT SEALED
 NO PATCH AUTHORIZED
 NO REWRITE ENABLED
@@ -83,6 +84,19 @@ Sealed pipeline context:
   Compiler/ICLCC.CPP
     SHA256    2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
 
+Sealed pass-boundary display:
+
+  SHA256      D0D3EE768491C299B072BF3975BD707BA894349633E477D96670A6538E6F44F9
+
+  Compiler/ICLCC.CPP
+    SHA256    2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
+
+  Compiler/OptPass6.CPP
+    SHA256    1A960B56AB366DC821F1AE26045DC822B8FB81CCD3A653C52ECEADA689902487
+
+  Compiler/OptPass789.CPP
+    SHA256    7AEB06CD2850BA6F7CDBC6B9B4076BE26EE14260388EFBD660DA6584B823667F
+
 MANUAL PIPELINE ADJUDICATION
 
 Compiler/CmpExts.CPP lines 30 through 36 are extern declarations.  They expose
@@ -127,7 +141,25 @@ Existing source line 410 calls LCCHeaderPut(lx,7,FALSE).  Its pass-state and
 trace contract must be preserved or explicitly accounted for.  The exact
 insertion point is therefore not sealed and no patch is authorized.
 
-The manual result is recorded in:
+PASS-BOUNDARY DISPLAY RESULT
+
+Host execution on 2026-08-06 passed all exact identity gates and produced:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pass-boundary.txt
+
+Observed console status:
+
+  PASS CONTEXT    SEALED-DISPLAY
+  PIPELINE OWNER  LCCCompile-SEALED
+  SEAM            CANDIDATE-NOT-SEALED
+  PATCH STATUS    NOT-AUTHORIZED
+  VERDICT         PASS CONTEXT COMPLETE
+
+The console proves source identity and deterministic report creation.  It does
+not expose the displayed source lines and therefore does not seal the OptPass6,
+OptPass789, LCCHeaderPut, or insertion-seam contracts.
+
+The manual pipeline result and pass-display state are recorded in:
 
   TEMPLEOSTS-1.10-PIPELINE-ADJUDICATION.TXT
 
@@ -140,41 +172,31 @@ CURRENT PIPELINE
     -> RAW OptPass TRACE
     -> SEALED SOURCE CONTEXT
     -> MANUAL LCCCompile OWNERSHIP ADJUDICATION
-    -> DISPLAY EXACT OptPass6 AND OptPass789 CONTRACT CONTEXT
-    -> MANUAL PASS-BOUNDARY ADJUDICATION
+    -> SEALED OptPass6 AND OptPass789 CONTEXT DISPLAY
+    -> MANUAL PASS-CONTRACT ADJUDICATION
+    -> SEAL INSERTION SEAM
     -> SEAL NO-REWRITE VERIFIER
     -> DIFFERENTIAL HARNESS
     -> FIRST PROVED TRANSFORMATION
 
-NEXT COMMAND
+NEXT EVIDENCE
 
-Preserve every existing evidence file.  Pull and display only the exact pass
-boundary context:
+Preserve every existing evidence file.  Do not run another parser, tracer,
+classifier, source patch, or optimizer experiment.
 
-  Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
-  git pull
+Manually review the complete contents of:
 
-  .\tools\DISPLAY-TEMPLEOSTS-PASS-BOUNDARY.ps1 `
-      -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
-      -ManifestPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-expanded-manifest.txt `
-      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pass-boundary.txt
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pass-boundary.txt
 
-The display tool:
+The review must establish from exact displayed source:
 
-  verifies the observed manifest hash
-  verifies exact ICLCC.CPP identity
-  verifies OptPass6.CPP and OptPass789.CPP against the manifest
-  re-displays the ICLCC transition between OptPass6 and OptPass789
-  displays raw definition context from OptPass6.CPP and OptPass789.CPP
-  uses no function parser, comment filter, quote filter, or classifier
-  does not authorize an insertion seam or source patch
+  OptPass6 output data and state
+  OptPass789 input assumptions
+  OptPass789 sizing and convergence invariants
+  LCCHeaderPut pass-state transition semantics
+  whether the post-label-forward boundary is safe and exact
 
-Expected final status:
-
-  PASS CONTEXT       SEALED-DISPLAY
-  PIPELINE OWNER     LCCCompile-SEALED
-  SEAM               CANDIDATE-NOT-SEALED
-  PATCH STATUS       NOT-AUTHORIZED
+A successful display report is not seam authorization.
 
 CURRENT EVIDENCE STATUS
 
@@ -187,9 +209,11 @@ CURRENT EVIDENCE STATUS
   CmpExts declaration classification            SEALED
   LCCCompile pipeline ownership                 SEALED
   executable pass order                         SEALED
+  pass-boundary context display                 SEALED-DISPLAY
   post-label-forward boundary                   CANDIDATE
-  OptPass6 output contract                      NOT YET ADJUDICATED
-  OptPass789 input contract                     NOT YET ADJUDICATED
+  OptPass6 output contract                      UNRESOLVED
+  OptPass789 input contract                     UNRESOLVED
+  LCCHeaderPut transition contract              UNRESOLVED
   insertion seam                                NOT SEALED
   compiler rebuild                              NOT OBSERVED
   guest semantic run                            NOT OBSERVED
