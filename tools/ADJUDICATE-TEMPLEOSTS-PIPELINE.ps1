@@ -24,23 +24,12 @@ $ExpectedToolsCommit = '37b0457e8735ab8cc34a23f2717fcfb808e6a7a8'
 $ExpectedIsoHash = 'DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC'
 $Latin1 = [System.Text.Encoding]::GetEncoding(28591)
 $RegexOptions = [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
-$FunctionPattern = '(?<![A-Za-z0-9_])([A-Za-z_][A-Za-z0-9_]*)\s*\('
 $PassPattern = '(?<![A-Za-z0-9_])(OptPass[A-Za-z0-9_]*)\s*\('
-$ControlNames = [System.Collections.Generic.HashSet[string]]::new(
-    [System.StringComparer]::OrdinalIgnoreCase
-)
-foreach ($Name in @(
-    'if', 'for', 'while', 'switch', 'catch', 'sizeof', 'offsetof',
-    'return', 'break', 'continue', 'goto', 'asm'
-)) {
-    [void]$ControlNames.Add($Name)
-}
 
 function Get-Sha256Hex([byte[]]$Bytes) {
     $Hasher = [System.Security.Cryptography.SHA256]::Create()
     try {
-        $Hash = $Hasher.ComputeHash($Bytes)
-        return ([System.BitConverter]::ToString($Hash)).Replace('-', '')
+        return ([System.BitConverter]::ToString($Hasher.ComputeHash($Bytes))).Replace('-', '')
     }
     finally {
         $Hasher.Dispose()
@@ -48,10 +37,6 @@ function Get-Sha256Hex([byte[]]$Bytes) {
 }
 
 function Get-LineNumber([string]$Text, [int]$Offset) {
-    if ($Offset -lt 0 -or $Offset -gt $Text.Length) {
-        throw "line offset outside text: $Offset"
-    }
-
     $Line = 1
     for ($Index = 0; $Index -lt $Offset; $Index++) {
         if ($Text[$Index] -eq "`n") {
@@ -98,16 +83,14 @@ function Mask-NonCode([string]$Text) {
             $Closed = $false
 
             while ($Index + 1 -lt $Chars.Length) {
-                $Current = $Chars[$Index]
-                $Following = $Chars[$Index + 1]
-                if ($Current -eq '*' -and $Following -eq '/') {
+                if ($Chars[$Index] -eq '*' -and $Chars[$Index + 1] -eq '/') {
                     $Chars[$Index] = ' '
                     $Chars[$Index + 1] = ' '
                     $Index += 2
                     $Closed = $true
                     break
                 }
-                if ($Current -ne "`r" -and $Current -ne "`n") {
+                if ($Chars[$Index] -ne "`r" -and $Chars[$Index] -ne "`n") {
                     $Chars[$Index] = ' '
                 }
                 $Index++
@@ -159,96 +142,13 @@ function Mask-NonCode([string]$Text) {
     return (-join $Chars)
 }
 
-function Get-FunctionExtents([string]$Masked) {
-    $Results = [System.Collections.Generic.List[object]]::new()
-    $SeenOffsets = [System.Collections.Generic.HashSet[int]]::new()
-
-    foreach ($Match in [regex]::Matches($Masked, $FunctionPattern, $RegexOptions)) {
-        $Name = $Match.Groups[1].Value
-        $NameOffset = $Match.Groups[1].Index
-        if ($ControlNames.Contains($Name) -or -not $SeenOffsets.Add($NameOffset)) {
-            continue
-        }
-
-        $OpenParen = $Masked.IndexOf('(', $Match.Index)
-        if ($OpenParen -lt 0) {
-            continue
-        }
-
-        $ParenDepth = 0
-        $CloseParen = -1
-        for ($Index = $OpenParen; $Index -lt $Masked.Length; $Index++) {
-            if ($Masked[$Index] -eq '(') {
-                $ParenDepth++
-            }
-            elseif ($Masked[$Index] -eq ')') {
-                $ParenDepth--
-                if ($ParenDepth -eq 0) {
-                    $CloseParen = $Index
-                    break
-                }
-            }
-        }
-        if ($CloseParen -lt 0) {
-            continue
-        }
-
-        $Probe = $CloseParen + 1
-        while ($Probe -lt $Masked.Length -and [char]::IsWhiteSpace($Masked[$Probe])) {
-            $Probe++
-        }
-        if ($Probe -ge $Masked.Length -or $Masked[$Probe] -ne '{') {
-            continue
-        }
-
-        $BraceDepth = 1
-        $CloseBrace = -1
-        for ($Index = $Probe + 1; $Index -lt $Masked.Length; $Index++) {
-            if ($Masked[$Index] -eq '{') {
-                $BraceDepth++
-            }
-            elseif ($Masked[$Index] -eq '}') {
-                $BraceDepth--
-                if ($BraceDepth -eq 0) {
-                    $CloseBrace = $Index
-                    break
-                }
-            }
-        }
-        if ($CloseBrace -lt 0) {
-            throw "unterminated function body: $Name offset=$NameOffset"
-        }
-
-        $Results.Add([pscustomobject]@{
-            Name = $Name
-            NameOffset = $NameOffset
-            OpenBrace = $Probe
-            CloseBrace = $CloseBrace
-        })
-    }
-
-    return @($Results)
-}
-
-function Count-Ordinal([string]$Text, [string]$Needle) {
-    $Count = 0
-    $Offset = 0
-    while ($Offset -lt $Text.Length) {
-        $Hit = $Text.IndexOf($Needle, $Offset, [System.StringComparison]::Ordinal)
-        if ($Hit -lt 0) {
-            break
-        }
-        $Count++
-        $Offset = $Hit + $Needle.Length
-    }
-    return $Count
-}
-
 $Root = (Resolve-Path -LiteralPath $ExtractRoot -ErrorAction Stop).Path
 $Manifest = (Resolve-Path -LiteralPath $ManifestPath -ErrorAction Stop).Path
 $Discovery = (Resolve-Path -LiteralPath $DiscoveryPath -ErrorAction Stop).Path
 $Output = [System.IO.Path]::GetFullPath($OutPath)
 $Expanded = Join-Path $Root 'expanded'
+$ExpandedPath = [System.IO.Path]::GetFullPath($Expanded)
+$ExpandedPrefix = $ExpandedPath.TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
 
 if (-not (Test-Path -LiteralPath $Expanded -PathType Container)) {
     throw "expanded corpus directory missing: $Expanded"
@@ -270,7 +170,6 @@ foreach ($RequiredLine in @(
     }
 }
 
-$ExpandedPath = [System.IO.Path]::GetFullPath($Expanded)
 $DiscoveryLines = [System.IO.File]::ReadAllLines($Discovery)
 foreach ($RequiredLine in @(
     'TEMPLEOSTS 1.10 COMPILER DISCOVERY',
@@ -293,7 +192,6 @@ if ($ManifestLines[$SectionIndex + 1] -cne "path`tbytes`tSHA256") {
     throw 'expanded manifest file header mismatch'
 }
 
-$ExpandedPrefix = $ExpandedPath.TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
 $CompilerRows = [System.Collections.Generic.List[object]]::new()
 $SeenPaths = [System.Collections.Generic.HashSet[string]]::new(
     [System.StringComparer]::OrdinalIgnoreCase
@@ -330,22 +228,17 @@ for ($Index = $SectionIndex + 2; $Index -lt $ManifestLines.Length; $Index++) {
         throw "compiler path escapes expanded corpus: $($Parts[0])"
     }
     if (-not (Test-Path -LiteralPath $FullPath -PathType Leaf)) {
-        throw "compiler candidate file missing: $($Parts[0])"
+        throw "compiler file missing: $($Parts[0])"
     }
 
     $Item = Get-Item -LiteralPath $FullPath
-    if ($Item.Length -ne $ExpectedBytes) {
-        throw "compiler candidate byte count mismatch: $($Parts[0])"
-    }
-
-    $ExpectedHash = $Parts[2].ToUpperInvariant()
     $ActualHash = (Get-FileHash -LiteralPath $FullPath -Algorithm SHA256).Hash
-    if ($ActualHash -cne $ExpectedHash) {
-        throw "compiler candidate SHA256 mismatch: $($Parts[0])"
+    if ($Item.Length -ne $ExpectedBytes -or $ActualHash -cne $Parts[2].ToUpperInvariant()) {
+        throw "compiler identity mismatch: $($Parts[0])"
     }
 
     $CompilerRows.Add([pscustomobject]@{
-        RelativePath = $Parts[0]
+        Path = $Parts[0]
         FullPath = $FullPath
         Bytes = $ExpectedBytes
         SHA256 = $ActualHash
@@ -355,150 +248,81 @@ for ($Index = $SectionIndex + 2; $Index -lt $ManifestLines.Length; $Index++) {
 if ($CompilerRows.Count -eq 0) {
     throw 'expanded manifest contains no Compiler/ files'
 }
-
-foreach ($RequiredPath in @(
-    'Compiler/CmpMain.CPP',
-    'Compiler/OptPass6.CPP'
-)) {
-    $RequiredCount = @(
-        $CompilerRows |
-            Where-Object { $_.RelativePath -ceq $RequiredPath }
-    ).Count
-    if ($RequiredCount -ne 1) {
-        throw "observed compiler candidate count mismatch: path=$RequiredPath count=$RequiredCount"
+foreach ($RequiredPath in @('Compiler/CmpMain.CPP', 'Compiler/OptPass6.CPP')) {
+    $Count = @($CompilerRows | Where-Object { $_.Path -ceq $RequiredPath }).Count
+    if ($Count -ne 1) {
+        throw "observed compiler candidate count mismatch: path=$RequiredPath count=$Count"
     }
 }
 
 $CompilerSetLines = @(
-    foreach ($Row in ($CompilerRows | Sort-Object RelativePath)) {
-        "$($Row.RelativePath)`t$($Row.Bytes)`t$($Row.SHA256)"
+    foreach ($Row in ($CompilerRows | Sort-Object Path)) {
+        "$($Row.Path)`t$($Row.Bytes)`t$($Row.SHA256)"
     }
 )
-$CompilerSetBytes = $Latin1.GetBytes(($CompilerSetLines -join "`n") + "`n")
-$CompilerSetHash = Get-Sha256Hex $CompilerSetBytes
+$CompilerSetHash = Get-Sha256Hex (
+    $Latin1.GetBytes(($CompilerSetLines -join "`n") + "`n")
+)
 $DiscoveryHash = (Get-FileHash -LiteralPath $Discovery -Algorithm SHA256).Hash
-
-$PassDefinitions = [System.Collections.Generic.List[object]]::new()
-$PipelineCandidates = [System.Collections.Generic.List[object]]::new()
-$FunctionsOfInterest = [System.Collections.Generic.List[object]]::new()
+$Occurrences = [System.Collections.Generic.List[object]]::new()
+$Contexts = [System.Collections.Generic.List[string]]::new()
 
 foreach ($Row in $CompilerRows) {
     if ($Row.Bytes -gt 16MB) {
         continue
     }
 
-    $FileBytes = [System.IO.File]::ReadAllBytes($Row.FullPath)
-    $Text = $Latin1.GetString($FileBytes)
+    $Bytes = [System.IO.File]::ReadAllBytes($Row.FullPath)
+    $Text = $Latin1.GetString($Bytes)
     $Masked = Mask-NonCode $Text
+    $Lines = [regex]::Split($Text, "\r\n|\n|\r")
 
-    foreach ($Function in (Get-FunctionExtents $Masked)) {
-        $FunctionLength = $Function.CloseBrace - $Function.NameOffset + 1
-        $FunctionText = $Text.Substring($Function.NameOffset, $FunctionLength)
-        $FunctionBytes = $Latin1.GetBytes($FunctionText)
-        $FunctionHash = Get-Sha256Hex $FunctionBytes
-        $StartLine = Get-LineNumber $Text $Function.NameOffset
-        $EndLine = Get-LineNumber $Text $Function.CloseBrace
-
-        $BodyStart = $Function.OpenBrace + 1
-        $BodyLength = $Function.CloseBrace - $BodyStart
-        $BodyMasked = $Masked.Substring($BodyStart, $BodyLength)
-        $IcCount = Count-Ordinal $BodyMasked 'CIntermediateCode'
-
-        $PassCalls = [System.Collections.Generic.List[object]]::new()
-        foreach ($Match in [regex]::Matches($BodyMasked, $PassPattern, $RegexOptions)) {
-            $AbsoluteOffset = $BodyStart + $Match.Groups[1].Index
-            $PassCalls.Add([pscustomobject]@{
-                Name = $Match.Groups[1].Value
-                Offset = $AbsoluteOffset
-                Line = Get-LineNumber $Text $AbsoluteOffset
-            })
-        }
-
-        if ($Function.Name.StartsWith('OptPass', [System.StringComparison]::Ordinal)) {
-            $PassDefinitions.Add([pscustomobject]@{
-                Path = $Row.RelativePath
-                Name = $Function.Name
-                StartLine = $StartLine
-                EndLine = $EndLine
-                SHA256 = $FunctionHash
-            })
-        }
-
-        if ($PassCalls.Count -eq 0 -and $IcCount -eq 0) {
-            continue
-        }
-
-        $CallText = @(
-            foreach ($Call in $PassCalls) {
-                "$($Call.Name)@$($Call.Line)"
-            }
-        ) -join ','
-
-        $FunctionsOfInterest.Add([pscustomobject]@{
-            Path = $Row.RelativePath
-            Name = $Function.Name
-            StartLine = $StartLine
-            EndLine = $EndLine
-            SHA256 = $FunctionHash
-            PassCallCount = $PassCalls.Count
-            IcCount = $IcCount
-            Calls = $CallText
+    foreach ($Match in [regex]::Matches($Masked, $PassPattern, $RegexOptions)) {
+        $LineNumber = Get-LineNumber $Text $Match.Groups[1].Index
+        $Occurrences.Add([pscustomobject]@{
+            Path = $Row.Path
+            Name = $Match.Groups[1].Value
+            Line = $LineNumber
+            Offset = $Match.Groups[1].Index
         })
 
-        if ($PassCalls.Count -ge 2) {
-            $UniqueCalls = @(
-                $PassCalls |
-                    Select-Object -ExpandProperty Name |
-                    Sort-Object -Unique
-            ).Count
-            $Score = $PassCalls.Count * 100 + $UniqueCalls * 20 + [Math]::Min($IcCount, 50)
-            if ($Row.RelativePath -ceq 'Compiler/CmpMain.CPP') {
-                $Score += 50
+        if ($Row.Path -ceq 'Compiler/CmpMain.CPP') {
+            $Start = [Math]::Max(1, $LineNumber - 3)
+            $End = [Math]::Min($Lines.Length, $LineNumber + 3)
+            $Contexts.Add("--- $($Row.Path) $($Match.Groups[1].Value) line $LineNumber")
+            for ($ContextLine = $Start; $ContextLine -le $End; $ContextLine++) {
+                $Display = $Lines[$ContextLine - 1].Replace("`t", '<TAB>')
+                $Contexts.Add(("{0:D6}`t{1}" -f $ContextLine, $Display))
             }
-
-            $PipelineCandidates.Add([pscustomobject]@{
-                Score = $Score
-                Path = $Row.RelativePath
-                Name = $Function.Name
-                StartLine = $StartLine
-                EndLine = $EndLine
-                SHA256 = $FunctionHash
-                PassCallCount = $PassCalls.Count
-                UniquePassCount = $UniqueCalls
-                IcCount = $IcCount
-                Calls = $CallText
-            })
         }
     }
 }
 
-$OrderedDefinitions = @(
-    $PassDefinitions |
+$PipelineFiles = @(
+    $Occurrences |
+        Group-Object Path |
+        ForEach-Object {
+            $Ordered = @($_.Group | Sort-Object Offset)
+            $Names = @($Ordered | Select-Object -ExpandProperty Name)
+            $Unique = @($Names | Sort-Object -Unique)
+            [pscustomobject]@{
+                Path = $_.Name
+                Calls = $Ordered.Count
+                Unique = $Unique.Count
+                OrderedNames = ($Names -join ',')
+                OrderedLines = (@($Ordered | ForEach-Object { "$($_.Name)@$($_.Line)" }) -join ',')
+            }
+        } |
         Sort-Object `
-            @{ Expression = 'Name'; Descending = $false },
-            @{ Expression = 'Path'; Descending = $false },
-            @{ Expression = 'StartLine'; Descending = $false }
-)
-$OrderedFunctions = @(
-    $FunctionsOfInterest |
-        Sort-Object `
-            @{ Expression = 'PassCallCount'; Descending = $true },
-            @{ Expression = 'IcCount'; Descending = $true },
-            @{ Expression = 'Path'; Descending = $false },
-            @{ Expression = 'StartLine'; Descending = $false }
-)
-$OrderedPipelines = @(
-    $PipelineCandidates |
-        Sort-Object `
-            @{ Expression = 'Score'; Descending = $true },
-            @{ Expression = 'Path'; Descending = $false },
-            @{ Expression = 'StartLine'; Descending = $false }
+            @{ Expression = 'Unique'; Descending = $true },
+            @{ Expression = 'Calls'; Descending = $true },
+            @{ Expression = 'Path'; Descending = $false }
 )
 
 $Report = [System.Collections.Generic.List[string]]::new()
 foreach ($Line in @(
     'DBYTE-HOLYC-OPT',
-    'TEMPLEOSTS 1.10 COMPILER PIPELINE ADJUDICATION',
+    'TEMPLEOSTS 1.10 COMPILER PIPELINE TRACE',
     '',
     'CORPUS',
     "tools_commit`t$ExpectedToolsCommit",
@@ -510,63 +334,47 @@ foreach ($Line in @(
     "compiler_files_verified`t$($CompilerRows.Count)",
     "compiler_set_sha256`t$CompilerSetHash",
     '',
-    'PASS DEFINITIONS',
-    "path`tfunction`tstart_line`tend_line`tfunction_SHA256"
+    'PIPELINE FILE CANDIDATES',
+    "path`tpass_occurrences`tunique_pass_names`tordered_names`tordered_calls"
 )) {
     $Report.Add($Line)
 }
 
-foreach ($Definition in $OrderedDefinitions) {
+foreach ($File in $PipelineFiles) {
     $Report.Add(
-        "$($Definition.Path)`t$($Definition.Name)`t$($Definition.StartLine)`t" +
-        "$($Definition.EndLine)`t$($Definition.SHA256)"
+        "$($File.Path)`t$($File.Calls)`t$($File.Unique)`t" +
+        "$($File.OrderedNames)`t$($File.OrderedLines)"
     )
 }
 
 foreach ($Line in @(
     '',
-    'PIPELINE CANDIDATES',
-    "score`tpath`tfunction`tstart_line`tend_line`tfunction_SHA256`tpass_calls`tunique_passes`tIC_refs`tordered_calls"
+    'ALL OptPass OCCURRENCES',
+    "path`tname`tline`toffset"
 )) {
     $Report.Add($Line)
 }
-
-foreach ($Candidate in $OrderedPipelines) {
-    $Report.Add(
-        "$($Candidate.Score)`t$($Candidate.Path)`t$($Candidate.Name)`t" +
-        "$($Candidate.StartLine)`t$($Candidate.EndLine)`t$($Candidate.SHA256)`t" +
-        "$($Candidate.PassCallCount)`t$($Candidate.UniquePassCount)`t" +
-        "$($Candidate.IcCount)`t$($Candidate.Calls)"
-    )
+foreach ($Hit in ($Occurrences | Sort-Object Path, Offset)) {
+    $Report.Add("$($Hit.Path)`t$($Hit.Name)`t$($Hit.Line)`t$($Hit.Offset)")
 }
 
-foreach ($Line in @(
-    '',
-    'FUNCTIONS OF INTEREST',
-    "path`tfunction`tstart_line`tend_line`tfunction_SHA256`tpass_calls`tIC_refs`tordered_calls"
-)) {
+$Report.Add('')
+$Report.Add('CmpMain CONTEXT')
+foreach ($Line in $Contexts) {
     $Report.Add($Line)
-}
-
-foreach ($Function in $OrderedFunctions) {
-    $Report.Add(
-        "$($Function.Path)`t$($Function.Name)`t$($Function.StartLine)`t" +
-        "$($Function.EndLine)`t$($Function.SHA256)`t$($Function.PassCallCount)`t" +
-        "$($Function.IcCount)`t$($Function.Calls)"
-    )
 }
 
 foreach ($Line in @(
     '',
     'BOUNDARY',
-    'Compiler/ is an exact candidate file set sealed from the expanded manifest.',
-    'Pass definitions and ordered calls are lexical observations from masked bytes.',
-    'Pipeline scores are navigation aids and do not identify semantic ownership.',
-    'No insertion seam is selected or authorized by this report.',
+    'Compiler/ is an exact candidate set verified against the expanded manifest.',
+    'OptPass occurrences exclude comments and quoted literals.',
+    'The trace reports lexical order and source context, not function ownership.',
+    'No compiler entrypoint, pass boundary, or insertion seam is selected here.',
     'No source, archive, manifest, or discovery file is modified.',
     '',
     "COMPILER SET STATUS`tEXACT-CANDIDATE",
-    "PIPELINE STATUS`tCANDIDATE-ONLY",
+    "PIPELINE STATUS`tTRACE-ONLY",
     "SEAM STATUS`tUNRESOLVED",
     "PATCH STATUS`tNOT-AUTHORIZED",
     '',
@@ -588,24 +396,21 @@ if ($OutputDirectory) {
 $ReportHash = (Get-FileHash -LiteralPath $Output -Algorithm SHA256).Hash
 Write-Host "COMPILER FILES:      $($CompilerRows.Count)/$($CompilerRows.Count)"
 Write-Host "COMPILER SET SHA256: $CompilerSetHash"
-Write-Host "PASS DEFINITIONS:    $($OrderedDefinitions.Count)"
-Write-Host "FUNCTIONS:           $($OrderedFunctions.Count)"
-Write-Host "PIPELINE CANDIDATES: $($OrderedPipelines.Count)"
-foreach ($Candidate in @($OrderedPipelines | Select-Object -First 10)) {
+Write-Host "PASS OCCURRENCES:    $($Occurrences.Count)"
+Write-Host "PIPELINE FILES:      $($PipelineFiles.Count)"
+foreach ($File in @($PipelineFiles | Select-Object -First 10)) {
     Write-Host (
-        "PIPELINE {0}: {1}::{2} lines {3}-{4} calls {5}" -f
-        $Candidate.Score,
-        $Candidate.Path,
-        $Candidate.Name,
-        $Candidate.StartLine,
-        $Candidate.EndLine,
-        $Candidate.Calls
+        "PIPELINE FILE: {0} calls={1} unique={2} order={3}" -f
+        $File.Path,
+        $File.Calls,
+        $File.Unique,
+        $File.OrderedNames
     )
 }
 Write-Host "REPORT:              $Output"
 Write-Host "REPORT SHA256:       $ReportHash"
 Write-Host 'COMPILER SET:        EXACT-CANDIDATE'
-Write-Host 'PIPELINE:            CANDIDATE-ONLY'
+Write-Host 'PIPELINE:            TRACE-ONLY'
 Write-Host 'SEAM:                UNRESOLVED'
 Write-Host 'PATCH STATUS:        NOT AUTHORIZED'
-Write-Host 'VERDICT:             ADJUDICATION COMPLETE'
+Write-Host 'VERDICT:             TRACE COMPLETE'
