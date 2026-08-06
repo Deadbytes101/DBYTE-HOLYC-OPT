@@ -1,0 +1,213 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 CONFIGURATION-EXACT RECOVERY BUNDLE PREPARATION OBSERVATION
+
+CLASS
+
+CONFIGURATION-EXACT RECOVERY BUNDLE PREPARATION COMPLETED.
+THE FINAL RECOVERY ROOT, MANIFEST AND PREPARATION REPORT WERE CREATED.
+THE BUNDLE VBOX AND VDI ARE DISTINCT NTFS FILE OBJECTS FROM THEIR SOURCES.
+THE PRESERVED FAILED STAGING ROOT REMAINS SEPARATE AND UNTOUCHED.
+BUNDLE PREPARATION IS OBSERVED; RESTORE CORRECTNESS IS NOT YET SEALED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  45d034926d13cb5ca538f377e9b17555736dd93d
+
+Command:
+  tools/PREPARE-TEMPLEOSTS-CONFIG-EXACT-RECOVERY-BUNDLE-R5.ps1
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  resource root
+    D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+  sealed normalized difference report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vbox-normalized-diff.txt
+
+  normalized difference report SHA256
+    C7253681589771FF0E36A56DDFA7627C6FCA48398A1AEE1465645470DC8B3A11
+
+  final recovery root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2
+
+  preparation report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-config-exact-recovery-preparation.txt
+
+  preserved failed staging root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2.incomplete-20260806T231912Z-p11460
+
+OBSERVED WRAPPER BINDING
+
+  original preparer blob
+    33957db6d124f20025be638eb41d74e7e4190bcc
+
+  blank-line writer guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  empty running-inventory guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  zero-snapshot sentinel guard
+    EXACT SENTINEL / INITIAL + FINAL
+
+  bidirectional root-disjoint guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  final zero-snapshot guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  patched source SHA256
+    67E7366E8EEB6E34437120A797A5BF45FA3E090C9785C691BD8B15D279F9003E
+
+TARGET IDENTITY
+
+  name
+    Temple1.10
+
+  UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  state
+    poweroff
+
+LIVE ARTIFACTS
+
+  live VBOX SHA256
+    E537469A1B1A88DE13D18704B5D6299F3AF202DA518FB266F045485A8FC4F1E6
+
+  live VDI SHA256
+    90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+OBSERVED NTFS FILE IDENTITIES
+
+  adopted baseline VDI file ID
+    0X0000000000000000001500000003CF10
+
+  live VDI file ID
+    0X00000000000000000004000000040293
+
+  bundle VBOX file ID
+    0X00000000000000000003000000060062
+
+  bundle VDI file ID
+    0X0000000000000000000100000006007B
+
+The live, adopted-baseline and bundle VDI file IDs are pairwise distinct.
+The bundle VBOX file ID is distinct from the live VBOX source as required by the
+preparer contract.
+
+BUNDLE OUTPUT
+
+  final root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2
+
+  manifest SHA256
+    3E7C4285920A981BF72AFCD179C467B2DEC35AB1828D21EB4767A1DEB3619F45
+
+  preparation report SHA256
+    C4182656FC6DFE7CD3173126564415C37745B756B5416557BBCFE7EDA6D948D8
+
+  terminal bundle state
+    PREPARED
+
+  terminal recovery-point state
+    NOT-SEALED
+
+  terminal restore-execution state
+    NOT-OBSERVED
+
+  terminal build state
+    NOT-AUTHORIZED
+
+OBSERVED PREPARATION CONTRACT
+
+The successful terminal verdict demonstrates that the preparer completed these
+host-side operations without throwing:
+
+  revalidated the sealed normalized-difference report
+  revalidated the pinned resource commit and clean tracked tree
+  revalidated the adopted baseline VDI and ISO
+  revalidated registered target identity and zero running target rows
+  revalidated target UUID, poweroff state and exact attachments
+  revalidated zero shared-folder mappings
+  accepted only the exact no-snapshot sentinel as zero snapshot rows
+  revalidated the live VBOX, VDI and ISO identities
+  revalidated absent live NVRAM
+  revalidated distinct live and adopted-baseline VDI NTFS file IDs
+  created a new unique staging root
+  copied and rehashed the exact current VBOX
+  copied and rehashed an exact distinct recovery VDI
+  copied and rehashed the exact TempleOSTS ISO
+  copied and rehashed the sealed normalized-difference report
+  revalidated distinct copied VBOX and VDI NTFS file IDs
+  wrote and hashed five read-only inventory evidence files
+  wrote the deterministic recovery-bundle manifest
+  performed final target and zero-snapshot revalidation
+  revalidated final live VBOX, VDI and ISO identities
+  atomically renamed the new staging directory to the requested final root
+  revalidated the manifest hash after directory promotion
+  wrote the external preparation report
+
+MUTATION BOUNDARY
+
+Host-side backup files, inventory evidence, manifest and preparation report were
+created.  The prior failed staging root was preserved unchanged.  No VM start,
+stop, snapshot mutation, attachment change, live VBOX write, live VDI write,
+live ISO write, guest delivery or compiler execution was reported.
+
+ADJUDICATION
+
+The final bundle is now a prepared host-side recovery-material set.  Preparation
+alone does not prove that every bundle object remains present, exact and
+internally consistent after promotion, and it does not prove a restore route.
+
+The next gate must be a read-only bundle verifier that:
+
+  binds the preparation report SHA256 exactly
+  binds the bundle manifest SHA256 exactly
+  requires the exact expected bundle file set with no extra files or directories
+  rehashes the bundle VBOX, VDI, ISO and normalized-difference report
+  validates every manifest evidence row against the corresponding evidence file
+  rechecks the observed NTFS file IDs and pairwise VDI distinctness
+  revalidates the live target as powered off with exact attachments
+  revalidates zero running rows, zero snapshots and zero shared folders
+  revalidates the live VBOX, VDI and ISO identities
+  confirms the preserved failed staging root still exists and remains unsealed
+  writes evidence outside the bundle and resource roots
+  performs no restore and authorizes no build
+
+CURRENT STATUS
+
+  exact TempleOSTS corpus                 SEALED
+  target guest VM                         SEALED
+  target VM state                         POWEROFF / OBSERVED
+  live VBOX, VDI and ISO                  EXACT / OBSERVED
+  adopted baseline VDI                    DISK-EXACT / DISTINCT FILE
+  preserved incomplete staging root       PRESENT / NOT SEALED
+  configuration-exact bundle preparation  COMPLETE / OBSERVED
+  configuration-exact bundle manifest     WRITTEN / HASH OBSERVED
+  configuration-exact bundle verification PENDING
+  powered-off recovery point              NOT SEALED
+  restore route                           UNRESOLVED
+  restore execution                       NOT OBSERVED
+  guest delivery                          UNRESOLVED
+  compiler build execution                NOT AUTHORIZED
+  optimizer transformation                DENIED
+
+RULE
+
+PREPARED FILES ARE NOT VERIFIED FILES UNTIL REOPENED, REHASHED AND ADJUDICATED.
+A VERIFIED BUNDLE IS STILL NOT AN OBSERVED RESTORE.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
