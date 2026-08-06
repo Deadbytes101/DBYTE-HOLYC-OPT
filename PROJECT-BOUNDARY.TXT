@@ -14,8 +14,8 @@ Terry A. Davis-authored source and matching historical packages are the
 semantic authority.
 
 DBYTE-HOLYC-TOOLS is the read-only resource layer for exact package identity,
-archive extraction, source maps, compiler archaeology, and accepted evidence
-boundaries.  It is not linked into the compiler.
+archive extraction, source navigation, compiler archaeology, and accepted
+evidence boundaries.  It is not linked into the compiler.
 
 RARE-CORPUS RULE
 
@@ -47,8 +47,8 @@ Accepted source layers:
 Navigation-only layer:
   holy      extension-normalized copy for indexing
 
-The normalized holy tree may locate source.  Patches and semantic comparison
-must be derived from expanded historical bytes, never from the normalized copy.
+Patches and semantic comparison must be derived from expanded historical bytes,
+never from the normalized copy.
 
 REJECTED AS TARGETS
 
@@ -60,35 +60,58 @@ REJECTED AS TARGETS
   LLVM frontends
   reconstructed or reformatted source
 
-CURRENT SEAM STATUS
+OBSERVED 1.10 CORRECTION
 
-The later TempleOS 5.03 source shows a candidate seam after OptPass6 and before
-OptPass789A.  That is archaeology only.  It is not authorization to patch the
-1.10 internal compiler.
+The later TempleOS 5.03 source exposes names including COCCompile, OptPass6,
+OptPass789A, and CIntermediateCode.  They remain architecture clues only.
 
-The real 1.10 seam must be rediscovered in the expanded TempleOSTS compiler
-bytes and sealed by path, byte count, and SHA256 before code is written.
+The exact TempleOSTS 1.10 expanded corpus does not contain the COCCompile
+literal.  The 5.03 symbol names are therefore rejected as required 1.10 marker
+contracts.  The earlier seam inspector was removed.
 
-MODEL
+CURRENT TARGET STATUS
 
-Operate directly on the original compiler intermediate code found in the rare
+  exact ISO identity          SEALED
+  read-only resource          SEALED
+  expanded extraction         OBSERVED
+  full expanded manifest      PENDING
+  compiler discovery catalog  PENDING
+  rare compiler identity      UNRESOLVED
+  optimizer pass identity     UNRESOLVED
+  insertion seam              UNRESOLVED
+  patch authorization         DENIED
+
+DISCOVERY MODEL
+
+Hash every expanded file before selecting a compiler candidate.  Search exact
+historical bytes for compiler-like paths and function names.  Count later-era
+anchors as observations, not requirements.  Manually adjudicate the compiler,
+pass pipeline, and seam from byte-identified files before any source copy or
+rewrite is created.
+
+MODEL AFTER SEAM SEALING
+
+Operate directly on the original compiler intermediate form found in the rare
 corpus.  Build temporary analysis tables only when needed.  Discard them after
-the function is handled.  Preserve the original parser, intermediate code,
+the function is handled.  Preserve the original parser, intermediate form,
 register model, fix-ups, JIT path, AOT path, and x86-64 backend.
 
 ALLOWED FIRST WORK
 
   verify exact TempleOSTS ISO identity
   extract with pinned DBYTE-HOLYC-TOOLS holyarchive
-  inventory original compiler files
-  hash every compiler source file
-  locate the original compile pipeline
-  prove the insertion seam from rare source bytes
+  hash every expanded historical file
+  catalog compiler-like paths and function names
+  inspect exact candidate files
+  identify the original compile pipeline
+  identify optimizer passes from rare bytes
+  prove the insertion seam from rare bytes
   create a no-rewrite verifier only after the seam is sealed
 
 NOT YET AUTHORIZED
 
-  patching common mirror source
+  selecting a target from common mirror names
+  creating an optimizer source patch
   memory load elimination
   alias speculation
   call motion
@@ -103,6 +126,7 @@ NOT YET AUTHORIZED
 RULE
 
 NO RARE BYTE IDENTITY, NO TARGET.
+NO COMPILER IDENTITY, NO SEAM.
 NO SEALED SEAM, NO PATCH.
 UNKNOWN MEANS DO NOT TRANSFORM.
 A SMALLER BINARY IS NOT PROOF.
