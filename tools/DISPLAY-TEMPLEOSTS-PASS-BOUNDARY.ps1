@@ -26,20 +26,20 @@ $RegexOptions = [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
 $Targets = @(
     [pscustomobject]@{
         Path = 'Compiler/ICLCC.CPP'
-        Patterns = @('OptPass6', 'OptPass789')
-        Counts = @(1, 3)
+        Patterns = [string[]]@('OptPass6', 'OptPass789')
+        Counts = [int[]]@(1, 3)
         Radius = 40
     },
     [pscustomobject]@{
         Path = 'Compiler/OptPass6.CPP'
-        Patterns = @('OptPass6')
-        Counts = @(1)
+        Patterns = [string[]]@('OptPass6')
+        Counts = [int[]]@(1)
         Radius = 120
     },
     [pscustomobject]@{
         Path = 'Compiler/OptPass789.CPP'
-        Patterns = @('OptPass789')
-        Counts = @(1)
+        Patterns = [string[]]@('OptPass789')
+        Counts = [int[]]@(1)
         Radius = 120
     }
 )
