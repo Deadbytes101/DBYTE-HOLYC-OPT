@@ -63,21 +63,53 @@ CURRENT PIPELINE
     -> DIFFERENTIAL HARNESS
     -> FIRST PROVED TRANSFORMATION
 
-COMMANDS
+PREFERRED COMMAND
+
+Run from the checked-out overheaven-foundation branch:
+
+  Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
+  git pull
+  .\tools\RUN-RARE-FOUNDATION.ps1
+
+The runner derives this repository path from its own location.  It first looks
+for the sibling resource repository:
+
+  D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+It searches the repository parent, Downloads, Desktop, and Documents for a file
+named TempleOSTS.iso.  A candidate is accepted only when both its byte count and
+SHA256 match the internal T.S. artifact.
+
+Default evidence output is outside Git:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE
+
+If the ISO is elsewhere, give its real path:
+
+  .\tools\RUN-RARE-FOUNDATION.ps1 `
+      -IsoPath D:\actual\location\TempleOSTS.iso
+
+If DBYTE-HOLYC-TOOLS is not beside this repository, give both paths:
+
+  .\tools\RUN-RARE-FOUNDATION.ps1 `
+      -HolyTools D:\actual\location\DBYTE-HOLYC-TOOLS `
+      -IsoPath D:\actual\location\TempleOSTS.iso
+
+MANUAL COMMANDS
 
   .\tools\VERIFY-HOLYC-TOOLS-RESOURCE.ps1 `
-      -Path D:\src\DBYTE-HOLYC-TOOLS
+      -Path D:\actual\location\DBYTE-HOLYC-TOOLS
 
   .\tools\SEAL-TEMPLEOSTS-COMPILER.ps1 `
-      -HolyTools D:\src\DBYTE-HOLYC-TOOLS `
-      -IsoPath D:\archive\TempleOSTS.iso `
-      -ExtractRoot D:\evidence\templeosts-1.10-internal `
-      -ManifestPath D:\evidence\templeosts-compiler-manifest.txt
+      -HolyTools D:\actual\location\DBYTE-HOLYC-TOOLS `
+      -IsoPath D:\actual\location\TempleOSTS.iso `
+      -ExtractRoot D:\actual\evidence\templeosts-1.10-internal `
+      -ManifestPath D:\actual\evidence\templeosts-compiler-manifest.txt
 
   .\tools\INSPECT-TEMPLEOSTS-SEAM.ps1 `
-      -ExtractRoot D:\evidence\templeosts-1.10-internal `
-      -ManifestPath D:\evidence\templeosts-compiler-manifest.txt `
-      -OutPath D:\evidence\templeosts-compiler-seam.txt
+      -ExtractRoot D:\actual\evidence\templeosts-1.10-internal `
+      -ManifestPath D:\actual\evidence\templeosts-compiler-manifest.txt `
+      -OutPath D:\actual\evidence\templeosts-compiler-seam.txt
 
 The inspector verifies every compiler file against the sealed manifest before
 reading it.  It tokenizes the expanded historical bytes directly, excludes
@@ -91,6 +123,7 @@ CURRENT EVIDENCE
   rare ISO identity exists in DBYTE-HOLYC-TOOLS
   rare ISO extraction was previously observed on Windows
   resource commit and rare identity verifier present
+  exact-input foundation runner present
   rare corpus sealer present
   bounded rare seam inspector present
   semantic observation contract present
