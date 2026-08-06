@@ -1,0 +1,149 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 GUEST DELIVERY PREFLIGHT OBSERVATION
+
+CLASS
+
+READ-ONLY VIRTUALBOX PREFLIGHT COMPLETED AND OBSERVED.
+ONE KNOWN CANDIDATE OBSERVED.
+TARGET IDENTITY NOT YET ADJUDICATED.
+GUEST DELIVERY UNRESOLVED.
+BUILD EXECUTION NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  429ade4544ec97f43dc34f16f49109fa1b32c97a
+
+Tool:
+  tools/DISPLAY-TEMPLEOSTS-GUEST-DELIVERY-PREFLIGHT.ps1
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  guard root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-GUARD\templeosts-1.10-no-rewrite
+
+  guard report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-guard.txt
+
+Output:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-delivery-preflight.txt
+
+OBSERVED RESULT
+
+  guard files
+    11/11
+
+  guard manifest SHA256
+    792ED470CF151582C81B20C95C588067B2CD41ED74893AB926079DC5D2C76FCA
+
+  guard report SHA256
+    53FC38AC8F84C16AA4657A9EF4CB7BBA94B958217B8C489D481ADEF4137AA297
+
+  registered VMs
+    1
+
+  known candidates
+    1
+
+  powered-off candidates
+    1
+
+  candidates with VDI
+    1
+
+  candidates with hashed VDI
+    1
+
+  candidates with exact TempleOSTS ISO
+    1
+
+  candidates with snapshot chains
+    0
+
+  candidates with shared folders
+    0
+
+  report SHA256
+    8F851B21087B470126E343ECBD8258F2A439D2AF3FAE8801451F4FBB63610461
+
+  target selection
+    UNRESOLVED
+
+  delivery route
+    UNRESOLVED
+
+  build
+    NOT-AUTHORIZED
+
+  verdict
+    GUEST DELIVERY PREFLIGHT CONTEXT COMPLETE
+
+OBSERVED SCOPE
+
+The console output proves successful execution of the read-only preflight and
+its aggregate counts.  It proves that exactly one known candidate was registered,
+was powered off according to the tool's two state sources, had one VDI surface
+that was safe to hash, and had the exact TempleOSTS ISO attached.
+
+The console output does not expose or independently prove the candidate name,
+UUID, VDI path, VDI hash, storage slots, or complete machine configuration.
+Those values remain inside the preflight report and require deterministic
+adjudication before selecting a target.
+
+No snapshot chain and no configured VirtualBox shared-folder surface were
+observed.  Absence of a snapshot means no powered-off recovery point is claimed.
+Absence of a shared folder means no delivery route is available through that
+surface.
+
+CURRENT STATUS
+
+  exact corpus                         SEALED
+  no-rewrite workspace                 OBSERVED
+  compiler-only build route            SEALED
+  host recovery material               PREPARED / OBSERVED
+  VM preflight aggregate               OBSERVED
+  target guest VM                      ONE CANDIDATE / NOT SELECTED
+  powered-off recovery point           NOT PREPARED
+  guest source delivery                UNRESOLVED
+  guest output backup and restore      UNRESOLVED
+  compiler build execution             NOT AUTHORIZED
+  compiler rebuild                     NOT OBSERVED
+  optimizer transformation             DENIED
+
+NEXT ALLOWED WORK
+
+  bind to the exact preflight report SHA256
+  parse the one candidate block
+  re-query VirtualBox read-only
+  require matching name, UUID, poweroff state, VDI path and VDI hash
+  require the exact TempleOSTS ISO path and hash
+  seal one target only after the report and live inventory agree
+  do not create a snapshot, copy a VDI, or deliver guest source in this step
+
+NOT AUTHORIZED
+
+  selecting a target from its name alone
+  starting or stopping a VM
+  creating or restoring a snapshot
+  attaching or detaching storage
+  mounting or modifying a VDI
+  copying candidate source into the guest
+  invoking Cmp
+  replacing Compiler.BIN.Z or Compiler.MAP.Z
+
+RULE
+
+ONE CANDIDATE COUNT IS NOT TARGET IDENTITY.
+NO EXACT UUID AND VDI IDENTITY, NO TARGET SELECTION.
+NO POWERED-OFF RECOVERY COPY OR SNAPSHOT, NO BUILD.
+NO OBSERVED DELIVERY, NO GUEST SOURCE CLAIM.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
