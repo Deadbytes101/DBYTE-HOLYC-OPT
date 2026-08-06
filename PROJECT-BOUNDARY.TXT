@@ -131,8 +131,25 @@ OBSERVED HOST BUILD GUARD
 
 The guard contains original raw recovery containers, matching expanded
 baselines, the candidate source, a non-executable contract, and a hash manifest.
-It does not prove a guest target, guest delivery, guest backup, restore, VM
-snapshot, or build.
+It does not prove a guest recovery point.
+
+OBSERVED VM PREFLIGHT AGGREGATE
+
+  report SHA256
+    8F851B21087B470126E343ECBD8258F2A439D2AF3FAE8801451F4FBB63610461
+
+  registered VMs             1
+  known candidates           1
+  powered-off candidates     1
+  candidates with VDI        1
+  candidates with hashed VDI 1
+  exact ISO attached         1
+  snapshot chains            0
+  shared folders             0
+
+This aggregate authorizes exact target adjudication only.  It does not expose
+or seal the candidate name, UUID, VDI path, VDI hash, storage slots, recovery
+point, or delivery route.
 
 CURRENT STATUS
 
@@ -146,8 +163,9 @@ CURRENT STATUS
   compiler boot load route            SEALED
   compiler map load route             SEALED
   host build guard                    PREPARED / OBSERVED
-  target guest VM                     UNRESOLVED
-  powered-off recovery point          UNRESOLVED
+  VM preflight aggregate              OBSERVED
+  target guest VM                     ONE CANDIDATE / NOT SELECTED
+  powered-off recovery point          NOT PREPARED
   guest delivery route                UNRESOLVED
   guest backup and restore            UNRESOLVED
   compiler build execution            NOT AUTHORIZED
@@ -157,20 +175,22 @@ CURRENT STATUS
 
 ALLOWED NEXT WORK
 
-  preserve the guard root and report
-  enumerate known TempleOSTS VirtualBox candidates read-only
-  record exact VM state, UUID, configuration and storage attachments
-  record snapshot-chain and configured shared-folder surfaces
-  hash a VDI only after both state sources prove poweroff
-  select one guest target only after observed evidence
-  do not mutate a VM or invoke Cmp in the preflight pass
+  preserve the guard and preflight reports
+  bind target adjudication to preflight SHA256 8F851B21087B470126E343ECBD8258F2A439D2AF3FAE8801451F4FBB63610461
+  parse exactly one candidate block
+  re-query registered and running VM inventories read-only
+  require matching name, UUID and poweroff state
+  re-hash the exact selected VDI and TempleOSTS ISO
+  record attachment keys and current snapshot/shared-folder rows
+  select one guest target only after report and live evidence agree
 
 NOT AUTHORIZED
 
+  choosing a target from its name alone
   starting or stopping a VM
   creating, restoring or deleting a snapshot
+  copying, mounting or modifying a VDI
   attaching or detaching storage
-  mounting or modifying a VDI
   delivering candidate source into a guest
   MakeAll
   MakeOSPrtBootInstall
@@ -186,9 +206,10 @@ NOT AUTHORIZED
 
 RULE
 
-EXACT BUILD ROUTE IS NOT BUILD AUTHORIZATION.
-HOST GUARD IS NOT A GUEST RECOVERY POINT.
-A VIRTUALBOX SHARED-FOLDER CONFIGURATION IS NOT TEMPLEOS GUEST SUPPORT PROOF.
+ONE CANDIDATE COUNT IS NOT TARGET IDENTITY.
+NO EXACT UUID AND VDI IDENTITY, NO TARGET SELECTION.
+TARGET SELECTION IS NOT A RECOVERY POINT.
+NO POWERED-OFF RECOVERY COPY OR SNAPSHOT, NO BUILD.
 NO OBSERVED DELIVERY, NO GUEST SOURCE CLAIM.
 NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
 NO OBSERVED BUILD, NO COMPILER CLAIM.
