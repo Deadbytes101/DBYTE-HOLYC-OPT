@@ -3,9 +3,10 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE-CORPUS DISCOVERY
-NO COMPILER FILE SELECTED
-NO SEAM SEALED
+0.0.1 RARE PIPELINE ADJUDICATION
+COMPILER DIRECTORY CANDIDATE OBSERVED
+PIPELINE UNRESOLVED
+SEAM UNRESOLVED
 NO PATCH AUTHORIZED
 NO REWRITE ENABLED
 NO PERFORMANCE CLAIM
@@ -55,68 +56,91 @@ The later TempleOS 5.03 compiler uses names including COCCompile, OptPass6,
 OptPass789A, and CIntermediateCode.  Those names were architecture clues only.
 
 The exact TempleOSTS 1.10 expanded corpus was scanned on Windows on 2026-08-06.
-The literal COCCompile marker was not present.  Therefore the later-era seam
-names are no longer accepted as a 1.10 discovery gate.
+COCCompile was absent, while OptPass6 and CIntermediateCode were present.
+Therefore later-era entrypoint and late-pass names are not accepted as 1.10
+contracts, but the original 1.10 optimizer and intermediate-code vocabulary are
+now directly observed in the rare bytes.
 
-The removed seam inspector made an unproved assumption about 1.10.  It has been
-replaced by a full-corpus manifest and a read-only compiler discovery report.
+OBSERVED CORPUS FOUNDATION
+
+  expanded files                 1057/1057
+  text-like files                777
+  discovery candidates           45
+
+  expanded manifest SHA256
+    6556485E4425386687C53F4F626146A2136AE12F38E075E2646C98147D61CB68
+
+  compiler discovery SHA256
+    66DEED7083CABB292064477ECE15F8AA368A86B47FED1C45C097BFAC0A0F6348
+
+  COCCompile                     0
+  OptPass6                       10
+  OptPass789A                    0
+  CIntermediateCode             169
+
+Highest-scoring exact paths included:
+
+  Compiler/StmtParser.CPP
+  Compiler/ExpParser.CPP
+  Compiler/CmpExts.CPP
+  Compiler/Assembler.CPP
+  Compiler/ICLCC.CPP
+  Compiler/OptPass6.CPP
+  Compiler/OptPass012.CPP
+  Compiler/OptPass3.CPP
+  Compiler/CmpMain.CPP
+  Compiler/OptPass4.CPP
+
+These paths are evidence-backed candidates.  Scores are navigation aids only.
 
 CURRENT PIPELINE
 
   TEMPLEOSTS.ISO EXACT IDENTITY
     -> PINNED DBYTE-HOLYC-TOOLS HOLYARCHIVE
     -> RAW AND EXPANDED HISTORICAL BYTES
-    -> HASH EVERY EXPANDED FILE
-    -> COMPILER-LIKE PATH AND FUNCTION CATALOG
-    -> MANUAL COMPILER ADJUDICATION
-    -> MANUAL PASS AND SEAM ADJUDICATION
+    -> HASH ALL 1057 EXPANDED FILES
+    -> DISCOVER COMPILER-LIKE PATHS AND SYMBOLS
+    -> VERIFY THE EXACT Compiler/ FILE SET
+    -> FIND OptPass* DEFINITIONS
+    -> FIND FUNCTION BODIES WITH ORDERED OptPass* CALLS
+    -> MANUAL PIPELINE ADJUDICATION
+    -> MANUAL SEAM ADJUDICATION
     -> NO-REWRITE VERIFIER
     -> DIFFERENTIAL HARNESS
     -> FIRST PROVED TRANSFORMATION
 
-PREFERRED COMMAND
+NEXT COMMAND
 
-The current evidence directory contains a valid extraction but no manifest.
-Preserve it and revalidate it:
+The manifest and discovery report already exist.  Preserve them and run only
+the read-only pipeline adjudicator:
 
   Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
   git pull
-  .\tools\RUN-RARE-FOUNDATION.ps1 `
-      -ResumeIncompleteExtraction
 
-The runner selects the canonical acquisition source first:
-
-  D:\TECHNICAL\DBYTE-HOLYC-TOOLS\legacy-input\templeos-v1.10\TempleOSTS.iso
-
-Default evidence output remains outside Git:
-
-  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE
-
-Expected new files:
-
-  templeosts-expanded-manifest.txt
-  templeosts-compiler-discovery.txt
-
-The expanded manifest hashes every exact file.  The discovery report rechecks
-every manifest row, counts later-era anchors, catalogs compiler-like paths and
-function names, and prints the ten highest-scoring candidates.
-
-Candidate scores are navigation aids only.  A discovery PASS does not identify
-the compiler or authorize a source patch.
-
-MANUAL COMMANDS
-
-  .\tools\SEAL-TEMPLEOSTS-CORPUS.ps1 `
-      -HolyTools D:\TECHNICAL\DBYTE-HOLYC-TOOLS `
-      -IsoPath D:\TECHNICAL\DBYTE-HOLYC-TOOLS\legacy-input\templeos-v1.10\TempleOSTS.iso `
+  .\tools\ADJUDICATE-TEMPLEOSTS-PIPELINE.ps1 `
       -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
       -ManifestPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-expanded-manifest.txt `
-      -ResumeExistingExtraction
+      -DiscoveryPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-discovery.txt `
+      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-pipeline-adjudication.txt
 
-  .\tools\DISCOVER-TEMPLEOSTS-COMPILER.ps1 `
-      -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
-      -ManifestPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-expanded-manifest.txt `
-      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-discovery.txt
+The adjudicator:
+
+  rechecks every selected Compiler/ file against the expanded manifest
+  requires the observed CmpMain.CPP and OptPass6.CPP candidates
+  hashes the sorted exact Compiler/ file set
+  masks comments and quoted literals while preserving offsets
+  catalogs OptPass* function definitions
+  catalogs ordered OptPass* calls inside function bodies only
+  records path, lines, function SHA256, IC references, and candidate score
+  does not select an insertion seam
+  does not modify source or prior evidence
+
+Expected final status:
+
+  COMPILER SET        EXACT-CANDIDATE
+  PIPELINE            CANDIDATE-ONLY
+  SEAM                UNRESOLVED
+  PATCH STATUS        NOT AUTHORIZED
 
 CURRENT EVIDENCE
 
@@ -124,12 +148,12 @@ CURRENT EVIDENCE
   pinned DBYTE-HOLYC-TOOLS commit               PASS
   pinned resource blobs                         9/9 PASS
   resource tracked tree                         CLEAN
-  HolyArchive extraction                        OBSERVED
-  expanded-byte scanning                        OBSERVED
-  COCCompile literal in exact 1.10 expanded     NOT FOUND
-  full expanded manifest                        NOT YET OBSERVED
-  compiler discovery report                     NOT YET OBSERVED
-  rare compiler identity                        UNRESOLVED
+  HolyArchive extraction                        PASS
+  full expanded manifest                        PASS
+  compiler discovery report                     PASS
+  Compiler/ directory candidates                OBSERVED
+  pipeline adjudication report                  NOT YET OBSERVED
+  rare compiler pipeline identity               UNRESOLVED
   rare compiler insertion seam                  UNRESOLVED
   patched compiler rebuild                      NOT OBSERVED
   guest semantic run                            NOT OBSERVED
