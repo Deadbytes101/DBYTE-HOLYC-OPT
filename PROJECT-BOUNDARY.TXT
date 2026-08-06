@@ -1,0 +1,85 @@
+DBYTE-HOLYC-OPT
+PROJECT BOUNDARY
+
+CLASS
+
+NATIVE HOLYC OPTIMIZER EXTENSION.
+NOT A PORT.
+NOT A TRANSPILER.
+NOT A REPLACEMENT COMPILER.
+
+AUTHORITY
+
+Terry A. Davis-authored source and matching historical packages are the
+semantic authority.
+
+DBYTE-HOLYC-TOOLS is the project resource layer for source maps, compiler
+contracts, codegen archaeology, package identities, and accepted evidence
+boundaries.  It is read-only input to this project.  It is not copied into this
+repository and it is not linked as a runtime dependency.
+
+FIRST SOURCE TARGET
+
+Preservation mirror:
+  cia-foundation/TempleOS
+
+Pinned mirror commit:
+  c26482bb6ad3f80106d28504ec5db3c6a360732c
+
+Candidate compiler seam:
+  COCCompile
+  after OptPass6(cc)
+  before label forwarding and OptPass789A
+
+The seam is not sealed until a matching Terry-authored source package is
+byte-identified and a patched compiler rebuild is observed.
+
+MODEL
+
+Operate directly on CIntermediateCode.
+Build temporary analysis tables only when needed.
+Discard them after the function is handled.
+Keep Terry's parser, intermediate code, register model, fix-ups, JIT path,
+AOT path, and x86-64 backend.
+
+ALLOWED FIRST WORK
+
+  verify queue and intermediate-code invariants
+  identify basic-block boundaries
+  build predecessor and successor tables
+  mark reachable code
+  prove one integer constant branch
+  remove only the branch arm proved unreachable
+
+NOT YET AUTHORIZED
+
+  memory load elimination
+  alias speculation
+  call motion
+  floating-point reassociation
+  loop unrolling
+  vectorization
+  function inlining
+  register allocator replacement
+  fix-up rewriting
+  assembly rewriting
+
+BARRIERS
+
+  inline assembly
+  unknown or indirect call
+  unknown memory write
+  current-RIP expression
+  exported or patched address
+  relocation uncertainty
+  missing alias proof
+
+RULE
+
+UNKNOWN MEANS DO NOT TRANSFORM.
+A SMALLER BINARY IS NOT PROOF.
+A FASTER RUN IS NOT PROOF.
+BASELINE AND CANDIDATE MUST AGREE.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
