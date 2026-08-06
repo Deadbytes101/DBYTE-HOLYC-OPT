@@ -3,7 +3,7 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE NO-REWRITE WORKSPACE
+0.0.1 RARE BUILD ROUTE CONTEXT
 EXACT TEMPLEOSTS 1.10 CORPUS
 LCCCompile PIPELINE OWNER SEALED
 EXECUTABLE PASS ORDER SEALED
@@ -11,8 +11,9 @@ PASS CONTRACTS SEALED
 EXACT INSERTION SEAM SEALED
 NO-REWRITE ASSERTION INSTALLED
 WORKSPACE OBSERVED
+BUILD ROUTE CONTEXT OBSERVED
+EXACT BUILD ROUTE UNRESOLVED
 OPTIMIZER TRANSFORMATION DENIED
-BUILD ROUTE UNRESOLVED
 BUILD NOT OBSERVED
 
 ONLY TARGET
@@ -35,7 +36,7 @@ PATCH AUTHORITY
 
 Authorized changes exist only in a new manifest-verified working tree.
 
-EVIDENCE
+SEALED EVIDENCE
 
   expanded files              1057/1057
   expanded manifest SHA256
@@ -82,9 +83,6 @@ SEALED SEAM
 
   original Compiler/ICLCC.CPP lines 410 and 411
 
-At this point passes 0 through 6 and jump-table forwarding are complete,
-lx->pass is 7, and OptPass789 first-time finalization has not started.
-
 INSTALLED PATCH
 
   if (lx->pass!=7)
@@ -93,7 +91,7 @@ INSTALLED PATCH
 This is a no-rewrite assertion.  It performs no valid-path write and installs no
 optimizer transformation.
 
-OBSERVED WORKSPACE INSTALL
+OBSERVED WORKSPACE
 
   work root
     D:\TECHNICAL\DBYTE-HOLYC-OPT-WORK\templeosts-1.10-no-rewrite
@@ -114,13 +112,6 @@ OBSERVED WORKSPACE INSTALL
   workspace status
     EXACT-COPY-PLUS-ONE-ASSERTION
 
-  optimizer transformations
-    NONE
-
-Install record:
-
-  TEMPLEOSTS-1.10-NO-REWRITE-INSTALL.TXT
-
 EXACT BUILD ARTIFACTS
 
   Compiler/Compiler.PRJ
@@ -139,43 +130,53 @@ EXACT BUILD ARTIFACTS
     bytes   202757
     SHA256  8509A6224474915233209975E9D56598FA79E005F616B31B878D4350CED247A5
 
-These identities prove the rare build artifacts exist.  They do not yet prove
-the build command, loader route, output replacement sequence, or guest run.
+OBSERVED BUILD ROUTE DISPLAY
 
-NEXT COMMAND
+  report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-route.txt
 
-Preserve the installed workspace.  Display the exact 1.10 build-route context:
+  report SHA256
+    ED5108F73DE8363E948D559F7625F8752C15B6AD0AED941C40EDD01D0A8488A6
 
-  Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
-  git pull
+  manifest files             1057/1057
+  workspace files            1057/1057
+  changed files              1
+  raw build-name references  20
 
-  .\tools\DISPLAY-TEMPLEOSTS-COMPILER-BUILD-ROUTE.ps1 `
-      -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
-      -ManifestPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-expanded-manifest.txt `
-      -WorkRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-WORK\templeosts-1.10-no-rewrite `
-      -InstallReportPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-no-rewrite-seam.txt `
-      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-route.txt
+  workspace
+    EXACT-COPY-PLUS-ONE-ASSERTION
 
-The display tool:
+  build route
+    RAW-DISPLAY-ONLY
 
-  re-verifies all 1057 evidence files
-  re-verifies all 1057 workspace files
-  requires exactly one changed workspace path
-  requires the observed patched ICLCC hash
-  binds to the observed install report hash
-  displays Compiler/Compiler.PRJ and Compiler/CmpMain.CPP
-  reports raw exact references to Compiler.PRJ, Compiler.BIN, and Compiler.MAP
-  does not build, load, execute, replace output, or modify the workspace
+  build
+    NOT-OBSERVED
 
-Expected status:
+The count 20 is a raw exact-literal occurrence count.  It is not a count of
+unique executable build routes.
 
-  WORKSPACE       EXACT-COPY-PLUS-ONE-ASSERTION
-  BUILD ROUTE     RAW-DISPLAY-ONLY
-  BUILD           NOT-OBSERVED
-  VERDICT         BUILD ROUTE CONTEXT COMPLETE
+Display record:
+
+  TEMPLEOSTS-1.10-COMPILER-BUILD-ROUTE-DISPLAY.TXT
+
+NEXT EVIDENCE
+
+Manually review the complete build-route report.  Determine from exact displayed
+Compiler.PRJ, CmpMain.CPP, and raw reference context:
+
+  the actual project loader or compiler entry
+  the required guest path and working directory
+  the build invocation
+  temporary output names
+  Compiler.BIN and Compiler.MAP replacement sequence
+  rollback and failure behavior
+
+No new parser, display tool, guessed build command, compiler invocation, binary
+replacement, or guest execution is authorized before that review.
 
 RULE
 
+RAW REFERENCES ARE NAVIGATION, NOT EXECUTION PROOF.
 WORKSPACE INSTALL IS NOT A BUILD.
 NO EXACT BUILD ROUTE, NO BUILD COMMAND.
 NO OBSERVED BUILD, NO COMPILER CLAIM.
