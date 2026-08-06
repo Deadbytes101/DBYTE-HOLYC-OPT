@@ -41,7 +41,7 @@ Resource extractor:
   DBYTE-HOLYC-TOOLS holyarchive
 
 Accepted source layers:
-  raw       original ISO file bytes and CArc payloads
+  raw       original ISO and archive evidence
   expanded  exact expanded historical file contents
 
 Navigation-only layer:
@@ -60,34 +60,58 @@ REJECTED AS TARGETS
   LLVM frontends
   reconstructed or reformatted source
 
-OBSERVED 1.10 CORRECTION
+OBSERVED CORRECTIONS
 
-The later TempleOS 5.03 source exposes names including COCCompile, OptPass6,
-OptPass789A, and CIntermediateCode.  They remain architecture clues only.
+The exact TempleOSTS 1.10 corpus rejected COCCompile and OptPass789A as required
+contracts.  Later TempleOS names remain architecture clues only.
 
-The exact TempleOSTS 1.10 expanded corpus does not contain the COCCompile
-literal.  The 5.03 symbol names are therefore rejected as required 1.10 marker
-contracts.  The earlier seam inspector was removed.
+A partial C/C++ quote masker was also rejected by exact 1.10 source bytes.  Raw
+Latin-1 context and manual source adjudication replaced heuristic parsing.
 
 CURRENT TARGET STATUS
 
-  exact ISO identity          SEALED
-  read-only resource          SEALED
-  expanded extraction         OBSERVED
-  full expanded manifest      PENDING
-  compiler discovery catalog  PENDING
-  rare compiler identity      UNRESOLVED
-  optimizer pass identity     UNRESOLVED
-  insertion seam              UNRESOLVED
-  patch authorization         DENIED
+  exact ISO identity              SEALED
+  read-only resource              SEALED
+  expanded extraction             SEALED
+  full expanded manifest          SEALED
+  exact 31-file Compiler/ set      SEALED
+  raw pipeline trace              SEALED
+  source context                  SEALED
+  CmpExts declaration role        SEALED
+  LCCCompile pipeline ownership   SEALED
+  executable pass order           SEALED
+  post-label-forward boundary     CANDIDATE
+  OptPass6 output contract        UNRESOLVED
+  OptPass789 input contract       UNRESOLVED
+  insertion seam                  NOT SEALED
+  patch authorization             DENIED
 
-DISCOVERY MODEL
+PIPELINE ADJUDICATION
 
-Hash every expanded file before selecting a compiler candidate.  Search exact
-historical bytes for compiler-like paths and function names.  Count later-era
-anchors as observations, not requirements.  Manually adjudicate the compiler,
-pass pipeline, and seam from byte-identified files before any source copy or
-rewrite is created.
+Compiler/CmpExts.CPP contains extern declarations for the optimizer passes.  It
+is not the compile-pipeline owner.
+
+Compiler/ICLCC.CPP defines LCCCompile.  Exact displayed source proves that
+LCCCompile owns the optimizer-to-sizing-to-emission sequence:
+
+  OptPass012
+  OptPass012
+  OptPass3
+  OptPass4
+  OptPass5
+  OptPass6
+  jump-table label forwarding
+  OptPass789 sizing until stable
+  AOT or JIT allocation
+  OptPass789 final emission
+
+The strongest candidate boundary is after jump-table label forwarding and
+before the first OptPass789 sizing call.  LCCHeaderPut(lx,7,FALSE) remains in
+that interval and its pass-state contract must be preserved.
+
+The complete adjudication is recorded in:
+
+  TEMPLEOSTS-1.10-PIPELINE-ADJUDICATION.TXT
 
 MODEL AFTER SEAM SEALING
 
@@ -96,22 +120,22 @@ corpus.  Build temporary analysis tables only when needed.  Discard them after
 the function is handled.  Preserve the original parser, intermediate form,
 register model, fix-ups, JIT path, AOT path, and x86-64 backend.
 
-ALLOWED FIRST WORK
+NEXT ALLOWED WORK
 
-  verify exact TempleOSTS ISO identity
-  extract with pinned DBYTE-HOLYC-TOOLS holyarchive
-  hash every expanded historical file
-  catalog compiler-like paths and function names
-  inspect exact candidate files
-  identify the original compile pipeline
-  identify optimizer passes from rare bytes
-  prove the insertion seam from rare bytes
+  inspect exact OptPass6.CPP definition context
+  inspect exact OptPass789.CPP definition context
+  adjudicate state contracts across the candidate boundary
+  preserve LCCHeaderPut pass and trace semantics
   create a no-rewrite verifier only after the seam is sealed
 
 NOT YET AUTHORIZED
 
-  selecting a target from common mirror names
   creating an optimizer source patch
+  inserting a new pass
+  changing LCCHeaderPut pass numbering
+  changing jump-table label forwarding
+  changing OptPass789 convergence
+  changing JIT or AOT allocation or emission
   memory load elimination
   alias speculation
   call motion
@@ -126,7 +150,7 @@ NOT YET AUTHORIZED
 RULE
 
 NO RARE BYTE IDENTITY, NO TARGET.
-NO COMPILER IDENTITY, NO SEAM.
+NO SEALED PASS CONTRACT, NO SEAM.
 NO SEALED SEAM, NO PATCH.
 UNKNOWN MEANS DO NOT TRANSFORM.
 A SMALLER BINARY IS NOT PROOF.
