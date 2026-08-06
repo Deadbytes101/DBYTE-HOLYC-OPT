@@ -118,7 +118,9 @@ function ConvertFrom-VBoxMachineReadable {
 
 function Assert-UniqueLine {
     param(
-        [Parameter(Mandatory = $true)][string[]]$Lines,
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [string[]]$Lines,
         [Parameter(Mandatory = $true)][string]$Expected
     )
 
@@ -130,7 +132,9 @@ function Assert-UniqueLine {
 
 function Get-UniqueTabValue {
     param(
-        [Parameter(Mandatory = $true)][string[]]$Lines,
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [string[]]$Lines,
         [Parameter(Mandatory = $true)][string]$Key
     )
 
