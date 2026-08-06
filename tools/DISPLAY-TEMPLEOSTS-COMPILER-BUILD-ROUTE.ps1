@@ -98,6 +98,7 @@ function Get-LineNumber([string]$Text, [int]$Offset) {
 function Add-LineNumberedText {
     param(
         [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
         [System.Collections.Generic.List[string]]$Report,
 
         [Parameter(Mandatory = $true)]
