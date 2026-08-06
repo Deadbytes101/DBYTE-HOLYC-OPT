@@ -288,13 +288,13 @@ Assert-UniqueLine -Lines $Lines -Expected "candidates_with_hashed_vdi`t1"
 Assert-UniqueLine -Lines $Lines -Expected "candidates_with_exact_iso`t1"
 Assert-UniqueLine -Lines $Lines -Expected "candidates_with_snapshots`t0"
 Assert-UniqueLine -Lines $Lines -Expected "candidates_with_shared_folders`t0"
-Assert-UniqueLine -Lines $Lines -Expected "target_selection`tUNRESOLVED"
+Assert-UniqueLine -Lines $Lines -Expected 'target_selection`tUNRESOLVED'
 Assert-UniqueLine `
     -Lines $Lines `
-    -Expected "powered_off_recovery_point`tUNRESOLVED"
-Assert-UniqueLine -Lines $Lines -Expected "guest_delivery_route`tUNRESOLVED"
-Assert-UniqueLine -Lines $Lines -Expected "build_execution`tNOT-AUTHORIZED"
-Assert-UniqueLine -Lines $Lines -Expected "build_status`tNOT-OBSERVED"
+    -Expected 'powered_off_recovery_point`tUNRESOLVED'
+Assert-UniqueLine -Lines $Lines -Expected 'guest_delivery_route`tUNRESOLVED'
+Assert-UniqueLine -Lines $Lines -Expected 'build_execution`tNOT-AUTHORIZED'
+Assert-UniqueLine -Lines $Lines -Expected 'build_status`tNOT-OBSERVED'
 
 $CandidateIndexes = @()
 for ($Index = 0; $Index -lt $Lines.Length; $Index++) {
