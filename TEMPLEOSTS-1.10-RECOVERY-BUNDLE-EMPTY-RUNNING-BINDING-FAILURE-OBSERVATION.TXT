@@ -1,0 +1,174 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 RECOVERY BUNDLE EMPTY RUNNING INVENTORY BINDING FAILURE OBSERVATION
+
+CLASS
+
+CONFIGURATION-EXACT RECOVERY BUNDLE PREPARATION DID NOT START.
+ZERO RUNNING VM ROWS WERE REJECTED BY A POWERSHELL PARAMETER BINDING CONTRACT.
+NO STAGING ROOT, RECOVERY ROOT, MANIFEST OR PREPARATION REPORT WAS CREATED.
+POWERED-OFF RECOVERY POINT REMAINS NOT SEALED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  7bb98b060ef8dddadf79cf7e5f9d1b83eea7f924
+
+Command:
+  tools/PREPARE-TEMPLEOSTS-CONFIG-EXACT-RECOVERY-BUNDLE-R2.ps1
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  resource root
+    D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+  sealed normalized difference report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vbox-normalized-diff.txt
+
+  recovery root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2
+
+  intended preparation report directory
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE
+
+OBSERVED WRAPPER BINDING
+
+  original preparer blob
+    33957db6d124f20025be638eb41d74e7e4190bcc
+
+  root-disjoint guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  final zero-snapshot guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  patched source SHA256
+    CB05AD553326E0BA66D58AF0D3DCF3BC1F00ADE5AF724F60C06BA9C5B855FD18
+
+OBSERVED RESULT
+
+  terminal failure
+    Cannot bind argument to parameter 'Running' because it is an empty array.
+
+  failing function
+    Assert-LiveTarget
+
+  failing parameter
+    Running
+
+  expected live state
+    zero running target rows
+
+  staging root
+    NOT CONSTRUCTED
+
+  recovery root
+    NOT CREATED
+
+  manifest
+    NOT WRITTEN
+
+  preparation report
+    NOT WRITTEN
+
+ROOT CAUSE
+
+The preparer deliberately queries:
+
+  VBoxManage list runningvms
+
+A powered-off target correctly produces an empty string array.  Assert-LiveTarget
+requires a mandatory string-array Running parameter but does not declare
+AllowEmptyCollection.  Windows PowerShell therefore rejects the expected empty
+array during parameter binding before the function can evaluate that the target
+has zero running rows.
+
+This is a parameter contract mismatch.  It is not evidence that the target VM
+was running and it is not evidence that the powered-off state changed.
+
+OBSERVED EXECUTION BOUNDARY
+
+Before the failure, the R2 wrapper:
+
+  bound the original preparer tree and local blob
+  applied the exact root-disjoint hardening replacement
+  applied the exact final zero-snapshot hardening replacement
+  created the patched scriptblock
+
+The original preparer then:
+
+  resolved and validated its input paths
+  verified that the requested recovery root did not exist
+  verified that its requested report path did not exist
+  bound the sealed normalized difference report
+  revalidated the pinned resource commit and clean tracked tree
+  revalidated the adopted baseline VDI and ISO
+  queried registered, running and machine-readable target inventory read-only
+
+It stopped while binding the empty running inventory into Assert-LiveTarget.
+The code had not yet queried snapshot inventory, hashed live artifacts, created
+a staging root, copied files, written evidence, generated a manifest or moved a
+staging directory into the final recovery root.
+
+INVOCATION PATH DEFECT
+
+The submitted OutPath expression concatenated:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE
+  templeosts-config-exact-recovery-preparation.txt
+
+without a directory separator.  The resulting path would have been:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCEtempleosts-config-exact-recovery-preparation.txt
+
+The execution stopped before that path was created.  The next invocation must
+construct the report path with Join-Path or an explicit directory separator.
+
+MUTATION BOUNDARY
+
+No VM start, stop, snapshot operation, attachment change, live VBOX write, live
+VDI write, live ISO write, guest delivery or compiler execution occurred.
+No staging directory, final recovery directory, bundle file, manifest or report
+was created by this invocation.
+
+CORRECTION CONTRACT
+
+  preserve the original preparer and failed R2 wrapper
+  bind the original preparer blob exactly
+  retain the exact root-disjoint hardening
+  retain the exact final zero-snapshot revalidation
+  add AllowEmptyCollection only to Assert-LiveTarget Running
+  retain the requirement that the running target row count is zero
+  construct OutPath with Join-Path
+  do not seal recovery during preparation
+  do not authorize build execution
+
+CURRENT STATUS
+
+  exact TempleOSTS corpus                 SEALED
+  target guest VM                         SEALED
+  target VM state                         POWEROFF / PREVIOUSLY OBSERVED
+  adopted baseline VDI                    DISK-EXACT / DISTINCT FILE
+  adopted baseline VBOX                   CONFIGURATION-NONEXACT
+  replacement recovery bundle             NOT PREPARED
+  restore execution                       NOT OBSERVED
+  guest delivery                          UNRESOLVED
+  compiler build execution                NOT AUTHORIZED
+  optimizer transformation                DENIED
+
+RULE
+
+ZERO RUNNING ROWS ARE VALID EVIDENCE FOR A POWERED-OFF TARGET.
+AN EMPTY COLLECTION MUST NOT BE MISCLASSIFIED AS A MISSING REQUIRED ARGUMENT.
+PREPARATION IS NOT RESTORE PROOF.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
