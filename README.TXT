@@ -3,7 +3,7 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE GUEST TARGET PREFLIGHT
+0.0.1 SEALED GUEST TARGET
 EXACT TEMPLEOSTS 1.10 CORPUS
 OPTIMIZER PIPELINE AND INSERTION SEAM SEALED
 NO-REWRITE ASSERTION INSTALLED / OBSERVED
@@ -11,8 +11,8 @@ COMPILER-ONLY BUILD ROUTE SEALED
 BOOT AND MAP LOAD ROUTES SEALED
 HOST BUILD GUARD PREPARED / OBSERVED
 VM PREFLIGHT AGGREGATE OBSERVED
-TARGET VM ONE CANDIDATE / ADJUDICATION PENDING
-POWERED-OFF RECOVERY POINT NOT PREPARED
+TARGET VM SEALED
+POWERED-OFF RECOVERY POINT VERIFICATION PENDING
 GUEST DELIVERY UNRESOLVED
 BUILD EXECUTION NOT AUTHORIZED
 OPTIMIZER TRANSFORMATION DENIED
@@ -138,26 +138,13 @@ OBSERVED HOST BUILD GUARD
   guard root
     D:\TECHNICAL\DBYTE-HOLYC-OPT-GUARD\templeosts-1.10-no-rewrite
 
-  report
-    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-guard.txt
-
-  workspace files             1057/1057
-  guard files                 11
-
   guard manifest SHA256
     792ED470CF151582C81B20C95C588067B2CD41ED74893AB926079DC5D2C76FCA
 
   guard report SHA256
     53FC38AC8F84C16AA4657A9EF4CB7BBA94B958217B8C489D481ADEF4137AA297
 
-The guard preserves exact raw recovery containers, matching expanded baseline
-objects, the candidate ICLCC source, a non-executable contract, and a hash
-manifest.  It is host recovery material, not a guest recovery point.
-
-OBSERVED VM PREFLIGHT AGGREGATE
-
-  report
-    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-delivery-preflight.txt
+OBSERVED VM PREFLIGHT
 
   report SHA256
     8F851B21087B470126E343ECBD8258F2A439D2AF3FAE8801451F4FBB63610461
@@ -171,70 +158,110 @@ OBSERVED VM PREFLIGHT AGGREGATE
   snapshot chains            0
   shared folders             0
 
-The console aggregate proves one viable candidate count but does not itself
-expose the exact candidate name, UUID, VDI path, VDI hash, or storage slots.
-Target identity therefore remains pending deterministic report adjudication.
+SEALED GUEST TARGET
+
+  report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-target.txt
+
+  report SHA256
+    0CDEAEF0B877CB4ED4D56860D5160EB28DDF838AE45360133A8CCAE7CF61EC62
+
+  name
+    Temple1.10
+
+  UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  state
+    poweroff
+
+  VDI
+    D:\VirtualBox VMs\Temple1.10\Temple1.10.vdi
+
+  VDI bytes
+    2097152
+
+  VDI SHA256
+    90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  ISO
+    D:\TempleOSTS.iso
+
+  ISO SHA256
+    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+  snapshot UUID rows
+    0
+
+  shared folders
+    0
 
 Records:
 
   TEMPLEOSTS-1.10-COMPILER-BUILD-ROUTE-ADJUDICATION.TXT
   TEMPLEOSTS-1.10-COMPILER-BUILD-GUARD-OBSERVATION.TXT
   TEMPLEOSTS-1.10-GUEST-DELIVERY-PREFLIGHT-OBSERVATION.TXT
+  TEMPLEOSTS-1.10-GUEST-TARGET-OBSERVATION.TXT
 
 NEXT COMMAND
 
-Adjudicate the one candidate against the exact preflight report and a fresh
-read-only VirtualBox inventory:
+Verify the existing adopted powered-off recovery baseline without creating or
+modifying a VM artifact:
 
   Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
   git pull
 
   $VBox = 'D:\Portable-VirtualBox7\app64\VBoxManage.exe'
-  $Guard = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-GUARD\templeosts-1.10-no-rewrite'
-  $GuardReport = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-guard.txt'
-  $Preflight = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-delivery-preflight.txt'
-  $Out = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-target.txt'
+  $Resource = 'D:\TECHNICAL\DBYTE-HOLYC-TOOLS'
+  $Target = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-target.txt'
+  $Inspector = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-adopted-recovery-inspector.txt'
+  $Out = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-powered-off-recovery-point.txt'
 
-  if (Test-Path -LiteralPath $Out) {
-      throw "TARGET OUTPUT ALREADY EXISTS — preserve it: $Out"
+  foreach ($Path in @($Inspector, $Out)) {
+      if (Test-Path -LiteralPath $Path) {
+          throw "RECOVERY EVIDENCE ALREADY EXISTS — preserve it: $Path"
+      }
   }
 
-  .\tools\ADJUDICATE-TEMPLEOSTS-GUEST-TARGET.ps1 `
+  .\tools\VERIFY-TEMPLEOSTS-POWERED-OFF-RECOVERY-POINT.ps1 `
       -VBoxManagePath $VBox `
-      -GuardRoot $Guard `
-      -GuardReportPath $GuardReport `
-      -PreflightReportPath $Preflight `
+      -ResourceRoot $Resource `
+      -TargetReportPath $Target `
+      -InspectorReportPath $Inspector `
       -OutPath $Out
 
-The adjudicator:
+The verifier:
 
-  binds to preflight SHA256 8F851B21087B470126E343ECBD8258F2A439D2AF3FAE8801451F4FBB63610461
-  re-verifies all ten guard-manifest objects and the exact candidate source
-  parses exactly one candidate block
-  requires poweroff, not-running, one hashed VDI and the exact ISO
-  re-queries registered and running VM inventories
-  matches live name and UUID to the sealed report
-  hashes the selected VDI and ISO again while the VM remains powered off
-  records current attachment keys and snapshot/shared-folder rows
-  does not create a snapshot, copy a VDI, change attachments or deliver source
+  binds to target report SHA256 0CDEAEF0B877CB4ED4D56860D5160EB28DDF838AE45360133A8CCAE7CF61EC62
+  requires DBYTE-HOLYC-TOOLS commit 37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
+  requires a clean tracked resource tree and exact inspector blob
+  verifies the adopted baseline manifest, VBOX, VBOX-PREV, VDI and ISO
+  verifies four non-empty raw baseline evidence files and absent NVRAM
+  requires equal live/baseline VDI bytes and SHA256
+  requires distinct NTFS file IDs for live and baseline VDI files
+  runs the pinned adopted inspector in PREFLIGHT mode
+  requires REGISTERED-EXACT, poweroff, exact VBOX, VDI and ISO
+  writes reports only outside the read-only resource root
+  does not start, stop, copy, replace, mount, attach or modify a VM artifact
 
 Expected terminal boundary:
 
   TARGET SELECTION     SEALED
-  RECOVERY POINT       NOT-PREPARED
+  RECOVERY POINT       SEALED
+  RESTORE EXECUTION    NOT-OBSERVED
   DELIVERY ROUTE       UNRESOLVED
   BUILD                NOT-AUTHORIZED
-  VERDICT              GUEST TARGET SELECTION COMPLETE
+  VERDICT              POWERED-OFF RECOVERY POINT COMPLETE
 
-The tool is statically reviewed only.  Windows PowerShell execution is not yet
-observed.
+The verifier is statically reviewed only.  Windows PowerShell execution is not
+yet observed.
 
 RULE
 
-ONE CANDIDATE COUNT IS NOT TARGET IDENTITY.
-NO EXACT UUID AND VDI IDENTITY, NO TARGET SELECTION.
 TARGET SELECTION IS NOT A RECOVERY POINT.
-NO POWERED-OFF RECOVERY COPY OR SNAPSHOT, NO BUILD.
+MATCHING BYTES AT ONE PATH ARE NOT AN INDEPENDENT RECOVERY COPY.
+NO VERIFIED INDEPENDENT BASELINE VDI, NO RECOVERY POINT.
+NO OBSERVED RESTORE, NO RESTORE CLAIM.
 NO OBSERVED DELIVERY, NO GUEST SOURCE CLAIM.
 NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
 NO OBSERVED BUILD, NO COMPILER CLAIM.
