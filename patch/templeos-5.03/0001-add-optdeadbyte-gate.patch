@@ -1,0 +1,87 @@
+diff --git a/Compiler/CExts.HC b/Compiler/CExts.HC
+--- a/Compiler/CExts.HC
++++ b/Compiler/CExts.HC
+@@ -17,6 +17,7 @@ extern U0 OptPass3(CCmpCtrl *cc,COptReg *reg_offsets);
+ extern U0 OptPass4(CCmpCtrl *cc,COptReg *reg_offsets,I64 *_type);
+ extern U0 OptPass5(CCmpCtrl *cc);
+ extern U0 OptPass6(CCmpCtrl *cc);
++extern U0 OptDeadByteGate(CCmpCtrl *cc);
+ extern I64 OptPass789A(
+ 	CCmpCtrl *cc,COptReg *reg_offsets,U8 *buf,CDbgInfo **_dbg);
+ extern CHashClass *PrsClass(
+diff --git a/Compiler/Compiler.PRJ b/Compiler/Compiler.PRJ
+--- a/Compiler/Compiler.PRJ
++++ b/Compiler/Compiler.PRJ
+@@ -31,6 +31,7 @@ CUAsmGlbls	uasm;
+ #include "OptPass4"
+ #include "OptPass5"
+ #include "OptPass6"
++#include "OptDeadByte"
+ #include "BackLib"
+ #include "BackFA"
+ #include "BackFB"
+diff --git a/Compiler/PrsLib.HC b/Compiler/PrsLib.HC
+--- a/Compiler/PrsLib.HC
++++ b/Compiler/PrsLib.HC
+@@ -224,6 +224,7 @@ U8 *COCCompile(CCmpCtrl *cc,I64 *_code_size,CDbgInfo **_dbg,I64 *_type)
+   OptPass5(cc);
+   COCHeaderPut(cc,6,TRUE);
+   OptPass6(cc);
++  OptDeadByteGate(cc);
+   COCHeaderPut(cc,7,TRUE);
+ 
+   lb=cc->coc.coc_next_misc;
+diff --git a/Compiler/OptDeadByte.HC b/Compiler/OptDeadByte.HC
+new file mode 100644
+--- /dev/null
++++ b/Compiler/OptDeadByte.HC
+@@ -0,0 +1,49 @@
++#define DBYTE_OPT_MAX_IC	1048576
++
++Bool dbyte_opt_enable=FALSE;
++
++Bool OptDeadByteVerify(CCmpCtrl *cc)
++{
++  CIntermediateCode *tmpi;
++  I64 count=0;
++
++  if (!cc)
++    return FALSE;
++
++  tmpi=cc->coc.coc_head.next;
++  if (!tmpi)
++    return FALSE;
++
++  while (tmpi->ic_code) {
++    if (!tmpi->next || !tmpi->last)
++      return FALSE;
++    if (tmpi->next->last!=tmpi || tmpi->last->next!=tmpi)
++      return FALSE;
++    if (++count>DBYTE_OPT_MAX_IC)
++      return FALSE;
++    tmpi=tmpi->next;
++  }
++
++  if (!tmpi->next || !tmpi->last)
++    return FALSE;
++  if (tmpi->next->last!=tmpi || tmpi->last->next!=tmpi)
++    return FALSE;
++  if (tmpi!=&cc->coc.coc_head.next)
++    return FALSE;
++
++  return TRUE;
++}
++
++U0 OptDeadByteGate(CCmpCtrl *cc)
++{
++  if (!OptDeadByteVerify(cc))
++    LexExcept(cc,"DBYTE optimizer IC list failure at ");
++
++  if (!dbyte_opt_enable)
++    return;
++
++  // No rewrite is authorized in the foundation build.
++
++  if (!OptDeadByteVerify(cc))
++    LexExcept(cc,"DBYTE optimizer post-pass failure at ");
++}
