@@ -19,11 +19,13 @@ $ErrorActionPreference = 'Stop'
 $ExpectedToolsCommit = '37b0457e8735ab8cc34a23f2717fcfb808e6a7a8'
 $ExpectedIsoHash = 'DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC'
 $RegexOptions = [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+$Latin1 = [System.Text.Encoding]::GetEncoding(28591)
 
 function Get-Sha256Hex([byte[]]$Bytes) {
     $Hasher = [System.Security.Cryptography.SHA256]::Create()
     try {
-        return [System.Convert]::ToHexString($Hasher.ComputeHash($Bytes))
+        $Hash = $Hasher.ComputeHash($Bytes)
+        return ([System.BitConverter]::ToString($Hash)).Replace('-', '')
     }
     finally {
         $Hasher.Dispose()
@@ -253,7 +255,7 @@ $NamePattern = '(?<![A-Za-z0-9_])COCCompile\s*\('
 
 foreach ($Row in $Rows) {
     $FileBytes = [System.IO.File]::ReadAllBytes($Row.FullPath)
-    $Text = [System.Text.Encoding]::Latin1.GetString($FileBytes)
+    $Text = $Latin1.GetString($FileBytes)
     $Masked = Mask-NonCode $Text
 
     foreach ($NameMatch in [regex]::Matches($Masked, $NamePattern, $RegexOptions)) {
@@ -354,7 +356,7 @@ if ($Pass6End -ge $Pass789Offset -or $Definition.Masked[$Pass6End] -ne ';') {
 
 $FunctionLength = $Definition.CloseOffset - $Definition.NameOffset + 1
 $FunctionText = $Definition.Text.Substring($Definition.NameOffset, $FunctionLength)
-$FunctionHash = Get-Sha256Hex ([System.Text.Encoding]::Latin1.GetBytes($FunctionText))
+$FunctionHash = Get-Sha256Hex ($Latin1.GetBytes($FunctionText))
 
 $FunctionStartLine = Get-LineNumber $Definition.Text $Definition.NameOffset
 $FunctionEndLine = Get-LineNumber $Definition.Text $Definition.CloseOffset
