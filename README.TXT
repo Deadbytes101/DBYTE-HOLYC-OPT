@@ -3,14 +3,16 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE HOST BUILD GUARD
+0.0.1 RARE GUEST TARGET PREFLIGHT
 EXACT TEMPLEOSTS 1.10 CORPUS
 OPTIMIZER PIPELINE AND INSERTION SEAM SEALED
 NO-REWRITE ASSERTION INSTALLED / OBSERVED
 COMPILER-ONLY BUILD ROUTE SEALED
 BOOT AND MAP LOAD ROUTES SEALED
 HOST BUILD GUARD PREPARED / OBSERVED
-TARGET VM UNRESOLVED
+VM PREFLIGHT AGGREGATE OBSERVED
+TARGET VM ONE CANDIDATE / ADJUDICATION PENDING
+POWERED-OFF RECOVERY POINT NOT PREPARED
 GUEST DELIVERY UNRESOLVED
 BUILD EXECUTION NOT AUTHORIZED
 OPTIMIZER TRANSFORMATION DENIED
@@ -152,14 +154,37 @@ The guard preserves exact raw recovery containers, matching expanded baseline
 objects, the candidate ICLCC source, a non-executable contract, and a hash
 manifest.  It is host recovery material, not a guest recovery point.
 
+OBSERVED VM PREFLIGHT AGGREGATE
+
+  report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-delivery-preflight.txt
+
+  report SHA256
+    8F851B21087B470126E343ECBD8258F2A439D2AF3FAE8801451F4FBB63610461
+
+  registered VMs             1
+  known candidates           1
+  powered-off candidates     1
+  candidates with VDI        1
+  candidates with hashed VDI 1
+  exact ISO attached         1
+  snapshot chains            0
+  shared folders             0
+
+The console aggregate proves one viable candidate count but does not itself
+expose the exact candidate name, UUID, VDI path, VDI hash, or storage slots.
+Target identity therefore remains pending deterministic report adjudication.
+
 Records:
 
   TEMPLEOSTS-1.10-COMPILER-BUILD-ROUTE-ADJUDICATION.TXT
   TEMPLEOSTS-1.10-COMPILER-BUILD-GUARD-OBSERVATION.TXT
+  TEMPLEOSTS-1.10-GUEST-DELIVERY-PREFLIGHT-OBSERVATION.TXT
 
 NEXT COMMAND
 
-Display the existing VM candidates and delivery surfaces read-only:
+Adjudicate the one candidate against the exact preflight report and a fresh
+read-only VirtualBox inventory:
 
   Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
   git pull
@@ -167,45 +192,49 @@ Display the existing VM candidates and delivery surfaces read-only:
   $VBox = 'D:\Portable-VirtualBox7\app64\VBoxManage.exe'
   $Guard = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-GUARD\templeosts-1.10-no-rewrite'
   $GuardReport = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-guard.txt'
-  $Out = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-delivery-preflight.txt'
+  $Preflight = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-delivery-preflight.txt'
+  $Out = 'D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-target.txt'
 
   if (Test-Path -LiteralPath $Out) {
-      throw "PREFLIGHT OUTPUT ALREADY EXISTS — preserve it: $Out"
+      throw "TARGET OUTPUT ALREADY EXISTS — preserve it: $Out"
   }
 
-  .\tools\DISPLAY-TEMPLEOSTS-GUEST-DELIVERY-PREFLIGHT.ps1 `
+  .\tools\ADJUDICATE-TEMPLEOSTS-GUEST-TARGET.ps1 `
       -VBoxManagePath $VBox `
       -GuardRoot $Guard `
       -GuardReportPath $GuardReport `
+      -PreflightReportPath $Preflight `
       -OutPath $Out
 
-The preflight tool:
+The adjudicator:
 
-  re-verifies all eleven guard files
-  binds to the observed guard manifest and report hashes
-  lists registered and running VirtualBox machines
-  inspects only known TempleOSTS candidate names by default
-  records exact VM state, UUID, configuration, attachments and snapshots
-  hashes an attached VDI only when both state sources prove poweroff
-  hashes attached ISO files and identifies the exact TempleOSTS ISO
-  records configured shared-folder surfaces without treating them as guest proof
-  does not start, stop, snapshot, attach, detach, mount or modify anything
+  binds to preflight SHA256 8F851B21087B470126E343ECBD8258F2A439D2AF3FAE8801451F4FBB63610461
+  re-verifies all ten guard-manifest objects and the exact candidate source
+  parses exactly one candidate block
+  requires poweroff, not-running, one hashed VDI and the exact ISO
+  re-queries registered and running VM inventories
+  matches live name and UUID to the sealed report
+  hashes the selected VDI and ISO again while the VM remains powered off
+  records current attachment keys and snapshot/shared-folder rows
+  does not create a snapshot, copy a VDI, change attachments or deliver source
 
 Expected terminal boundary:
 
-  TARGET SELECTION     UNRESOLVED
+  TARGET SELECTION     SEALED
+  RECOVERY POINT       NOT-PREPARED
   DELIVERY ROUTE       UNRESOLVED
   BUILD                NOT-AUTHORIZED
-  VERDICT              GUEST DELIVERY PREFLIGHT CONTEXT COMPLETE
+  VERDICT              GUEST TARGET SELECTION COMPLETE
 
 The tool is statically reviewed only.  Windows PowerShell execution is not yet
 observed.
 
 RULE
 
-EXACT BUILD ROUTE IS NOT BUILD AUTHORIZATION.
-HOST GUARD IS NOT A GUEST RECOVERY POINT.
-A VIRTUALBOX SHARED-FOLDER CONFIGURATION IS NOT TEMPLEOS GUEST SUPPORT PROOF.
+ONE CANDIDATE COUNT IS NOT TARGET IDENTITY.
+NO EXACT UUID AND VDI IDENTITY, NO TARGET SELECTION.
+TARGET SELECTION IS NOT A RECOVERY POINT.
+NO POWERED-OFF RECOVERY COPY OR SNAPSHOT, NO BUILD.
 NO OBSERVED DELIVERY, NO GUEST SOURCE CLAIM.
 NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
 NO OBSERVED BUILD, NO COMPILER CLAIM.
