@@ -3,14 +3,16 @@ HOLYC TO OVERHEAVEN
 
 STATUS
 
-0.0.1 RARE NO-REWRITE SEAM
+0.0.1 RARE NO-REWRITE WORKSPACE
 EXACT TEMPLEOSTS 1.10 CORPUS
 LCCCompile PIPELINE OWNER SEALED
 EXECUTABLE PASS ORDER SEALED
 PASS CONTRACTS SEALED
 EXACT INSERTION SEAM SEALED
-NO-REWRITE ASSERTION AUTHORIZED
+NO-REWRITE ASSERTION INSTALLED
+WORKSPACE OBSERVED
 OPTIMIZER TRANSFORMATION DENIED
+BUILD ROUTE UNRESOLVED
 BUILD NOT OBSERVED
 
 ONLY TARGET
@@ -27,12 +29,11 @@ RESOURCE
 
 PATCH AUTHORITY
 
-  expanded/   exact expanded historical bytes
+  expanded/   exact historical bytes; immutable evidence
   raw/        identity and archive evidence
-  holy/       navigation only
+  holy/       normalized navigation only
 
-The evidence tree is never modified.  Authorized changes go only into a new
-manifest-verified working tree.
+Authorized changes exist only in a new manifest-verified working tree.
 
 EVIDENCE
 
@@ -53,20 +54,10 @@ EVIDENCE
   pass-boundary context SHA256
     D0D3EE768491C299B072BF3975BD707BA894349633E477D96670A6538E6F44F9
 
-  Compiler/ICLCC.CPP SHA256
-    2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
+SEALED PIPELINE
 
-  Compiler/OptPass6.CPP SHA256
-    1A960B56AB366DC821F1AE26045DC822B8FB81CCD3A653C52ECEADA689902487
-
-  Compiler/OptPass789.CPP SHA256
-    7AEB06CD2850BA6F7CDBC6B9B4076BE26EE14260388EFBD660DA6584B823667F
-
-PIPELINE
-
-Compiler/CmpExts.CPP contains extern declarations only.
-
-Compiler/ICLCC.CPP defines LCCCompile and owns:
+  file      Compiler/ICLCC.CPP
+  function  LCCCompile
 
   OptPass012
   OptPass012
@@ -79,27 +70,9 @@ Compiler/ICLCC.CPP defines LCCCompile and owns:
   AOT or JIT allocation
   OptPass789 final emission
 
-PASS CONTRACTS
-
-LCCHeaderPut optionally emits existing trace output and always assigns
-lx->pass=pass.  It performs no displayed intermediate-code rewrite.
-
-OptPass6 mutates the existing lx->lcc chain in place, maps selected stack
-temporaries to registers, normalizes selected flags, propagates clobber state,
-and writes fun_class register masks when applicable.
-
-OptPass789 declares:
-
-  pass 7  first-time finalization and sizing
-  pass 8  repeated sizing until size stops shrinking
-  pass 9  final emission
-
-LCCCompile rejects pass-8 size growth and stops on stable size.
+Compiler/CmpExts.CPP is an extern declaration surface only.
 
 SEALED SEAM
-
-  file      Compiler/ICLCC.CPP
-  function  LCCCompile
 
   after
     LCCHeaderPut(lx,7,FALSE);
@@ -107,57 +80,104 @@ SEALED SEAM
   before
     code_size=OptPass789(lx,fun_class,reg_offsets,NULL,NULL);
 
-  original source lines 410 and 411
+  original Compiler/ICLCC.CPP lines 410 and 411
 
 At this point passes 0 through 6 and jump-table forwarding are complete,
-lx->pass is 7, and OptPass789 finalization, sizing, allocation, and emission
-have not started.
+lx->pass is 7, and OptPass789 first-time finalization has not started.
 
-Contract record:
-
-  TEMPLEOSTS-1.10-PASS-CONTRACT-ADJUDICATION.TXT
-
-FIRST AUTHORIZED PATCH
-
-Only this no-rewrite assertion is authorized:
+INSTALLED PATCH
 
   if (lx->pass!=7)
     LexExcept(lx,"ST_OPT_INTERNAL_ERROR");
 
-It reads pass state and performs no valid-path write.  No optimizer
-transformation is authorized.
+This is a no-rewrite assertion.  It performs no valid-path write and installs no
+optimizer transformation.
+
+OBSERVED WORKSPACE INSTALL
+
+  work root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-WORK\templeosts-1.10-no-rewrite
+
+  manifest files             1057/1057
+  copied files               1057/1057
+  changed files              1
+
+  evidence Compiler/ICLCC.CPP SHA256
+    2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
+
+  patched Compiler/ICLCC.CPP SHA256
+    DB1C75A5EE71B07ADAEC32E984146602E73D9A0D606E2B76B8CCCC624E0CDCB8
+
+  install report SHA256
+    59B0BB29AA5C088114E38FE27FCF5CB5E2D3F59120CD6FD2678DF9D566C75E32
+
+  workspace status
+    EXACT-COPY-PLUS-ONE-ASSERTION
+
+  optimizer transformations
+    NONE
+
+Install record:
+
+  TEMPLEOSTS-1.10-NO-REWRITE-INSTALL.TXT
+
+EXACT BUILD ARTIFACTS
+
+  Compiler/Compiler.PRJ
+    bytes   858
+    SHA256  D82BBFE3B9A75B67D5C3E1B6E5EB03628960B81FAC9E3453212AE1163A47F779
+
+  Compiler/CmpMain.CPP
+    bytes   15275
+    SHA256  B4F1DE8EC776EAE47E3FBB77A7E6E23A50FEB9F4EEED6605986D4736283E4B8B
+
+  Compiler/Compiler.BIN
+    bytes   206512
+    SHA256  010F06358F26B5804600EE5BD6E6D313209C006C606E5F72C1E68D4028825AD1
+
+  Compiler/Compiler.MAP
+    bytes   202757
+    SHA256  8509A6224474915233209975E9D56598FA79E005F616B31B878D4350CED247A5
+
+These identities prove the rare build artifacts exist.  They do not yet prove
+the build command, loader route, output replacement sequence, or guest run.
 
 NEXT COMMAND
+
+Preserve the installed workspace.  Display the exact 1.10 build-route context:
 
   Set-Location D:\TECHNICAL\DBYTE-HOLYC-OPT
   git pull
 
-  .\tools\INSTALL-TEMPLEOSTS-NO-REWRITE-SEAM.ps1 `
+  .\tools\DISPLAY-TEMPLEOSTS-COMPILER-BUILD-ROUTE.ps1 `
       -ExtractRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-1.10-internal `
       -ManifestPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-expanded-manifest.txt `
       -WorkRoot D:\TECHNICAL\DBYTE-HOLYC-OPT-WORK\templeosts-1.10-no-rewrite `
-      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-no-rewrite-seam.txt
+      -InstallReportPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-no-rewrite-seam.txt `
+      -OutPath D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-route.txt
 
-The installer verifies and copies all 1057 files, patches one exact source
-needle, verifies that only Compiler/ICLCC.CPP differs, and confirms the evidence
-source hash remains unchanged.  It does not build or execute the compiler.
+The display tool:
+
+  re-verifies all 1057 evidence files
+  re-verifies all 1057 workspace files
+  requires exactly one changed workspace path
+  requires the observed patched ICLCC hash
+  binds to the observed install report hash
+  displays Compiler/Compiler.PRJ and Compiler/CmpMain.CPP
+  reports raw exact references to Compiler.PRJ, Compiler.BIN, and Compiler.MAP
+  does not build, load, execute, replace output, or modify the workspace
 
 Expected status:
 
   WORKSPACE       EXACT-COPY-PLUS-ONE-ASSERTION
-  SEAM            SEALED
-  PATCH CLASS     NO-REWRITE-ASSERTION
-  OPT TRANSFORMS  NONE
+  BUILD ROUTE     RAW-DISPLAY-ONLY
   BUILD           NOT-OBSERVED
-  VERDICT         INSTALL COMPLETE
-
-The installer is statically reviewed.  Windows PowerShell execution is not yet
-observed.
+  VERDICT         BUILD ROUTE CONTEXT COMPLETE
 
 RULE
 
-SEALED SEAM AUTHORIZES ONLY THE NAMED PATCH.
-NO OBSERVED WORKSPACE, NO PATCH INSTALL CLAIM.
+WORKSPACE INSTALL IS NOT A BUILD.
+NO EXACT BUILD ROUTE, NO BUILD COMMAND.
 NO OBSERVED BUILD, NO COMPILER CLAIM.
 NO GUEST DIFFERENTIAL, NO SEMANTIC CLAIM.
 REPORTS ARE CLAIMS, NOT EVIDENCE.
