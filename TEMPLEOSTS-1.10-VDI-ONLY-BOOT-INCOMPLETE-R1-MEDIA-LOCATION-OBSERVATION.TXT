@@ -1,0 +1,186 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT INCOMPLETE R1 MEDIA LOCATION OBSERVATION
+
+CLASS
+
+THE PRESERVED R11 INCOMPLETE R1 ROOT WAS INSPECTED READ-ONLY.
+THE COPIED VBOX REMAINED THE EXACT SEALED PRE-REWRITE OBJECT.
+ITS TARGET MEDIA REGISTRY LOCATIONS ARE RELATIVE BASENAMES, NOT ABSOLUTE PATHS.
+THE TARGET VDI LOCATION IS EXACTLY Temple1.10.vdi.
+THE TARGET ISO LOCATION IS EXACTLY TempleOSTS.iso.
+SEALED AND COPIED ABSOLUTE PATH OCCURRENCE COUNTS ARE ZERO FOR BOTH MEDIA FILES.
+EACH TARGET BASENAME OCCURS EXACTLY ONCE IN THE COPIED VBOX TEXT.
+THE INCOMPLETE VBOXUSERHOME REMAINED EMPTY.
+NO VBOXMANAGE INVOCATION, VIRTUALBOX MUTATION OR VM START OCCURRED DURING INSPECTION.
+THE R1 ROOT REMAINS PRESERVED AND MUST NEVER BE REUSED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  6be6e8a7057915a027d50fe1f289ab295b1d8b1b
+
+Inspector:
+  tools/INSPECT-TEMPLEOSTS-VDI-ONLY-BOOT-INCOMPLETE-R1.ps1
+
+Inspector final blob:
+  437ae52bfd990c40048c0855892aa6da466856ac
+
+Preserved incomplete root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Absent final preparation report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+Inspection report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r1-incomplete-inspection.txt
+
+Inspection report SHA256:
+  3D48BD2FCE6BA9363E086270D52C76A1AC326947A565F48F917C818435F70912
+
+OBSERVED COPIED FILE IDENTITIES
+
+Copied VBOX SHA256:
+  69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+Copied VBOX file ID:
+  0X0000000000000000000100000006034F
+
+Copied VDI file ID:
+  0X00000000000000000001000000060350
+
+Copied ISO file ID:
+  0X00000000000000000001000000060351
+
+The VDI and ISO content identities remain the previously sealed exact TempleOSTS objects.
+The inspector independently required the copied file IDs to be distinct from the sealed and live bound objects.
+
+OBSERVED MEDIA REGISTRY REPRESENTATION
+
+Target VDI UUID:
+  55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+Target VDI location attribute:
+  Temple1.10.vdi
+
+Target ISO UUID:
+  ab97b3a5-1331-494d-a917-e85b6e728c45
+
+Target ISO location attribute:
+  TempleOSTS.iso
+
+Raw copied-VBOX occurrence matrix:
+
+  sealed VDI absolute path occurrences    0
+  copied VDI absolute path occurrences    0
+  Temple1.10.vdi basename occurrences     1
+
+  sealed ISO absolute path occurrences    0
+  copied ISO absolute path occurrences    0
+  TempleOSTS.iso basename occurrences     1
+
+The copied VBOX is therefore not an absolute-path relocation object.
+The exact target media registry entries use co-located relative filenames.
+
+OBSERVED STATE BOUNDARY
+
+VBoxUserHome files:
+  0
+
+VBoxUserHome directories:
+  0
+
+VBoxManage during inspection:
+  NOT-EXECUTED
+
+VirtualBox mutation during inspection:
+  NOT-EXECUTED
+
+VM start:
+  NOT-AUTHORIZED
+
+The inspection report was written outside the incomplete root.
+No final boot-attempt preparation report was created.
+
+ADJUDICATION
+
+The R11 path-rewrite failure is explained by a false absolute-path assumption.
+The sealed VBOX does not contain the sealed rehearsal VDI or ISO absolute path.
+It stores the exact relative basenames:
+
+  Temple1.10.vdi
+  TempleOSTS.iso
+
+The copied VBOX, copied VDI and copied ISO are placed together in the new Machine directory using those same filenames.
+Therefore the next preparation must preserve the relative media location representation instead of rewriting it to host absolute paths.
+
+A no-rewrite policy is authorized only with these exact conditions:
+
+  source copied VBOX SHA256 remains 69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+  target VDI UUID row occurs exactly once
+  target VDI location equals Temple1.10.vdi
+  target ISO UUID row occurs exactly once before detach
+  target ISO location equals TempleOSTS.iso
+  VDI basename occurs exactly once
+  ISO basename occurs exactly once
+  sealed and copied absolute-path occurrence counts remain zero
+
+The XML postcondition must also use the relative basenames rather than host absolute paths.
+
+R1 PRESERVATION RULE
+
+The following root is permanent failure evidence and must not be deleted, modified, registered, started or reused:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Any later preparation must use a different fixed root.
+The next authorized root identifier is r2 only after a separately audited preparer binds this observation.
+
+ONE DECISION
+
+Create one direct-R2 R12 preparer that:
+
+  binds R2 blob 796f23166f2ddf14f2e981a14fc31cc5732c5c71
+  binds modifyvm probe report SHA256 57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+  binds this incomplete inspection report SHA256 3D48BD2FCE6BA9363E086270D52C76A1AC326947A565F48F917C818435F70912
+  requires preserved r1 still exists
+  requires new r2 root is absent
+  uses fixed --clipboard-mode and --drag-and-drop switches
+  patches the original expected boot root from r1 to r2
+  removes the copied-VBOX absolute-media rewrite step
+  preserves the exact relative media basenames without serializing the copied XML at that stage
+  changes the final VBOX XML media-registry postcondition to Temple1.10.vdi and TempleOSTS.iso
+  preserves every remaining R2 hardening and original-preparer blob contract
+
+AUTHORIZED RESULT ON A LATER SUCCESSFUL R12 PREPARATION
+
+  NEW R2 BOOT ATTEMPT COPY              PREPARED
+  POWERED-OFF CORRECTED CONFIGURATION   OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  R1 REUSE                              DENIED
+  VM START                              NOT AUTHORIZED
+  RESTORE BOOT                          NOT OBSERVED
+  POWERED-OFF RECOVERY POINT            NOT SEALED
+  GUEST DELIVERY                        UNRESOLVED
+  COMPILER BUILD                        NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION              DENIED
+
+RULE
+
+PRESERVE R1.
+USE RELATIVE MEDIA BASENAMES AS OBSERVED.
+DO NOT REWRITE THE COPIED VBOX TO HOST ABSOLUTE MEDIA PATHS.
+USE A NEW R2 ROOT ONLY AFTER STATIC AUDIT.
+NO VM START.
+NO RESTORE-BOOT CLAIM.
+NO RECOVERY CLAIM.
+NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
