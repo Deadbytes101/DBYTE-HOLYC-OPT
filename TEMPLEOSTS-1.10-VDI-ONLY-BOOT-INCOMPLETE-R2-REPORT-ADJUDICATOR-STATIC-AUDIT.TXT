@@ -1,0 +1,188 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT INCOMPLETE R2 REPORT ADJUDICATOR STATIC AUDIT
+
+CLASS
+
+THE R2 INSPECTION REPORT ADJUDICATOR WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+THE ADJUDICATOR BINDS THE COMPLETED R2 INSPECTION REPORT BY EXACT PATH AND SHA256, REASSERTS THE USER-OBSERVED SUMMARY FIELDS, PARSES EXACTLY TWO VBOX-LIKE FILE ROWS, CLASSIFIES THE CURRENT VBOX AND ONE COMPANION FILE, AND REPLAYS SELECTED STRUCTURAL REPORT ROWS WITHOUT VIRTUALBOX EXECUTION.
+NO R1/R2 WRITE, VBOXMANAGE INVOCATION, VM START OR R3 PREPARATION IS AUTHORIZED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/ADJUDICATE-TEMPLEOSTS-VDI-ONLY-BOOT-INCOMPLETE-R2-REPORT.ps1
+
+Final blob:
+  1c78a560914eaf68076df80a52ddf4b5f61bcdef
+
+BOUND REPORT
+
+Path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r2-incomplete-inspection.txt
+
+Required SHA256:
+  9C2F6A2C2838CF00412F37BA2753DBB1718605FBE165B6D9D2A9FFBFC5E2D42A
+
+Output path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r2-incomplete-adjudication.txt
+
+The output must be absent before execution.
+The adjudicator writes only this external report.
+
+BOUND OBSERVED SUMMARY
+
+R1 root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+R2 root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+
+Machine UUID:
+  9c98691e-27cd-4487-a306-587969c2c78c
+
+Current R2 VBOX SHA256:
+  8EADB39D54CABE5E7B791E5D7E05BCF4CBBF32D4AB6B58291BEC0B2FAD607C0C
+
+Current R2 VBOX file ID:
+  0X00000000000000000005000000060670
+
+Pre-registration VBOX SHA256:
+  69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+R2 VDI SHA256:
+  90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+R2 VDI file ID:
+  0X00000000000000000001000000060671
+
+R2 ISO SHA256:
+  DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+R2 ISO file ID:
+  0X00000000000000000001000000060672
+
+Required observed state fields include:
+  final preparation report absent True
+  incomplete marker present True
+  final manifest absent True
+  current VBOX does not match pre-registration hash
+  target VDI registry rows 1
+  target VDI location Temple1.10.vdi
+  target VDI expected True
+  target ISO registry rows 1
+  target ISO location TempleOSTS.iso
+  target ISO expected True
+  attached target ISO count 0
+  VBOX-like file count 2
+  boot-order node count 4
+  network-adapter node count 1
+  clipboard/drag node count 1
+  graphics node count 0
+  VBoxUserHome file count 2
+  isolated registry target entry count 1
+  inspector VBoxManage NOT-EXECUTED
+  inspector VirtualBox mutation NOT-EXECUTED
+  VM start NOT-AUTHORIZED
+  inspection COMPLETE
+  R1 and R2 PRESERVED
+
+VBOX-LIKE FILE CLASSIFICATION
+
+The adjudicator requires exactly two vbox_like_file rows.
+Each row must contain exactly five TAB-separated columns:
+  key
+  relative path
+  bytes
+  SHA256
+  NTFS file ID
+
+The current settings row must be exactly:
+  Machine\Temple1.10.vbox
+
+Its SHA256 and file ID must equal the observed current values above.
+Exactly one remaining VBOX-like row is classified as the companion.
+The companion filename, bytes, SHA256 and file ID are not guessed.
+They are replayed directly from the bound report.
+The adjudicator computes only one derived boolean:
+  whether the companion SHA256 equals the exact pre-registration VBOX SHA256.
+
+STRUCTURAL ROW REPLAY
+
+Selected rows are classified by exact ordinal prefixes, not a fuzzy regular expression.
+The replay includes:
+  machine_file
+  vbox_like_file
+  boot_order_*
+  network_adapter_*
+  clipboard_drag_*
+  graphics_*
+  storage_device_*
+  vbox_user_home_file
+  isolated_registry_*
+  registry_machine_entry_*
+
+The first draft used a regular expression with an incorrect escaped-tab character-class representation.
+Static review caught it before user execution.
+The final blob replaced that logic with exact ordinal prefix checks.
+TAB parsing of VBOX-like rows uses explicit character 9.
+
+COMMAND SURFACE
+
+The adjudicator performs only:
+  inspection report path resolution
+  SHA256 read
+  text parsing
+  exact field assertions
+  exact row classification
+  external adjudication report write
+
+It does not invoke:
+  VBoxManage
+  registervm
+  unregistervm
+  modifyvm
+  storageattach
+  startvm
+  controlvm
+  snapshot mutation
+  guestcontrol
+  compiler execution
+
+PRESERVATION AND AUTHORIZATION
+
+R1 remains permanent evidence and must not be reused.
+R2 remains permanent evidence and must not be reused.
+R3 preparation remains NOT-AUTHORIZED until the exact companion and structural rows are observed from the adjudication output and a separate decision is made.
+
+AUTHORIZED ACTION
+
+Run only:
+  tools/ADJUDICATE-TEMPLEOSTS-VDI-ONLY-BOOT-INCOMPLETE-R2-REPORT.ps1
+
+NOT AUTHORIZED
+
+R1 reuse
+R2 reuse
+R3 preparation
+VM start
+restore boot
+powered-off recovery-point seal
+guest delivery
+compiler build
+optimizer transformation
+
+RULE
+
+BIND THE EXACT COMPLETED R2 INSPECTION REPORT.
+READ THE SETTINGS COMPANION AND STRUCTURAL ROWS BEFORE ALTERING THE FILE-ID GATE.
+NO VIRTUALBOX EXECUTION.
+NO R3 YET.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
