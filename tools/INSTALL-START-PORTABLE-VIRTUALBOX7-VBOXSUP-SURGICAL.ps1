@@ -90,6 +90,8 @@ function Invoke-Sc {
 function Add-ScEvidence {
     param(
         [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
+        [AllowEmptyString()]
         [System.Collections.Generic.List[string]]$Lines,
         [Parameter(Mandatory = $true)]
         [string]$Prefix,
