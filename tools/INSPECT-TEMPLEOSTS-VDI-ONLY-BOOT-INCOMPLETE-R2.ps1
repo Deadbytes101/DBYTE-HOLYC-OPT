@@ -232,6 +232,7 @@ $Iso = Assert-ExactFile -Path $IsoPath -Bytes $ExpectedIsoBytes -SHA256 $Expecte
 $VBoxItem = Get-Item -LiteralPath $VBoxPath -Force
 $VBoxHash = (Get-FileHash -LiteralPath $VBoxPath -Algorithm SHA256).Hash
 $VBoxFileId = Get-FileId -Path $VBoxPath -Label 'r2 VBOX'
+$VBoxMatchesPreRegistrationHash = $VBoxHash -ceq $ExpectedR1VBoxHash
 
 [xml]$VBoxXml = [System.IO.File]::ReadAllText($VBoxPath)
 $MachineNodes = @($VBoxXml.SelectNodes("//*[local-name()='Machine']"))
@@ -254,6 +255,7 @@ if ($TargetVdiRows.Count -ne 1) {
     throw "r2 target VDI registry row count mismatch: $($TargetVdiRows.Count)"
 }
 $TargetVdiLocation = $TargetVdiRows[0].GetAttribute('location')
+$TargetVdiLocationMatches = $TargetVdiLocation -ceq $ExpectedVdiLocation
 
 $DvdImages = @($VBoxXml.SelectNodes("//*[local-name()='MediaRegistry']/*[local-name()='DVDImages']/*[local-name()='Image']"))
 $TargetIsoRows = @(
@@ -262,6 +264,13 @@ $TargetIsoRows = @(
     }
 )
 $TargetIsoLocations = @($TargetIsoRows | ForEach-Object { $_.GetAttribute('location') })
+$TargetIsoLocationMatches = (
+    $TargetIsoRows.Count -eq 0 -or
+    (
+        $TargetIsoRows.Count -eq 1 -and
+        $TargetIsoLocations[0] -ceq $ExpectedIsoLocation
+    )
+)
 
 $AttachedImages = @($VBoxXml.SelectNodes("//*[local-name()='AttachedDevice']/*[local-name()='Image']"))
 $AttachedTargetIso = @(
@@ -330,6 +339,7 @@ $Lines.Add("machine_uuid`t$MachineUuid")
 $Lines.Add("vbox_bytes`t$($VBoxItem.Length)")
 $Lines.Add("vbox_sha256`t$VBoxHash")
 $Lines.Add("vbox_file_id`t$VBoxFileId")
+$Lines.Add("vbox_matches_pre_registration_hash`t$VBoxMatchesPreRegistrationHash")
 $Lines.Add("vdi_bytes`t$($Vdi.Bytes)")
 $Lines.Add("vdi_sha256`t$($Vdi.SHA256)")
 $Lines.Add("vdi_file_id`t$($Vdi.FileId)")
@@ -339,10 +349,12 @@ $Lines.Add("iso_file_id`t$($Iso.FileId)")
 $Lines.Add('')
 $Lines.Add("target_vdi_registry_rows`t$($TargetVdiRows.Count)")
 $Lines.Add("target_vdi_location`t$TargetVdiLocation")
+$Lines.Add("target_vdi_location_matches_expected`t$TargetVdiLocationMatches")
 $Lines.Add("target_iso_registry_rows`t$($TargetIsoRows.Count)")
 foreach ($Location in $TargetIsoLocations) {
     $Lines.Add("target_iso_location`t$Location")
 }
+$Lines.Add("target_iso_location_matches_expected`t$TargetIsoLocationMatches")
 $Lines.Add("attached_target_iso_count`t$($AttachedTargetIso.Count)")
 $Lines.Add('')
 
@@ -412,12 +424,12 @@ for ($Index = 0; $Index -lt $RegistryMachineEntries.Count; $Index++) {
     Add-NodeAttributes -Lines $Lines -Prefix "registry_machine_entry_$($Index + 1)" -Node $RegistryMachineEntries[$Index]
 }
 $Lines.Add('')
-$Lines.Add('vboxmanage_invocation`tNOT-EXECUTED')
-$Lines.Add('virtualbox_mutation`tNOT-EXECUTED')
-$Lines.Add('vm_start`tNOT-AUTHORIZED')
-$Lines.Add('INSPECTION`tCOMPLETE')
-$Lines.Add('R1 ROOT`tPRESERVED')
-$Lines.Add('R2 ROOT`tPRESERVED')
+$Lines.Add("vboxmanage_invocation`tNOT-EXECUTED")
+$Lines.Add("virtualbox_mutation`tNOT-EXECUTED")
+$Lines.Add("vm_start`tNOT-AUTHORIZED")
+$Lines.Add("INSPECTION`tCOMPLETE")
+$Lines.Add("R1 ROOT`tPRESERVED")
+$Lines.Add("R2 ROOT`tPRESERVED")
 $Lines.Add('')
 $Lines.Add('REPORTS ARE CLAIMS, NOT EVIDENCE.')
 
@@ -431,9 +443,11 @@ $ReportHash = (Get-FileHash -LiteralPath $Output -Algorithm SHA256).Hash
 Write-Host "INCOMPLETE R2 ROOT:    $R2"
 Write-Host "VBOX SHA256:           $VBoxHash"
 Write-Host "VBOX FILE ID:          $VBoxFileId"
+Write-Host "VBOX MATCHES PRECOPY:  $VBoxMatchesPreRegistrationHash"
 Write-Host "VDI FILE ID:           $($Vdi.FileId)"
 Write-Host "ISO FILE ID:           $($Iso.FileId)"
 Write-Host "TARGET VDI LOCATION:   $TargetVdiLocation"
+Write-Host "TARGET VDI EXPECTED:   $TargetVdiLocationMatches"
 Write-Host "TARGET ISO ROWS:       $($TargetIsoRows.Count)"
 if ($TargetIsoLocations.Count -eq 0) {
     Write-Host 'TARGET ISO LOCATION:   <missing>'
@@ -443,6 +457,7 @@ else {
         Write-Host "TARGET ISO LOCATION:   $Location"
     }
 }
+Write-Host "TARGET ISO EXPECTED:   $TargetIsoLocationMatches"
 Write-Host "ATTACHED ISO COUNT:    $($AttachedTargetIso.Count)"
 Write-Host "VBOX-LIKE FILES:       $($VBoxLikeFiles.Count)"
 Write-Host "BOOT ORDER NODES:      $($BootOrderNodes.Count)"
