@@ -1,0 +1,251 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R4 AST TOKEN STATIC AUDIT
+
+CLASS
+
+THE R4 BOOT-ATTEMPT PREPARER ENTRYPOINT WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+R4 PRESERVES AND BINDS THE FAILED R3 ENTRYPOINT BY EXACT TREE AND LOCAL BLOB.
+R4 REPLACES ONLY THE R3 PSSCRIPTROOT TOKEN-CLASSIFICATION CONTRACT AND R3 DYNAMIC REPOSITORY-ROOT ANCHOR.
+THE R2 HARDENING WRAPPER AND ORIGINAL PREPARER REMAIN BOUND BY THEIR EXISTING BLOBS.
+NO VIRTUALBOX COMMAND, BOOT-ATTEMPT MUTATION OR AUTHORIZATION STATE WAS ADDED BY R4.
+VM START, RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R4.ps1
+
+Blob:
+  fcdec4c784f2d0610d8227aeb95ac138fa7e77d4
+
+BOUND R3
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3.ps1
+
+Required tree/local blob:
+  462a54f375439f60d9aefc37a62b9b3dd41e681e
+
+R3 continues to bind R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R2 continues to bind original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+OBSERVED FAILURE BOUNDARY
+
+The failed R3 invocation reported:
+
+  psscriptroot=5
+  anchor=1
+
+Static source review classified those textual matches as:
+
+  one exact executable PSScriptRoot variable token in the repository-root anchor
+  occurrences inside the longer variable name PSScriptRootReferences
+  one literal string used by R2 diagnostic source inspection
+
+The raw substring count therefore over-counted harmless textual occurrences.
+
+AST TOKEN CONTRACT
+
+R4 uses:
+
+  System.Management.Automation.Language.Parser.ParseInput
+
+It rejects any parse error before source execution.
+
+It then searches the PowerShell abstract syntax tree for nodes satisfying both:
+
+  node type is VariableExpressionAst
+  VariablePath.UserPath equals PSScriptRoot with ordinal case-sensitive equality
+
+This distinguishes:
+
+  executable $PSScriptRoot
+
+from:
+
+  $PSScriptRootReferences
+  '$PSScriptRoot'
+  diagnostic text containing PSScriptRoot
+
+The patched R3 requires for the R2 source:
+
+  exact PSScriptRoot variable tokens before R2 root injection  1
+  exact executable R2 repository-root anchors                 1
+  exact PSScriptRoot variable tokens after R2 root injection   0
+
+R4 independently parses the final patched R3 dynamic source and requires:
+
+  exact PSScriptRoot variable tokens                           0
+
+Therefore neither dynamic wrapper layer may depend on an empty automatic
+PSScriptRoot value.
+
+R3 REPOSITORY-ROOT INJECTION
+
+R4 is file-backed and derives the repository root from its own valid PSScriptRoot.
+
+It replaces one exact R3 source seam containing:
+
+  R2 relative path declaration
+  executable R3 repository-root anchor
+  R2 path construction start
+
+The replacement injects the resolved repository root as a single-quoted PowerShell
+literal and preserves the R2 relative path and path construction.
+
+The injected literal construction escapes any single quote in the repository path.
+The R2-relative source line is emitted as literal text and does not reference an
+undefined R4 variable.
+
+REPLACEMENT CONTRACT
+
+R4 requires exact-one source cardinality for:
+
+  R3 pre-injection textual token-count block
+  R3 post-injection textual token-count block
+  R3 executable repository-root seam
+
+For every replacement R4 requires:
+
+  old seam occurs exactly once before replacement
+  new seam is absent before replacement
+  new seam occurs exactly once after replacement
+  retained old text inside a new block is counted explicitly
+
+R4 also requires:
+
+  R3 tree blob exact
+  R3 local blob exact
+  patched source differs from original source
+  patched R3 source parses without error
+  patched R3 exact PSScriptRoot token count is zero
+
+UNCHANGED R3 AND PREPARER CONTRACTS
+
+R4 preserves R3 behavior for:
+
+  typed List[object] help-attempt argument arrays
+  modifyvm --help and --help modifyvm read-only probes
+  R2 repository-root injection
+  R2 and original-preparer blob verification
+  R2 hardening replacement cardinality
+  original preparer parameter forwarding
+
+R4 does not alter original preparer gates for:
+
+  exact sealed reports and roots
+  exact default and sealed identities
+  new disjoint boot-attempt root
+  copied VBOX, VDI and ISO identities and distinct NTFS file objects
+  empty isolated VBOX_USER_HOME
+  copied VM registration only
+  disk-only boot order
+  ISO detach
+  NIC, clipboard and drag-and-drop disablement
+  VBoxVGA and 9 MB VRAM retention
+  zero running rows, snapshots and shared folders
+  powered-off corrected-state verification
+  manifest and external-report creation
+  incomplete-root preservation on failure
+
+NEGATIVE COMMAND SURFACE
+
+R4 itself invokes no VBoxManage command.
+It performs only Git blob checks, source parsing, exact in-memory replacements and
+dynamic invocation of the already audited R3 chain.
+
+The inherited preparer chain still contains no:
+
+  startvm
+  controlvm
+  savestate
+  poweroff
+  unregistervm
+  snapshot take
+  snapshot restore
+  snapshot delete
+  guestcontrol
+  compiler execution
+
+The inherited intended VirtualBox mutations remain limited to the new isolated
+boot-attempt copy:
+
+  registervm
+  modifyvm
+  storageattach --medium none
+
+WRITE BOUNDARY
+
+Before the original preparer is invoked, R4 writes no boot-attempt root, registry,
+manifest or evidence report.
+
+On a successful inherited preparer execution, writes remain restricted to:
+
+  the new boot-attempt root
+  copied machine files
+  the new isolated VBOX_USER_HOME
+  boot-attempt manifest
+  external preparation report
+
+The sealed rehearsal, default registry, live VM artifacts and recovery bundle remain
+read-only inputs and are revalidated by the inherited preparer.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  BOOT ATTEMPT COPY                  PREPARED
+  POWERED-OFF CORRECTED CONFIG       OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  VM START                           NOT AUTHORIZED
+  RESTORE BOOT                       NOT OBSERVED
+  TEMPLEOS DESKTOP                   NOT OBSERVED
+  POWERED-OFF RECOVERY POINT         NOT SEALED
+  GUEST DELIVERY                     UNRESOLVED
+  COMPILER BUILD                     NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION           DENIED
+
+ADVERSARIAL JUDGMENT
+
+A substring count is not a PowerShell variable-token proof.
+An AST exact-name check is appropriate because the contract concerns runtime
+variable dependency, not the appearance of characters inside longer identifiers or
+string literals.
+
+R4 does not weaken repository-root validation.  It retains the exact executable
+anchor count and adds syntax-aware exact-variable validation before and after
+injection.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal     VERIFIED / SEALED
+  boot readiness                     ADJUDICATED
+  R3 first invocation                FAILED CLOSED / RECORDED
+  R4 AST correction                  STATICALLY AUDITED
+  boot-attempt copy                  EXECUTION PENDING
+  VM start                           NOT AUTHORIZED
+  restore boot                       NOT OBSERVED
+  powered-off recovery point         NOT SEALED
+  build execution                    NOT AUTHORIZED
+
+RULE
+
+RUN R4 ONLY.
+COUNT EXACT POWERSHELL VARIABLE TOKENS, NOT SUBSTRINGS.
+PRESERVE ANY INCOMPLETE BOOT ROOT.
+DO NOT START THE SEALED REHEARSAL OR BOOT COPY.
+PREPARATION IS NOT A BOOT PROOF.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
