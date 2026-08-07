@@ -1,0 +1,82 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / PORTABLE VIRTUALBOX7 VBOXSUP HOST-READY R3 SHOWVMINFO STORAGE-KEY FAILURE OBSERVATION
+
+CLASSIFY
+
+Read-only verification failure after successful VBoxSup host mutation.
+The failure is currently classified as a VBoxManage --machinereadable storage-key/schema mismatch until raw output is inspected.
+It is NOT evidence that the R3 VDI detached.
+It is NOT guest boot evidence.
+No VM retry is authorized.
+
+OBSERVED USER EXECUTION
+
+expected_head	cd36e9370f35906d17b0e9c9826b3a3b2e047af3
+actual_head_after_fetch_merge	a44b152c1faec98d824052fc2828580dc002f8bf
+runner_blob_expected	104cb6362ef23c8439a3d7ee398f40a4282a03b4
+runner_blob_tree_local_observed	104cb6362ef23c8439a3d7ee398f40a4282a03b4
+
+head_gate_result	FAILED / HEAD MISMATCH
+manual_continuation_after_head_gate	OBSERVED
+
+GitHub comparison from cd36e9370f35906d17b0e9c9826b3a3b2e047af3 to a44b152c1faec98d824052fc2828580dc002f8bf showed only removal of two static-audit files.
+The verifier and network-count hotfix runner bytes were not changed by that head movement.
+Therefore the manual continuation bypassed the intended fail-closed head gate, but the subsequently executed runner object still matched the intended exact blob.
+
+RUNNER OUTPUT
+
+bound_verifier_base	9d2cce9702aed0b955a779a07d3b61f78097933b
+correction	FINAL NIC COUNT MATERIALIZED WITH @()
+replacement	EXACT SOURCE CARDINALITY 1 -> 1
+core_verification	OTHERWISE UNCHANGED
+sc_mutation	NONE
+vm_start	NONE
+patched_verifier_sha256	165D9C117DE1EC36FFFCC7205B459D58F8DE5EF5A1442258C45FD694A15AE811
+
+FAILURE
+
+message	showvminfo missing key: IDE-1-0
+location	patched verifier required-key gate after VBoxManage showvminfo --machinereadable returned successfully
+final_host_ready_report	NOT-WRITTEN-BY-VERIFIER-BEFORE-THIS-FAILURE
+
+ORDERED EVIDENCE IMPLIED BY FAILURE LOCATION
+
+Before reaching the missing-key gate, the verifier source requires all of the following to succeed:
+- exact mutation report SHA256 3C24420D77868E8D15F58A6412AF53635EEAFFF00337CCEB01E17C31183666F3
+- exact failed-start report SHA256 AC22D9A63234B8BC16FFFAE21BDAAE78704BDE6635A4072093EECCD070EE80D4
+- exact prepared-verification report SHA256 26DC5258CF4692FD55EC95D81E48E3CFE05B4667BC20CDAC0CFFD58DC8433EF7
+- exact prior boot-authorization report SHA256 F8596A2CDECB75BE1FEC02377E9B6A428F15A3F4FC2C81D33F27A0CD962C3482
+- exact VBoxSup.sys / INF / CAT identities and valid driver signature
+- VBoxSup service registry object with expected image path/type/start/error/display values
+- sc query VBoxSup numeric STATE 4 before VBoxManage reads
+- exactly one Win32_SystemDriver VBoxSup row with Running state
+- exact R3 current/previous VBOX, VDI and ISO hashes/file IDs
+- exact isolated VirtualBox.xml SHA256 before VBoxManage reads
+- VirtualBox version 7.0.12r159484
+- exactly one registered Temple1.10 target
+- zero running VMs
+- successful VBoxManage showvminfo call and machine-readable conversion
+
+The failure happened while requiring the key IDE-1-0 from the converted showvminfo map.
+No post-showvminfo storage interpretation is accepted from this failed run.
+
+NEXT EVIDENCE NEEDED
+
+Capture, read-only:
+- raw VBoxManage showvminfo TARGET --machinereadable rows
+- parsed key inventory without assuming IDE-1-0
+- raw non-machine-readable storage rows
+- R3 VBOX XML StorageController/AttachedDevice topology
+- current VDI hash/file ID before and after the reads
+- isolated VirtualBox.xml hash before and after the reads
+- VBoxSup numeric STATE 4 before and after the reads
+
+DECISION
+
+Do not rerun the failed verifier directly.
+Do not retry VM start.
+Do not stop/delete/recreate VBoxSup.
+Do not mutate R3 media/configuration.
+Run a separate read-only storage-surface probe first.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
