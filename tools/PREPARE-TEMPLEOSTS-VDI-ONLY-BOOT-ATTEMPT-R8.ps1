@@ -281,7 +281,11 @@ function Get-ReportField {
     )
 
     $Prefix = $Key + "`t"
-    $Matches = @($Lines | Where-Object { $_.StartsWith($Prefix, [System.StringComparison]::Ordinal) })
+    $Matches = @(
+        $Lines | Where-Object {
+            $_.StartsWith($Prefix, [System.StringComparison]::Ordinal)
+        }
+    )
     if ($Matches.Count -ne 1) {
         throw "probe report field cardinality mismatch: key=$Key count=$($Matches.Count)"
     }
@@ -302,6 +306,31 @@ function Assert-ReportField {
             "observed=$Observed expected=$Expected"
         )
     }
+}
+
+function Assert-Attempt {
+    param(
+        [Parameter(Mandatory = $true)][string[]]$Lines,
+        [Parameter(Mandatory = $true)][string]$Number,
+        [Parameter(Mandatory = $true)][string]$Arguments,
+        [Parameter(Mandatory = $true)][string]$ExitCode,
+        [Parameter(Mandatory = $true)][string]$StdoutBytes,
+        [Parameter(Mandatory = $true)][string]$StdoutHash,
+        [Parameter(Mandatory = $true)][string]$StderrBytes,
+        [Parameter(Mandatory = $true)][string]$StderrHash
+    )
+
+    Assert-ReportField -Lines $Lines -Key "attempt_${Number}_arguments" -Expected $Arguments
+    Assert-ReportField -Lines $Lines -Key "attempt_${Number}_exit_code" -Expected $ExitCode
+    Assert-ReportField -Lines $Lines -Key "attempt_${Number}_stdout_utf8_bytes" -Expected $StdoutBytes
+    Assert-ReportField -Lines $Lines -Key "attempt_${Number}_stdout_sha256" -Expected $StdoutHash
+    Assert-ReportField -Lines $Lines -Key "attempt_${Number}_stderr_utf8_bytes" -Expected $StderrBytes
+    Assert-ReportField -Lines $Lines -Key "attempt_${Number}_stderr_sha256" -Expected $StderrHash
+    Assert-ReportField -Lines $Lines -Key "attempt_${Number}_modifyvm_usage_marker" -Expected 'True'
+    Assert-ReportField -Lines $Lines -Key "attempt_${Number}_clipboard_mode_marker" -Expected 'True'
+    Assert-ReportField -Lines $Lines -Key "attempt_${Number}_clipboard_marker" -Expected 'True'
+    Assert-ReportField -Lines $Lines -Key "attempt_${Number}_drag_and_drop_marker" -Expected 'True'
+    Assert-ReportField -Lines $Lines -Key "attempt_${Number}_draganddrop_marker" -Expected 'False'
 }
 
 if (-not (Test-Path -LiteralPath $R2Path -PathType Leaf)) {
@@ -330,6 +359,9 @@ if (
     )
 }
 
+$ResolvedVBox = (
+    Resolve-Path -LiteralPath $VBoxManagePath -ErrorAction Stop
+).Path
 $ProbeReport = (
     Resolve-Path -LiteralPath $ModifyVmHelpProbeReportPath -ErrorAction Stop
 ).Path
@@ -348,125 +380,77 @@ if ($ObservedProbeHash -cne $ExpectedProbeReportHash) {
 }
 $ProbeLines = [System.IO.File]::ReadAllLines($ProbeReport)
 
-foreach ($Field in @(
-    @('vboxmanage_version', $ExpectedVBoxVersion),
-    @('version_exit_code', '0'),
-    @('boot_attempt_root', $ExpectedBootAttemptRoot),
-    @('boot_attempt_root_absent', 'True'),
-    @('preparation_report', $ExpectedPreparationReport),
-    @('preparation_report_absent', 'True'),
-    @('process_vbox_user_home_before', ''),
-    @('process_vbox_user_home_after', ''),
-    @('virtualbox_registry_query', 'NOT-EXECUTED'),
-    @('virtualbox_mutation', 'NOT-EXECUTED'),
-    @('vm_start', 'NOT-AUTHORIZED'),
-    @('PROBE', 'COMPLETE'),
-    @('BOOT ATTEMPT COPY', 'NOT-PREPARED'),
-    @('VM START', 'NOT-AUTHORIZED'),
-    @('RESTORE BOOT', 'NOT-OBSERVED'),
-    @('RECOVERY POINT', 'NOT-SEALED'),
-    @('BUILD EXECUTION', 'NOT-AUTHORIZED'),
-    @('VERDICT', 'READ-ONLY MODIFYVM HELP SURFACE PROBE COMPLETE')
-)) {
-    Assert-ReportField -Lines $ProbeLines -Key $Field[0] -Expected $Field[1]
-}
+Assert-ReportField -Lines $ProbeLines -Key 'vboxmanage_path' -Expected $ResolvedVBox
+Assert-ReportField -Lines $ProbeLines -Key 'vboxmanage_version' -Expected $ExpectedVBoxVersion
+Assert-ReportField -Lines $ProbeLines -Key 'version_exit_code' -Expected '0'
+Assert-ReportField -Lines $ProbeLines -Key 'boot_attempt_root' -Expected $ExpectedBootAttemptRoot
+Assert-ReportField -Lines $ProbeLines -Key 'boot_attempt_root_absent' -Expected 'True'
+Assert-ReportField -Lines $ProbeLines -Key 'preparation_report' -Expected $ExpectedPreparationReport
+Assert-ReportField -Lines $ProbeLines -Key 'preparation_report_absent' -Expected 'True'
+Assert-ReportField -Lines $ProbeLines -Key 'process_vbox_user_home_before' -Expected ''
+Assert-ReportField -Lines $ProbeLines -Key 'process_vbox_user_home_after' -Expected ''
+Assert-ReportField -Lines $ProbeLines -Key 'virtualbox_registry_query' -Expected 'NOT-EXECUTED'
+Assert-ReportField -Lines $ProbeLines -Key 'virtualbox_mutation' -Expected 'NOT-EXECUTED'
+Assert-ReportField -Lines $ProbeLines -Key 'vm_start' -Expected 'NOT-AUTHORIZED'
+Assert-ReportField -Lines $ProbeLines -Key 'PROBE' -Expected 'COMPLETE'
+Assert-ReportField -Lines $ProbeLines -Key 'BOOT ATTEMPT COPY' -Expected 'NOT-PREPARED'
+Assert-ReportField -Lines $ProbeLines -Key 'VM START' -Expected 'NOT-AUTHORIZED'
+Assert-ReportField -Lines $ProbeLines -Key 'RESTORE BOOT' -Expected 'NOT-OBSERVED'
+Assert-ReportField -Lines $ProbeLines -Key 'RECOVERY POINT' -Expected 'NOT-SEALED'
+Assert-ReportField -Lines $ProbeLines -Key 'BUILD EXECUTION' -Expected 'NOT-AUTHORIZED'
+Assert-ReportField `
+    -Lines $ProbeLines `
+    -Key 'VERDICT' `
+    -Expected 'READ-ONLY MODIFYVM HELP SURFACE PROBE COMPLETE'
 
-$ExpectedAttempts = @(
-    @('1', 'modifyvm --help', '2', '0',
-        'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855',
-        '7057',
-        '81512DB8141ECC159671E0D0FC558859D802AB0D9F1E2E9FE6F0C0ACA845A46B'),
-    @('2', '--help modifyvm', '1', '70110',
-        '221D40C22A784A7AE2BC6F241C4174B75B3745EB9686AE351E3FC479B818A899',
-        '0',
-        'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855'),
-    @('3', 'help modifyvm', '1', '70110',
-        '221D40C22A784A7AE2BC6F241C4174B75B3745EB9686AE351E3FC479B818A899',
-        '0',
-        'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855'),
-    @('4', 'modifyvm', '1', '6834',
-        'FC8D05B08C87A25ECCA0F8C307EFCB192326610676F4DE4A46C33E7C7501C5AF',
-        '0',
-        'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855')
-)
-foreach ($Attempt in $ExpectedAttempts) {
-    $Number = $Attempt[0]
-    foreach ($Field in @(
-        @("attempt_${Number}_arguments", $Attempt[1]),
-        @("attempt_${Number}_exit_code", $Attempt[2]),
-        @("attempt_${Number}_stdout_utf8_bytes", $Attempt[3]),
-        @("attempt_${Number}_stdout_sha256", $Attempt[4]),
-        @("attempt_${Number}_stderr_utf8_bytes", $Attempt[5]),
-        @("attempt_${Number}_stderr_sha256", $Attempt[6]),
-        @("attempt_${Number}_modifyvm_usage_marker", 'True'),
-        @("attempt_${Number}_clipboard_mode_marker", 'True'),
-        @("attempt_${Number}_clipboard_marker", 'True'),
-        @("attempt_${Number}_drag_and_drop_marker", 'True'),
-        @("attempt_${Number}_draganddrop_marker", 'False')
-    )) {
-        Assert-ReportField -Lines $ProbeLines -Key $Field[0] -Expected $Field[1]
-    }
-}
+$EmptyHash = 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855'
+Assert-Attempt `
+    -Lines $ProbeLines `
+    -Number '1' `
+    -Arguments 'modifyvm --help' `
+    -ExitCode '2' `
+    -StdoutBytes '0' `
+    -StdoutHash $EmptyHash `
+    -StderrBytes '7057' `
+    -StderrHash '81512DB8141ECC159671E0D0FC558859D802AB0D9F1E2E9FE6F0C0ACA845A46B'
+Assert-Attempt `
+    -Lines $ProbeLines `
+    -Number '2' `
+    -Arguments '--help modifyvm' `
+    -ExitCode '1' `
+    -StdoutBytes '70110' `
+    -StdoutHash '221D40C22A784A7AE2BC6F241C4174B75B3745EB9686AE351E3FC479B818A899' `
+    -StderrBytes '0' `
+    -StderrHash $EmptyHash
+Assert-Attempt `
+    -Lines $ProbeLines `
+    -Number '3' `
+    -Arguments 'help modifyvm' `
+    -ExitCode '1' `
+    -StdoutBytes '70110' `
+    -StdoutHash '221D40C22A784A7AE2BC6F241C4174B75B3745EB9686AE351E3FC479B818A899' `
+    -StderrBytes '0' `
+    -StderrHash $EmptyHash
+Assert-Attempt `
+    -Lines $ProbeLines `
+    -Number '4' `
+    -Arguments 'modifyvm' `
+    -ExitCode '1' `
+    -StdoutBytes '6834' `
+    -StdoutHash 'FC8D05B08C87A25ECCA0F8C307EFCB192326610676F4DE4A46C33E7C7501C5AF' `
+    -StderrBytes '0' `
+    -StderrHash $EmptyHash
 
 $Source = [System.IO.File]::ReadAllText($R2Path)
 $SourceNewLine = Get-ExactNewLine -Text $Source -Label 'R2 source'
-
-$OldVersionBoundFunction = @'
-$NewModifyHelp = @'
-function Get-ModifyVmSwitches {
-    $Attempts = @(
-        @('modifyvm', '--help'),
-        @('--help', 'modifyvm')
-    )
-    $Successful = [System.Collections.Generic.List[string]]::new()
-    foreach ($Arguments in $Attempts) {
-        $Captured = @(
-            & $script:VBox @Arguments 2>&1 |
-                ForEach-Object { [string]$_ }
-        )
-        if ($LASTEXITCODE -eq 0) {
-            $Successful.Add(($Captured -join "`n"))
-        }
-    }
-    if ($Successful.Count -le 0) {
-        throw 'no successful modifyvm help invocation'
-    }
-    $Text = $Successful -join "`n"
-    $ClipboardSwitch = if ($Text -match '(?m)--clipboard-mode(?:\s|=)') {
-        '--clipboard-mode'
-    }
-    elseif ($Text -match '(?m)--clipboard(?:\s|=)') {
-        '--clipboard'
-    }
-    else {
-        throw 'no supported clipboard modifyvm switch found'
-    }
-    $DragDropSwitch = if ($Text -match '(?m)--drag-and-drop(?:\s|=)') {
-        '--drag-and-drop'
-    }
-    elseif ($Text -match '(?m)--draganddrop(?:\s|=)') {
-        '--draganddrop'
-    }
-    else {
-        throw 'no supported drag-and-drop modifyvm switch found'
-    }
-    return [pscustomobject]@{
-        Clipboard = $ClipboardSwitch
-        DragDrop = $DragDropSwitch
-    }
-}
-'@
-'@
-$NewVersionBoundFunction = @'
-$NewModifyHelp = @'
-function Get-ModifyVmSwitches {
-    return [pscustomobject]@{
-        Clipboard = '--clipboard-mode'
-        DragDrop = '--drag-and-drop'
-    }
-}
-'@
-'@
+$OldFunctionBase64 = 'JE5ld01vZGlmeUhlbHAgPSBAJwpmdW5jdGlvbiBHZXQtTW9kaWZ5Vm1Td2l0Y2hlcyB7CiAgICAkQXR0ZW1wdHMgPSBAKAogICAgICAgIEAoJ21vZGlmeXZtJywgJy0taGVscCcpLAogICAgICAgIEAoJy0taGVscCcsICdtb2RpZnl2bScpCiAgICApCiAgICAkU3VjY2Vzc2Z1bCA9IFtTeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5MaXN0W3N0cmluZ11dOjpuZXcoKQogICAgZm9yZWFjaCAoJEFyZ3VtZW50cyBpbiAkQXR0ZW1wdHMpIHsKICAgICAgICAkQ2FwdHVyZWQgPSBAKAogICAgICAgICAgICAmICRzY3JpcHQ6VkJveCBAQXJndW1lbnRzIDI+JjEgfAogICAgICAgICAgICAgICAgRm9yRWFjaC1PYmplY3QgeyBbc3RyaW5nXSRfIH0KICAgICAgICApCiAgICAgICAgaWYgKCRMQVNURVhJVENPREUgLWVxIDApIHsKICAgICAgICAgICAgJFN1Y2Nlc3NmdWwuQWRkKCgkQ2FwdHVyZWQgLWpvaW4gImBuIikpCiAgICAgICAgfQogICAgfQogICAgaWYgKCRTdWNjZXNzZnVsLkNvdW50IC1sZSAwKSB7CiAgICAgICAgdGhyb3cgJ25vIHN1Y2Nlc3NmdWwgbW9kaWZ5dm0gaGVscCBpbnZvY2F0aW9uJwogICAgfQogICAgJFRleHQgPSAkU3VjY2Vzc2Z1bCAtam9pbiAiYG4iCiAgICAkQ2xpcGJvYXJkU3dpdGNoID0gaWYgKCRUZXh0IC1tYXRjaCAnKD9tKS0tY2xpcGJvYXJkLW1vZGUoPzpcc3w9KScpIHsKICAgICAgICAnLS1jbGlwYm9hcmQtbW9kZScKICAgIH0KICAgIGVsc2VpZiAoJFRleHQgLW1hdGNoICcoP20pLS1jbGlwYm9hcmQoPzpcc3w9KScpIHsKICAgICAgICAnLS1jbGlwYm9hcmQnCiAgICB9CiAgICBlbHNlIHsKICAgICAgICB0aHJvdyAnbm8gc3VwcG9ydGVkIGNsaXBib2FyZCBtb2RpZnl2bSBzd2l0Y2ggZm91bmQnCiAgICB9CiAgICAkRHJhZ0Ryb3BTd2l0Y2ggPSBpZiAoJFRleHQgLW1hdGNoICcoP20pLS1kcmFnLWFuZC1kcm9wKD86XHN8PSknKSB7CiAgICAgICAgJy0tZHJhZy1hbmQtZHJvcCcKICAgIH0KICAgIGVsc2VpZiAoJFRleHQgLW1hdGNoICcoP20pLS1kcmFnYW5kZHJvcCg/OlxzfD0pJykgewogICAgICAgICctLWRyYWdhbmRkcm9wJwogICAgfQogICAgZWxzZSB7CiAgICAgICAgdGhyb3cgJ25vIHN1cHBvcnRlZCBkcmFnLWFuZC1kcm9wIG1vZGlmeXZtIHN3aXRjaCBmb3VuZCcKICAgIH0KICAgIHJldHVybiBbcHNjdXN0b21vYmplY3RdQHsKICAgICAgICBDbGlwYm9hcmQgPSAkQ2xpcGJvYXJkU3dpdGNoCiAgICAgICAgRHJhZ0Ryb3AgPSAkRHJhZ0Ryb3BTd2l0Y2gKICAgIH0KfQonQA=='
+$NewFunctionBase64 = 'JE5ld01vZGlmeUhlbHAgPSBAJwpmdW5jdGlvbiBHZXQtTW9kaWZ5Vm1Td2l0Y2hlcyB7CiAgICByZXR1cm4gW3BzY3VzdG9tb2JqZWN0XUB7CiAgICAgICAgQ2xpcGJvYXJkID0gJy0tY2xpcGJvYXJkLW1vZGUnCiAgICAgICAgRHJhZ0Ryb3AgPSAnLS1kcmFnLWFuZC1kcm9wJwogICAgfQp9CidA'
+$OldVersionBoundFunction = [System.Text.Encoding]::UTF8.GetString(
+    [System.Convert]::FromBase64String($OldFunctionBase64)
+)
+$NewVersionBoundFunction = [System.Text.Encoding]::UTF8.GetString(
+    [System.Convert]::FromBase64String($NewFunctionBase64)
+)
 $OldVersionBoundFunction = Convert-ToNewLine `
     -Text $OldVersionBoundFunction `
     -NewLine $SourceNewLine `
