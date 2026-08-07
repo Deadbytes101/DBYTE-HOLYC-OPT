@@ -1,0 +1,189 @@
+DBYTE-HOLYC-OPT
+PORTABLE VIRTUALBOX 7 DRIVER LOADER SURFACE R2 STATIC AUDIT
+
+CLASS
+
+THE PORTABLE VIRTUALBOX DRIVER-LOADER SURFACE INSPECTOR WAS REVIEWED STATICALLY BEFORE USER EXECUTION.
+NO ASSISTANT-SIDE POWERSHELL EXECUTION IS CLAIMED.
+THE INSPECTOR IS READ-ONLY WITH RESPECT TO WINDOWS DRIVER/SERVICE STATE, VIRTUALBOX STATE, R3 STATE AND THE PORTABLE VIRTUALBOX TREE.
+IT WRITES ONLY ONE EXTERNAL EVIDENCE REPORT AFTER ITS READS COMPLETE.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/INSPECT-PORTABLE-VIRTUALBOX7-DRIVER-LOADER-SURFACE-R2.ps1
+
+Final blob:
+  aac16fdc82cd7d114e784065a937abb1172aafb7
+
+The earlier unexecuted draft path:
+  tools/INSPECT-PORTABLE-VIRTUALBOX7-DRIVER-LOADER-SURFACE.ps1
+was removed from the final tree after static review found an invalid PowerShell continuation token in the pnputil context call.
+No user execution of that draft was authorized or claimed.
+
+BOUND PRIOR EVIDENCE
+
+Host driver failure inspection report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-host-driver-failure-inspection.txt
+
+Required SHA256:
+  510E65B93889271010509F917DEE681E95273DD001B1BF3A9F222663410CD6F8
+
+The inspector refuses to proceed if the report hash differs.
+
+PORTABLE ROOT
+
+Only accepted root:
+  D:\Portable-VirtualBox7
+
+Bound support-driver payload:
+  app64\drivers\vboxsup\VBoxSup.sys
+
+Required SHA256:
+  3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4
+
+Required file version:
+  7.0.12.159484
+
+The inspector obtains Authenticode metadata for VBoxSup.sys but does not modify trust state or install the driver.
+
+READ-ONLY PORTABLE TREE INSPECTION
+
+The inspector inventories:
+  portable-root immediate entries
+  files in app64\drivers\vboxsup
+  INF files under app64\drivers
+  VBoxSup/VBoxDrv-related INF candidates
+  CAT files in the VBoxSup directory
+  candidate portable launcher/setup scripts and executables
+  bounded text/config/script files up to 2 MiB
+
+It records SHA256 for relevant files.
+It records executable/file-version and Authenticode metadata where applicable.
+
+INF/SERVICE METADATA EXTRACTION
+
+For VBoxSup/VBoxDrv INF candidates it extracts contextual lines around:
+  VBoxSup
+  VBoxDrv
+  VBoxDrvStub
+  AddService
+  ServiceBinary
+  ServiceType
+  StartType
+  ErrorControl
+  DefaultInstall
+  DefaultUninstall
+  CopyFiles
+  DelService
+  Root\\
+
+This is text parsing only.
+No INF is installed or executed.
+
+LOADER SURFACE SEARCH
+
+For bounded text/config/script files the inspector searches for tokens including:
+  VBoxSup
+  VBoxDrv
+  VBoxDrvStub
+  drivers\vboxsup
+  sc.exe
+  sc create
+  sc start
+  pnputil
+  net start
+  AddService
+  Portable-VirtualBox
+  driver install
+  driver start
+
+Search results are evidence only.
+No discovered command is executed by the inspector.
+
+WINDOWS DRIVER/SERVICE READS
+
+The inspector reads:
+  HKLM\SYSTEM\CurrentControlSet\Services entries whose names contain VBox/VirtualBox
+  Win32_SystemDriver rows containing VBox/VirtualBox metadata
+
+Registry access is read-only.
+CIM access is read-only.
+
+PNPUTIL SURFACE
+
+The only pnputil command executed is:
+  pnputil.exe /enum-drivers
+
+This enumerates installed driver packages.
+The inspector records only contextual lines around:
+  VirtualBox
+  VBox
+  Oracle
+
+Explicitly absent:
+  /add-driver
+  /delete-driver
+  /install
+  /uninstall
+  /disable-device
+  /enable-device
+  /restart-device
+
+MUTATION SURFACE
+
+Not present in the inspector:
+  sc create
+  sc start
+  sc stop
+  sc delete
+  net start
+  net stop
+  pnputil add/install/delete
+  driver install/remove
+  registry write/delete
+  VBoxManage
+  startvm
+  controlvm
+  modifyvm
+  storageattach
+  snapshot mutation
+  guestcontrol
+  compiler execution
+
+OUTPUT
+
+Only accepted output path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-portable-vbox-driver-loader-surface-inspection.txt
+
+It must be absent before execution.
+The inspector writes the report only after its read operations.
+
+PURPOSE
+
+The prior host evidence proves simultaneously:
+  VBoxSup.sys exists in the portable payload
+  VirtualBox hardening cannot open \Device\VBoxDrvStub
+  queried support-driver service names are absent
+  R3 artifacts remain exact
+
+This inspector is intended to decide which host-side activation mechanism is actually represented by the portable package before any driver mutation is authorized.
+
+NEXT RULE
+
+RUN ONLY:
+  tools/INSPECT-PORTABLE-VIRTUALBOX7-DRIVER-LOADER-SURFACE-R2.ps1
+
+DO NOT RETRY THE VM.
+DO NOT INSTALL OR START A DRIVER YET.
+DO NOT RUN THE SUPERSEDED DRAFT.
+DO NOT MODIFY R3.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
