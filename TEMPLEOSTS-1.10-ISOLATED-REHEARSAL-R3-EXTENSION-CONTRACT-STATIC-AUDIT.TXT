@@ -1,0 +1,174 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED REHEARSAL R3 EXTENSION CONTRACT STATIC AUDIT
+
+CLASS
+
+STATIC REVIEW ONLY.
+NO POWERSHELL EXECUTION OCCURRED IN THIS REVIEW ENVIRONMENT.
+NO REHEARSAL ROOT, VIRTUALBOX REGISTRATION OR REPORT WAS CREATED BY THIS REVIEW.
+
+REPOSITORY
+
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+BRANCH
+
+  overheaven-foundation
+
+R3 TOOL
+
+  tools/PREPARE-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL-R3.ps1
+
+R3 BLOB
+
+  f73842d863caf34e9ae43316704c9f30cc5bb9ae
+
+BOUND R2 WRAPPER
+
+  path
+    tools/PREPARE-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL-R2.ps1
+
+  expected tree/local blob
+    5ba96e9792911ba2f254d1bbf87f1e45db925677
+
+BOUND ORIGINAL PREPARER THROUGH R2
+
+  path
+    tools/PREPARE-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL.ps1
+
+  expected tree/local blob
+    cec7ca5dc9439c11d0375eebe45f0864a5f7f995
+
+R3 CHANGE SCOPE
+
+R3 does not duplicate or replace the isolated rehearsal preparer.  It loads the
+exact failed R2 wrapper and replaces only the postcondition block inside R2's
+Invoke-ExactReplacement helper.
+
+The exact old helper postcondition must occur once and the corrected helper
+postcondition must occur zero times before replacement.  After replacement the
+old complete block must occur zero times and the corrected complete block must
+occur once.
+
+CORRECTED CARDINALITY CONTRACT
+
+For every R2 replacement:
+
+  old_count_before == expected_count
+  new_count_before == 0
+  new_count_after == expected_count
+
+R3 additionally computes:
+
+  old_occurrences_per_new
+    exact complete occurrences of Old contained inside New
+
+  expected_old_count_after
+    expected_count * old_occurrences_per_new
+
+and requires:
+
+  old_count_after == expected_old_count_after
+
+This preserves the original source cardinality gates while allowing a larger
+new block to intentionally retain one complete old line.
+
+OBSERVED STRUCTURAL CASES
+
+Ordinary replacement:
+
+  old_occurrences_per_new = 0
+  expected_old_count_after = 0
+
+Manifest field extension:
+
+  old_occurrences_per_new = 1
+  expected_old_count_after = 1
+
+Report field extension:
+
+  old_occurrences_per_new = 1
+  expected_old_count_after = 1
+
+The manifest and report extensions each keep the original
+`disposable_vbox_post_registration_sha256` line and append two VBOX file-ID
+fields.  Therefore old_after=1 and new_after=1 are the intended successful
+cardinalities.
+
+PRESERVED R2 CONTRACTS
+
+R3 leaves all six R2 replacement seams unchanged:
+
+  VBoxSVC label interpolation
+  disposable VBOX file identity gate
+  post-operation sealed and disposable revalidation
+  manifest disposable VBOX file-ID fields
+  report disposable VBOX file-ID fields
+  terminal disposable VBOX file-ID display
+
+R3 also leaves unchanged:
+
+  original preparer blob binding
+  exact report and bundle identities
+  default-registry preflight
+  VBoxSVC shutdown gates
+  rehearsal-root disjointness
+  disposable file copying
+  ISO path rewrite on disposable VBOX only
+  empty isolated registry requirement
+  isolated registration only
+  zero running, snapshot and shared-folder requirements
+  default-registry post-revalidation
+  sealed bundle post-revalidation
+  no-start boundary
+  failure-root preservation
+
+ADVERSARIAL REVIEW
+
+The corrected helper does not accept a missing old block because the original
+old_count_before gate remains exact.
+
+The corrected helper does not accept a pre-existing new block because the
+original new_count_before gate remains zero.
+
+The corrected helper does not accept duplicate new blocks because
+new_count_after must equal expected_count.
+
+The corrected helper does not broadly ignore remaining old text.  It permits
+only the exact number of complete old occurrences structurally contained in the
+exact new block.
+
+R3 binds both the R2 tree blob and local blob before creating the patched R2
+scriptblock.  Any R2 source drift fails before the R2 wrapper or original
+preparer can run.
+
+MUTATION BOUNDARY
+
+R3 itself performs only Git reads, local source reading, in-memory replacement,
+text hashing and scriptblock creation before invoking the patched R2 wrapper.
+
+No rehearsal mutation can occur unless all R3 and R2 source-binding and
+replacement-cardinality gates pass.
+
+CURRENT STATUS
+
+  configuration-exact recovery bundle     VERIFIED
+  bundle identity                         SEALED
+  restore route                           ADJUDICATED
+  failed R2 invocation                     RECORDED
+  R3 helper correction                     STATICALLY REVIEWED
+  isolated rehearsal preparation          NOT OBSERVED
+  disposable VM registration              NOT OBSERVED
+  restore boot                             NOT OBSERVED
+  powered-off recovery point               NOT SEALED
+  guest delivery route                     UNRESOLVED
+  compiler build execution                 NOT AUTHORIZED
+
+RULE
+
+SOURCE CARDINALITY BEFORE REPLACEMENT REMAINS EXACT.
+POSTCONDITION CARDINALITY MUST MODEL THE ACTUAL OLD-IN-NEW STRUCTURE.
+STATIC REVIEW IS NOT OBSERVED EXECUTION.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
