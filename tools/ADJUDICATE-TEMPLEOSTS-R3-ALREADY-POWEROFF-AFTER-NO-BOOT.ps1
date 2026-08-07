@@ -22,24 +22,15 @@ $ExpectedDriverPath='D:\Portable-VirtualBox7\app64\drivers\vboxsup\VBoxSup.sys'
 $ExpectedDriverHash='3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4'
 $ScPath=Join-Path $env:SystemRoot 'System32\sc.exe'
 
-function Get-FullPath {
-    param([Parameter(Mandatory=$true)][string]$Path)
-    return [System.IO.Path]::GetFullPath([Environment]::ExpandEnvironmentVariables($Path)).TrimEnd([char]92,[char]47)
-}
+function Get-FullPath { param([Parameter(Mandatory=$true)][string]$Path); return [System.IO.Path]::GetFullPath([Environment]::ExpandEnvironmentVariables($Path)).TrimEnd([char]92,[char]47) }
 function Assert-PathEquals {
     param([string]$Observed,[string]$Expected,[string]$Label)
-    if(-not [string]::Equals((Get-FullPath $Observed),(Get-FullPath $Expected),[System.StringComparison]::OrdinalIgnoreCase)){
-        throw "${Label} mismatch observed=$Observed expected=$Expected"
-    }
+    if(-not [string]::Equals((Get-FullPath $Observed),(Get-FullPath $Expected),[System.StringComparison]::OrdinalIgnoreCase)){throw "${Label} mismatch observed=$Observed expected=$Expected"}
 }
 function Invoke-Native {
     param([string]$FilePath,[AllowEmptyCollection()][string[]]$Arguments,[string]$Label)
     $Old=$ErrorActionPreference
-    try{
-        $ErrorActionPreference='Continue'
-        $Rows=@(& $FilePath @Arguments 2>&1|ForEach-Object{[string]$_})
-        $Exit=$LASTEXITCODE
-    }finally{$ErrorActionPreference=$Old}
+    try{$ErrorActionPreference='Continue';$Rows=@(& $FilePath @Arguments 2>&1|ForEach-Object{[string]$_});$Exit=$LASTEXITCODE}finally{$ErrorActionPreference=$Old}
     return [pscustomobject]@{Label=$Label;ExitCode=[int]$Exit;Output=[string[]]$Rows}
 }
 function Require-Success { param([object]$Result); if($Result.ExitCode -ne 0){throw "$($Result.Label) failed exit=$($Result.ExitCode) output=$($Result.Output -join ' | ')"} }
@@ -73,6 +64,13 @@ function Get-SnapshotRows {
     if($Result.ExitCode -eq 0){return [string[]]@($Result.Output|Where-Object{$_ -match '^Snapshot(Name|UUID|Node)'})}
     if(($Result.Output -join "`n") -match '(?i)does not have any snapshots'){return [string[]]@()}
     throw "snapshot list failed exit=$($Result.ExitCode) output=$($Result.Output -join ' | ')"
+}
+function Wait-VBoxSVCExit {
+    param([int]$Seconds=30)
+    $Deadline=[DateTime]::UtcNow.AddSeconds($Seconds)
+    while([DateTime]::UtcNow -lt $Deadline){if(@(Get-Process -Name 'VBoxSVC' -ErrorAction SilentlyContinue).Count -eq 0){return};Start-Sleep -Milliseconds 250}
+    $Pids=@(Get-Process -Name 'VBoxSVC' -ErrorAction SilentlyContinue).Id
+    throw "VBoxSVC did not exit after read-only adjudication: $($Pids -join ',')"
 }
 
 foreach($Required in @($VBoxManagePath,$ScPath,$ExpectedDriverPath)){if(-not(Test-Path -LiteralPath $Required -PathType Leaf)){throw "required file missing: $Required"}}
@@ -130,6 +128,7 @@ try{
     $VdiInfo=Invoke-Native $VBox @('showmediuminfo','disk',$Vdi) 'VDI medium info';Require-Success $VdiInfo
     if(($VdiInfo.Output -join "`n") -notmatch '(?im)^UUID:\s*55c1f29d-a681-402e-b90d-bfbb6b09f207\s*$'){throw 'R3 VDI UUID mismatch'}
 }finally{[Environment]::SetEnvironmentVariable('VBOX_USER_HOME',$OriginalHome,[EnvironmentVariableTarget]::Process)}
+Wait-VBoxSVCExit
 Require-VBoxSupRunning
 $RegistryHashAfter=(Get-FileHash -LiteralPath $Registry -Algorithm SHA256).Hash
 if($RegistryHashAfter -cne $RegistryHashBefore){throw "R3 registry changed during read-only adjudication before=$RegistryHashBefore after=$RegistryHashAfter"}
