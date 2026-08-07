@@ -1,0 +1,76 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 SECOND CONTROLLED START / NO BOOTABLE MEDIUM OBSERVATION
+
+CLASSIFY
+
+The second controlled R3 start crossed the prior VirtualBox host-hardening boundary successfully after VBoxSup was installed and started.
+The guest did not boot TempleOSTS from the attached VDI.
+The observed guest-visible failure is a firmware/boot-medium failure, not the previous VBoxSup/VirtualBox hardening failure.
+
+EXECUTED OBJECT
+
+branch_head_at_execution	e5641abba98485ab8dbf01d9965a45520bf1d308
+runner	tools/RUN-TEMPLEOSTS-R3-SECOND-CONTROLLED-START-HARDENING-EVIDENCE-HOTFIX-R2.ps1
+runner_blob	ee9a75b124e7899559940723fba9a248eac80123
+bound_base_launcher_blob	f7a2d82b0e20739cc763fc93b395fa33f7701f27
+patched_launcher_sha256	3403F241FBBA169FE43005819937F2832496C4DFA412256E4546A4F44342E724
+
+HOST-START OBSERVATION
+
+second_start_boundary	ALL PRE-START GATES PASSED
+vboxsup_state_at_boundary	4 / RUNNING
+authorized_mutation	VBoxManage startvm 9c98691e-27cd-4487-a306-587969c2c78c --type gui / ONCE
+start_exit_code	0
+post_start_vm_state	running
+post_start_running_vms	1
+post_start_vboxsup_state	4
+controlvm	NOT-EXECUTED
+compiler_build	NOT-EXECUTED
+
+SECOND ATTEMPT REPORT
+
+path	D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-second-controlled-boot-attempt.txt
+sha256	E6780E727989B974727402F782CA16B1B870FBF05591FACA6D131F6244F71430
+
+VISUAL EVIDENCE
+
+A user-supplied screenshot was observed immediately after the successful second controlled start.
+The VirtualBox VM window title identifies Temple1.10 and shows the VM running.
+The black guest display contains the exact visible text:
+
+No bootable medium found!
+Please insert a bootable medium and reboot.
+
+A VirtualBoxVM dialog is also visible and states that the virtual machine failed to boot, possibly because of a missing operating system or misconfigured boot order, and offers a DVD selector plus a Mount and Retry Boot action.
+The DVD selector is visually empty in the supplied screenshot.
+
+ADJUDICATION
+
+VBoxSup host-start blocker	RESOLVED / OBSERVED
+VirtualBox startvm acceptance	OBSERVED
+Host VM running state	OBSERVED
+Guest firmware/boot path reached	OBSERVED VISUALLY
+TempleOSTS desktop boot	NOT-OBSERVED
+VDI bootability	FAILED UNDER OBSERVED R3 BOOT PATH
+No-bootable-medium condition	OBSERVED VISUALLY
+ISO attachment during this attempt	NOT-OBSERVED / R3 PRE-START GATE REQUIRED IDE-0-1 NONE WHEN EXPOSED
+Guest compiler build	NOT-AUTHORIZED / NOT-EXECUTED
+Optimizer transformation	DENIED
+
+ONE DECISION
+
+Do not retry the VDI-only boot path blindly.
+Do not click Mount and Retry Boot yet.
+Do not attach ISO, change boot order, reset, power off, or run a guest build until the current visual failure is sealed and a separate controlled ISO-boot route is reviewed.
+
+INTERPRETATION BOUNDARY
+
+The screenshot proves that the running VM reached a boot-medium failure screen.
+It does not prove why the VDI lacks a bootable operating system, nor whether its contents are empty, incomplete, non-bootable, or require a different boot route.
+No claim is made here about guest filesystem contents beyond the observed boot failure.
+
+PR
+
+PR #1 must remain OPEN / DRAFT / NOT MERGED.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
