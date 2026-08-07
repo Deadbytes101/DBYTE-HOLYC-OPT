@@ -1,0 +1,250 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R13 SELF-CONTAINING REPLACEMENT STATIC AUDIT
+
+CLASS
+
+THE R13 WRAPPER WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+R13 BINDS THE EXACT FAILED R12 SOURCE OBJECT AND CORRECTS ONLY THE GENERIC EXACT-REPLACEMENT POSTCONDITION THAT REJECTED A DELIBERATELY SELF-CONTAINING POLICY INJECTION.
+R13 DOES NOT CHANGE THE R12 RELATIVE-MEDIA POLICY, EVIDENCE HASHES, R1 PRESERVATION CONTRACT, R2 ROOT, MODIFYVM SWITCHES, VIRTUALBOX MUTATION SURFACE OR AUTHORIZATION STATE.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R13.ps1
+
+Final blob:
+  c89ba38799f9442c1daec599a1dd365101fbfb8e
+
+BOUND FAILED R12 OBJECT
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R12.ps1
+
+Required tree and local blob:
+  655b1b84c761af190b52765e17b8916875adc980
+
+R13 rejects execution unless both the current branch tree object and local worktree object match that exact blob.
+
+OBSERVED R12 FAILURE BEING CORRECTED
+
+Recorded error:
+  R12 original-source policy injection replacement mismatch: old_after=1 new_after=1
+
+The policy injection replaces the exact anchor:
+  if ($PatchedSource -ceq $Source) {
+
+with:
+  relative-media policy payload
+  blank line
+  the same anchor
+
+The replacement is intentionally self-containing.
+The failed R12 helper required old_after=0 unconditionally and therefore rejected a structurally correct one-for-one replacement.
+
+R13 HELPER CLASSIFICATION
+
+R13 parses the exact R12 source with the PowerShell AST before changing it.
+It selects only FunctionDefinitionAst nodes whose exact function name is:
+  Invoke-ExactReplacement
+
+It requires exactly one match.
+
+R13 range-checks:
+  Extent.StartOffset
+  Extent.EndOffset
+
+against the exact R12 source length and rechecks that the selected source extent begins with:
+  function Invoke-ExactReplacement {
+
+Only that function-definition extent is replaced.
+No raw whole-file helper-name replacement is used.
+
+CORRECTED REPLACEMENT INVARIANT
+
+Before replacement the corrected helper still requires:
+  old count equals ExpectedOldCount
+  new count equals zero
+
+It then computes:
+  OldOccurrencesPerNew = exact ordinal count of Old inside New
+  ExpectedOldAfter = ExpectedOldCount * OldOccurrencesPerNew
+
+After replacement it requires:
+  observed old count equals ExpectedOldAfter
+  observed new count equals ExpectedOldCount
+
+Therefore ordinary replacements remain strict:
+  if New contains Old zero times
+  ExpectedOldAfter is zero
+
+The R12 policy injection is also strict:
+  ExpectedOldCount is one
+  New contains Old exactly once
+  ExpectedOldAfter is one
+
+The corrected helper does not waive cardinality checks and does not accept missing, duplicated or pre-existing New text.
+It also rejects an empty Old replacement string.
+
+R12 REPOSITORY-ROOT CONTRACT
+
+Because R12 is dynamically invoked from R13, R13 parses the helper-corrected R12 source again and selects only AssignmentStatementAst nodes whose exact extent text is:
+  $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+It requires:
+  exact assignment count 1
+  executable PSScriptRoot variable-expression count 1
+
+R13 range-checks and rechecks the exact assignment extent before replacing only that AST extent with the file-backed R13 repository root emitted as a single-quoted PowerShell literal.
+
+The final corrected R12 source is parsed again and must contain:
+  executable PSScriptRoot variable-expression count 0
+
+Only then is the R12 scriptblock created.
+
+INHERITED R12 CONTRACTS
+
+R13 passes the user's arguments unchanged to the exact R12 object after the two wrapper-only corrections above.
+R12 therefore continues to bind:
+
+  R2 blob
+    796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+  modifyvm probe report SHA256
+    57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+  incomplete-r1 inspection report SHA256
+    3D48BD2FCE6BA9363E086270D52C76A1AC326947A565F48F917C818435F70912
+
+  old modifyvm fragment blob
+    7464fbe67b9456cc7eb679255c98b3ecbc6cdecc
+
+  fixed modifyvm fragment blob
+    36b5df298e4d657d54c1603e98104a8fe8f0ce0e
+
+  relative-media policy fragment blob
+    528175dabdcefa025bbf719f02b7f8c9bb2dd8f2
+
+R13 does not duplicate or replace those evidence contracts.
+
+R1 PRESERVATION
+
+Permanent evidence root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+R13 itself does not read or write R1.
+The bound R12 object rechecks R1 exact VBOX hash and exact observed copied VBOX/VDI/ISO file IDs before R2 invocation.
+R1 is never passed as the new boot root.
+
+R2 ROOT
+
+The only authorized new root remains:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+
+The observed R12 failure occurred before dynamic R2 invocation and before any root-creation code.
+R13 does not create the root itself.
+The bound R12 object requires R2 to be absent before invoking dynamic R2.
+
+RELATIVE MEDIA POLICY
+
+R13 makes no change to the policy established from the inspected R1 object:
+  VDI location  Temple1.10.vdi
+  ISO location  TempleOSTS.iso
+  sealed/copy absolute VDI occurrence counts 0
+  VDI basename count 1
+  sealed/copy absolute ISO occurrence counts 0
+  ISO basename count 1
+
+The copied VBOX remains no-rewrite before registration.
+The final XML postcondition remains relative-basename bound.
+
+R13 COMMAND SURFACE
+
+R13 itself performs:
+  Git tree/local blob reads
+  R12 source read
+  in-memory AST classification and source splicing
+  source hashing
+  dynamic invocation of the corrected exact R12 object
+
+R13 itself contains no direct VirtualBox mutation call.
+It does not add:
+  registervm
+  unregistervm
+  modifyvm
+  storageattach
+  startvm
+  controlvm
+  savestate
+  poweroff
+  snapshot take
+  snapshot restore
+  snapshot delete
+  guestcontrol
+  compiler execution
+
+The inherited R12/R2/original-preparer mutation surface remains limited to the new powered-off isolated R2 copy:
+  registervm
+  modifyvm
+  storageattach --medium none
+
+No VM-start command is introduced.
+
+FAILURE RULE
+
+If R13 or dynamic R12 fails before dynamic R2 creates R2:
+  R2 should remain absent
+  preserve the exact failure output
+
+If the inherited original preparer creates R2 and later fails:
+  preserve the R2 root permanently
+  preserve BOOT-ATTEMPT-INCOMPLETE.txt
+  do not delete or reuse R2
+
+AUTHORIZED RESULT ON SUCCESS
+
+  R2 BOOT ATTEMPT COPY                 PREPARED
+  POWERED-OFF CORRECTED CONFIGURATION  OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  R1 REUSE                              DENIED
+  VM START                              NOT AUTHORIZED
+  RESTORE BOOT                          NOT OBSERVED
+  TEMPLEOS DESKTOP                      NOT OBSERVED
+  POWERED-OFF RECOVERY POINT            NOT SEALED
+  GUEST DELIVERY                        UNRESOLVED
+  COMPILER BUILD                        NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION              DENIED
+
+CURRENT STATUS
+
+  R1 incomplete root                    PRESERVED / INSPECTED
+  relative media representation         OBSERVED
+  R12 execution                         FAILED CLOSED / RECORDED
+  R13 correction                        STATICALLY AUDITED
+  R2 boot-attempt copy                  EXECUTION PENDING
+  VM start                              NOT AUTHORIZED
+  restore boot                          NOT OBSERVED
+  powered-off recovery point            NOT SEALED
+  build execution                       NOT AUTHORIZED
+
+RULE
+
+RUN R13 ONLY.
+KEEP R1 PERMANENTLY PRESERVED.
+USE R2 ONLY IF IT IS STILL ABSENT BEFORE EXECUTION.
+PRESERVE R2 PERMANENTLY IF IT IS CREATED AND A LATER FAILURE OCCURS.
+DO NOT START R1, R2 OR THE SEALED REHEARSAL.
+PREPARATION IS NOT A BOOT PROOF.
+NO RESTORE-BOOT CLAIM.
+NO RECOVERY CLAIM.
+NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
