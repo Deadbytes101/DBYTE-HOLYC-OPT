@@ -1,0 +1,203 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R6 R3 ENCODED-SEAM FAILURE OBSERVATION
+
+CLASS
+
+THE R6 BOOT-ATTEMPT PREPARER ENTRYPOINT PASSED ITS OWN SOURCE CONTRACTS.
+R6 INVOKED THE PATCHED R5 ENTRYPOINT.
+R5 PASSED ITS REPOSITORY-ROOT CONTRACTS AND INVOKED THE PATCHED R4 ENTRYPOINT.
+THE PATCHED R4 ENTRYPOINT FAILED CLOSED WHILE TRYING TO INSERT THE NATIVE-STDERR CORRECTION INTO R3 SOURCE.
+R3, R2 AND THE ORIGINAL BOOT-ATTEMPT PREPARER WERE NOT INVOKED.
+NO VBOXMANAGE COMMAND, BOOT-ATTEMPT ROOT, ISOLATED REGISTRY OR EXTERNAL REPORT WAS CREATED.
+VM START, RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  288a3655285373c04dbe6026b23dddb2947e41a4
+
+Entrypoint:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R6.ps1
+
+R6 blob:
+  f722cf2fb34e5df482d8769a5ebb22e1b8f26e98
+
+Bound R5 blob:
+  8ffc92184d5ba46c387fc3d7f6ef9e2e09709259
+
+Bound R4 blob:
+  fcdec4c784f2d0610d8227aeb95ac138fa7e77d4
+
+Bound R3 blob:
+  462a54f375439f60d9aefc37a62b9b3dd41e681e
+
+Bound R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+Bound original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+Observed patched R5 SHA256:
+  125B09B40016902AE61C15F940F28950DE5D59CB700D8296C20E74F3D73015D1
+
+Observed patched R4 SHA256:
+  FB56C6385748672D89D34B318D2E404FAE843C5722472AA612C472E29B273A12
+
+Requested boot-attempt root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Requested external report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+OBSERVED FAILURE
+
+Terminal error:
+
+  R3 native help stderr correction injection source cardinality mismatch:
+  old=0 new_before=0
+
+Failure location:
+
+  dynamically patched R4 source
+  Invoke-ExactReplacement
+  line 78 in the dynamic execution context
+
+The user-provided terminal output is the observed execution evidence.
+GitHub and the assistant environment did not execute the local PowerShell command.
+
+EXECUTION BOUNDARY
+
+R6 completed:
+
+  exact R5 tree and local blob binding
+  AST executable repository-root assignment classification
+  R5 file-backed repository-root injection
+  dynamic R5 scriptblock creation
+  R5 invocation
+
+R5 completed:
+
+  exact R4 tree and local blob binding
+  native-stderr correction payload decoding
+  AST repository-root assignment classification supplied by R6
+  R4 file-backed repository-root injection
+  dynamic R4 scriptblock creation
+  R4 invocation
+
+The patched R4 failed before:
+
+  its R3 AST token replacements
+  its R3 repository-root replacement
+  dynamic R3 scriptblock creation
+  R3 invocation
+  R2 invocation
+  original-preparer invocation
+  either VBoxManage help probe
+  default-registry query
+  boot-attempt root creation
+  isolated VBOX_USER_HOME creation
+  copied VM registration
+  modifyvm execution
+  storageattach execution
+  manifest creation
+  external report creation
+
+SOURCE FINDING
+
+R5 stores the R3 native-help old and new source seams as fixed UTF-8 base64 payloads.
+The decoded payloads use LF line separators.
+
+R4 reads the checked-out R3 file and performs an ordinal exact-text replacement.
+The semantic source sequence targeted by the payload exists in the committed R3 object:
+
+  typed help-array replacement
+  immediate R2 repository-root anchor declaration
+
+The observed old=0 result proves that the fixed decoded byte representation did not
+match the checked-out R3 text representation exactly.
+
+On the observed Windows PowerShell worktree, this is consistent with an LF-versus-CRLF
+representation mismatch.  The terminal result alone does not expose the local newline
+bytes, so the exact newline representation is an inference rather than a direct byte
+observation.
+
+The important proven defect is broader:
+
+  a fixed encoded representation was used as authority for an exact replacement
+  against a separately materialized worktree source object.
+
+That contract is representation-dependent and failed before any preparer behavior.
+
+ADVERSARIAL JUDGMENT
+
+Continuing to patch nested wrapper source-patching machinery would add another layer
+without improving the VM preparation contract.
+
+R3 through R6 exist only to correct wrapper execution mechanics:
+
+  typed help argument arrays
+  file-backed repository-root injection
+  exact PSScriptRoot syntax classification
+  native stderr handling
+  executable repository-root assignment classification
+
+The VM preparation and identity hardening remains owned by R2 and the original
+preparer.
+
+ONE DECISION
+
+Preserve R3 through R6 as failed or superseded evidence objects.
+Create one file-backed R7 direct entrypoint that:
+
+  binds exact R2 tree and local blob
+  normalizes replacement seams to the observed R2 source newline style
+  replaces the nested help-attempt arrays with typed string arrays
+  replaces only the native help execution loop with bounded stderr handling
+  classifies the executable R2 repository-root assignment through the PowerShell AST
+  injects the file-backed repository root
+  requires zero exact PSScriptRoot variable tokens after injection
+  dynamically invokes R2
+
+R2 will continue to bind the original preparer and apply every existing VM-preparation
+hardening replacement.
+
+R7 must not alter:
+
+  sealed report hashes
+  sealed rehearsal identities
+  boot-attempt root
+  VirtualBox mutation sequence
+  copied-machine corrections
+  VM state
+  authorization state
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal             VERIFIED / SEALED
+  boot readiness                             ADJUDICATED
+  R6 wrapper source contracts                PASSED / OBSERVED
+  R3 encoded correction seam                 REPRESENTATION MISMATCH / FAILED CLOSED
+  boot-attempt root                          NOT CREATED BY THIS INVOCATION
+  boot-attempt copy                          NOT PREPARED
+  VM start                                   NOT AUTHORIZED
+  restore boot                               NOT OBSERVED
+  powered-off recovery point                 NOT SEALED
+  compiler build execution                   NOT AUTHORIZED
+  optimizer transformation                   DENIED
+
+RULE
+
+PATCH THE PREPARER CONTRACT, NOT AN UNBOUNDED CHAIN OF PATCHERS.
+NORMALIZE SOURCE SEAMS TO THE BOUND SOURCE OBJECT BEFORE EXACT REPLACEMENT.
+PRESERVE FAILED WRAPPERS AS EVIDENCE.
+NO PREPARED BOOT COPY, NO VM START.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
