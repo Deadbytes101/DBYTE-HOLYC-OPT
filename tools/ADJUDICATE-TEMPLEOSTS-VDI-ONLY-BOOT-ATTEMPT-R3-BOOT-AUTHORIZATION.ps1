@@ -157,6 +157,11 @@ function Convert-MachineReadable {
     )
 
     $Map = [ordered]@{}
+    $Backslash = [string][char]92
+    $Quote = [string][char]34
+    $EscapedQuote = $Backslash + $Quote
+    $EscapedBackslash = $Backslash + $Backslash
+
     foreach ($Line in $Lines) {
         if ([string]::IsNullOrWhiteSpace($Line)) {
             continue
@@ -171,9 +176,16 @@ function Convert-MachineReadable {
             throw "${Label} duplicate key: $Key"
         }
         $Value = $Raw
-        if ($Raw.Length -ge 2 -and $Raw[0] -eq '"' -and $Raw[$Raw.Length - 1] -eq '"') {
+        if (
+            $Raw.Length -ge 2 -and
+            $Raw[0] -eq [char]34 -and
+            $Raw[$Raw.Length - 1] -eq [char]34
+        ) {
             $Inner = $Raw.Substring(1, $Raw.Length - 2)
-            $Value = $Inner.Replace('\"', '"').Replace('\\', '\')
+            $Value = $Inner.Replace($EscapedQuote, $Quote).Replace(
+                $EscapedBackslash,
+                $Backslash
+            )
         }
         $Map[$Key] = [string]$Value
     }
