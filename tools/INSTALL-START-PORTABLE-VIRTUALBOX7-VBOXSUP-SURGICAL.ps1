@@ -306,8 +306,8 @@ try {
         throw "post-start sc query VBoxSup failed exit=$($PostQuery.ExitCode)"
     }
     $PostQueryText = $PostQuery.Output -join "`n"
-    if ($PostQueryText -notmatch '(?im)^\s*STATE\s*:\s*4\s+RUNNING\s*$') {
-        throw 'VBoxSup post-start query did not prove STATE 4 RUNNING'
+    if ($PostQueryText -notmatch '(?im)^\s*STATE\s*:\s*4\b') {
+        throw 'VBoxSup post-start query did not prove numeric STATE 4'
     }
 
     $CimError = ''
@@ -352,7 +352,7 @@ try {
     $Lines.Add('')
     $Lines.Add("SC CREATE`tEXECUTED-ONCE")
     $Lines.Add("SC START`tEXECUTED-ONCE")
-    $Lines.Add("SERVICE STATE`tRUNNING / OBSERVED-BY-SC")
+    $Lines.Add("SERVICE STATE`t4 / RUNNING")
     $Lines.Add("SERVICE CLEANUP`tNOT-EXECUTED")
     $Lines.Add("VBOXMANAGE`tNOT-EXECUTED")
     $Lines.Add("VM START`tNOT-AUTHORIZED")
@@ -375,7 +375,7 @@ try {
     Write-Host "VBOXSUP.SYS SIGNATURE:  $($Signature.Status)"
     Write-Host 'SC CREATE:              EXECUTED-ONCE / EXIT 0'
     Write-Host 'SC START:               EXECUTED-ONCE / EXIT 0'
-    Write-Host 'SERVICE STATE:          RUNNING / OBSERVED-BY-SC'
+    Write-Host 'SERVICE STATE:          4 / RUNNING'
     Write-Host "REPORT:                 $Output"
     Write-Host "REPORT SHA256:          $ReportHash"
     Write-Host 'SERVICE CLEANUP:        NOT-EXECUTED'
