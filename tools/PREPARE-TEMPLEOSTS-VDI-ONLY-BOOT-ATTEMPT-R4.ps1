@@ -299,7 +299,7 @@ $R2Path = Join-Path $RepoRoot (
 '@
 $InjectedRepoRoot = ConvertTo-SingleQuotedLiteral -Value $RepoRoot
 $NewR3RepoRootSeam = (
-    "$R2Relative = 'tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R2.ps1'`n" +
+    '$R2Relative = ''tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R2.ps1''' + "`n" +
     '$RepoRoot = ' + $InjectedRepoRoot + "`n" +
     '$R2Path = Join-Path $RepoRoot (' + "`n"
 )
