@@ -1,0 +1,60 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 CONTROLLED STOP / PRE-BOUNDARY ALREADY-POWEROFF OBSERVATION
+
+CLASSIFY
+
+The released HOME-collision hotfix runner was invoked from exact branch state:
+
+  tools/RUN-STOP-TEMPLEOSTS-R3-NO-BOOTABLE-MEDIUM-HOME-COLLISION-HOTFIX.ps1
+  blob 95d6355ece09aa80faec09ea818a381e9bf0a3df
+
+The runner successfully proved and applied its in-memory variable-only correction:
+
+  Home -> IsolatedVBoxHome
+  AST cardinality old 4 -> 0
+  AST cardinality new 0 -> 4
+  controlvm poweroff surface exactly one / unchanged
+  startvm none
+  storageattach none
+
+The patched stop object then failed at its PRE-STOP read-only inventory gate with:
+
+  pre-stop running inventory mismatch:
+
+The displayed mismatch carried no running VM rows.
+
+MUTATION ADJUDICATION
+
+The invocation did NOT print:
+
+  STOP BOUNDARY:          R3 RUNNING / NO-BOOT EVIDENCE SEALED
+  AUTHORIZED MUTATION:    controlvm TARGET poweroff / ONCE
+
+Therefore the authorized controlvm boundary was not crossed by this invocation.
+
+Observed classification:
+
+  PRE-STOP RUNNING VM ROWS    0 / OBSERVED
+  CONTROLVM POWEROFF          NOT-EXECUTED-BY-THIS-INVOCATION
+  STOP REPORT                 NOT-CREATED
+  ISO PREPARATION             NOT-EXECUTED
+  ISO START                   NOT-EXECUTED
+  COMPILER BUILD              NOT-EXECUTED
+
+This observation alone does not assert why R3 is no longer present in list runningvms and does not substitute for a direct VMState observation.
+
+ONE DECISION
+
+Do not manufacture a POWEROFF-ONCE stop report.
+
+Use a separate read-only R3 poweroff adjudicator that binds the second controlled boot attempt evidence and requires:
+
+  - exact isolated R3 registry
+  - exactly zero running VM rows
+  - target VMState poweroff
+  - exact target UUID/name/config/media identity
+  - VBoxSup still STATE 4
+
+If those gates pass, emit an ALREADY-POWEROFF / CONTROLVM-NOT-EXECUTED report and allow the fresh ISO preparer only through a separately audited bounded runner that accepts this truthful evidence form.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
