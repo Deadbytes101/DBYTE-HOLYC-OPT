@@ -1,0 +1,171 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT INCOMPLETE R2 INSPECTION OBSERVATION
+
+CLASS
+
+THE PRESERVED R2 INCOMPLETE ROOT WAS INSPECTED READ-ONLY THROUGH THE MATERIALIZATION-HOTFIXED INSPECTOR.
+THE INSPECTION COMPLETED AND WROTE AN EXTERNAL REPORT.
+THE CURRENT R2 VBOX NO LONGER MATCHES THE PRE-REGISTRATION SEALED VBOX CONTENT HASH AND ITS NTFS FILE ID IS A DIFFERENT OBJECT ID.
+THE TARGET VDI AND ISO MEDIA-REGISTRY LOCATIONS REMAIN THE EXPECTED RELATIVE BASENAMES.
+THE TARGET ISO IS NO LONGER ATTACHED TO A STORAGE DEVICE.
+THE R2 MACHINE DIRECTORY CONTAINS TWO VBOX-LIKE FILES.
+THE ISOLATED VBOX USER HOME CONTAINS TWO FILES AND ONE TARGET MACHINE-REGISTRY ROW.
+NO VBOXMANAGE INVOCATION, VIRTUALBOX MUTATION OR VM START OCCURRED DURING THIS INSPECTION.
+R1 AND R2 REMAIN PERMANENT PRESERVED EVIDENCE OBJECTS.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head used by the user:
+  f9141b07fb944568b762dd5062efcce227b7adb6
+
+Runner:
+  tools/RUN-TEMPLEOSTS-VDI-ONLY-BOOT-INCOMPLETE-R2-INSPECTOR-MATERIALIZATION-HOTFIX.ps1
+
+Runner final blob:
+  230652c82481f8f2e5ed331cfe883eec1185509c
+
+Bound failed inspector blob:
+  efaecd9ca56042e927a457596da487484ceefb77
+
+Observed patched inspector SHA256:
+  E14920A54EF3CF00E3B30591031D67B23C48336502CE4F565007F1170B8FB502
+
+Preserved R1 root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Preserved R2 root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+
+Absent final preparation report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+R2 inspection report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r2-incomplete-inspection.txt
+
+Observed report SHA256:
+  9C2F6A2C2838CF00412F37BA2753DBB1718605FBE165B6D9D2A9FFBFC5E2D42A
+
+OBSERVED CURRENT R2 IDENTITIES
+
+Current VBOX SHA256:
+  8EADB39D54CABE5E7B791E5D7E05BCF4CBBF32D4AB6B58291BEC0B2FAD607C0C
+
+Current VBOX file ID:
+  0X00000000000000000005000000060670
+
+VBOX matches pre-registration copied VBOX:
+  False
+
+Current VDI file ID:
+  0X00000000000000000001000000060671
+
+Current ISO file ID:
+  0X00000000000000000001000000060672
+
+The previously sealed content identities for the VDI and ISO were required by the inspector before this summary was emitted.
+
+OBSERVED MEDIA REGISTRY
+
+Target VDI location:
+  Temple1.10.vdi
+
+Target VDI expected-location result:
+  True
+
+Target ISO registry rows:
+  1
+
+Target ISO location:
+  TempleOSTS.iso
+
+Target ISO expected-location result:
+  True
+
+Attached target ISO count:
+  0
+
+The observed correction therefore preserved the relative media-registry representation and detached the ISO attachment while retaining the ISO registry row.
+
+OBSERVED STRUCTURE COUNTS
+
+VBOX-like files:
+  2
+
+Boot-order XML nodes:
+  4
+
+Network-adapter XML nodes:
+  1
+
+Clipboard/drag XML nodes:
+  1
+
+Graphics XML nodes:
+  0
+
+VBoxUserHome files:
+  2
+
+Isolated registry target rows:
+  1
+
+The console summary does not identify the two VBOX-like filenames, their hashes/file IDs, the exact boot/network/clipboard attributes, the storage-device rows, or the isolated registry configuration-file attribute.
+Those exact rows are present in the SHA-bound inspection report and must be adjudicated before changing the file-ID policy or authorizing an R3 preparation.
+
+ADJUDICATION SO FAR
+
+The R13 failure condition:
+  boot-copy VBOX file ID changed during correction
+
+is now consistent with an observed VirtualBox settings serialization event rather than with media corruption.
+That statement is bounded to the following observations only:
+  current VBOX hash differs from pre-registration hash
+  current VBOX file ID differs from the copied-file identity expected by the failed preparer
+  two VBOX-like files exist
+  media registry remains correct
+  ISO attachment count is zero
+  isolated registry target count is one
+
+The exact identity and role of the second VBOX-like file have not yet been extracted from the report in this conversation.
+Therefore the VBOX file-ID stability gate is not yet replaced or waived.
+
+ONE DECISION
+
+Bind the exact completed inspection report SHA256 and adjudicate the raw selected report rows read-only before designing any R3 preparer.
+
+PRESERVATION RULE
+
+R1:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+  PERMANENT EVIDENCE / NEVER REUSE
+
+R2:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+  PERMANENT EVIDENCE / NEVER REUSE
+
+NOT AUTHORIZED
+
+R1 reuse
+R2 reuse
+R3 preparation
+VM start
+restore boot
+powered-off recovery-point seal
+guest delivery
+compiler build
+optimizer transformation
+
+RULE
+
+ADJUDICATE THE EXACT R2 INSPECTION REPORT NEXT.
+DO NOT MUTATE R1 OR R2.
+NO PREPARER EXECUTION.
+NO VM START.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
