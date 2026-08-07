@@ -1,0 +1,195 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED REHEARSAL VERIFIER STATIC AUDIT
+
+CLASS
+
+THE ISOLATED REHEARSAL VERIFIER WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+NO VIRTUALBOX MUTATION COMMAND APPEARS IN THE VERIFIER.
+THE VERIFIER WRITES ONLY ONE EXTERNAL REPORT AFTER ALL GATES PASS.
+THE REHEARSAL ROOT, SEALED BUNDLE, DEFAULT REGISTRY AND LIVE ARTIFACTS ARE READ-ONLY INPUTS.
+VM START, RESTORE BOOT AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/VERIFY-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL.ps1
+
+Blob:
+  fe7437577605a8e72f27c7fa0c0f54558d62af6c
+
+BOUND OBSERVED INPUTS
+
+  resource commit
+    37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
+
+  bundle verification report SHA256
+    887D93D1869CA321A8A4A11816A7ABA6A74366BBA64D4138E1D7DF223F7A9CEC
+
+  restore-route report SHA256
+    8AD50F9DB56C228B1D1CF1366D2A34D9F3413DA8B2CD043B6971FB9004ED9AC4
+
+  rehearsal preparation report SHA256
+    7E8BABD61E456403AAD8F56FE326C7062A39C7937ABA02B331E0F90F95B39165
+
+  recovery-bundle manifest SHA256
+    3E7C4285920A981BF72AFCD179C467B2DEC35AB1828D21EB4767A1DEB3619F45
+
+  rehearsal manifest SHA256
+    AC2609C9C6EFC87316835BB6A4174AF5C28FEEE8DCEBD37E0E9D3DADB14D383F
+
+  rehearsal root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1
+
+  isolated VBOX_USER_HOME
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1\VBoxUserHome
+
+  disposable VBOX SHA256
+    69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+  disposable VBOX NTFS file ID
+    0X0000000000000000000100000006010A
+
+  disposable VDI NTFS file ID
+    0X0000000000000000000100000006010B
+
+  disposable ISO NTFS file ID
+    0X0000000000000000000100000006010C
+
+STATIC CONTROL REVIEW
+
+The verifier:
+
+  requires exact resource commit and a clean tracked resource tree
+  requires exact report and manifest hashes
+  requires exact recovery and rehearsal root paths
+  rejects an existing output report
+  rejects a rehearsal incomplete marker
+  requires process VBOX_USER_HOME to be unset before execution
+  validates the sealed recovery bundle and observed NTFS file IDs
+  validates essential manifest and preparation-report fields
+  parses every manifest inventory row
+  rejects rooted, parent-traversal and duplicate inventory paths
+  requires the actual pre-verification rehearsal file set to equal the manifest set plus the manifest itself
+  rehashes every manifest inventory file before VirtualBox access
+  validates exact disposable VBOX, VDI and ISO hashes and file IDs
+  requires disposable files to be distinct from sealed/live file objects
+  waits for VBoxSVC exit before moving between registry contexts
+  validates the default registry before isolation
+  sets VBOX_USER_HOME only at process scope
+  validates exactly one isolated powered-off VM
+  validates exact isolated VBOX, VDI and ISO attachment paths
+  validates zero isolated running rows, snapshots and shared folders
+  validates isolated VDI and ISO UUIDs
+  waits for isolated VBoxSVC exit before restoring VBOX_USER_HOME
+  restores the original process VBOX_USER_HOME in a finally block
+  validates the default registry again after isolation
+  revalidates live artifacts and sealed reports/bundle after isolation
+  revalidates disposable hashes and file IDs after isolation
+  reparses and rehashes every manifest inventory file after VBoxSVC shutdown
+  requires the post-verification rehearsal file set to remain exact
+  creates the output directory and report only after all previous gates pass
+
+EMPTY-RESULT CONTRACTS
+
+The verifier explicitly permits:
+
+  an empty running-VM inventory
+  empty-string rows produced by newline-only inventory files
+  the exact VirtualBox no-snapshot sentinel
+  intentional blank lines in reports and manifests
+
+It rejects:
+
+  nonempty whitespace-only inventory rows
+  unexpected registered or running VM rows
+  any non-sentinel snapshot command failure
+  any snapshot row
+  any shared-folder mapping
+
+NEGATIVE COMMAND SURFACE
+
+No occurrence was found in the verifier for:
+
+  registervm
+  unregistervm
+  startvm
+  controlvm
+  storageattach
+  createmedium
+  clonemedium
+  modifymedium
+  closemedium
+  snapshot take
+  snapshot restore
+  snapshot delete
+
+The only VBoxManage operations present are version and read/query operations:
+
+  --version
+  list vms
+  list runningvms
+  showvminfo --machinereadable
+  snapshot list --machinereadable
+  showmediuminfo disk
+  showmediuminfo dvd
+
+WRITE BOUNDARY
+
+Before every gate succeeds, the verifier does not create or modify:
+
+  the rehearsal root
+  the isolated registry
+  the disposable VBOX
+  the disposable VDI
+  the disposable ISO
+  the sealed recovery bundle
+  the default registry
+  the live VBOX
+  the live VDI
+  the live ISO
+  the external verification report
+
+After every gate succeeds, the verifier writes only:
+
+  the external verification report selected by OutPath
+
+ADVERSARIAL JUDGMENT
+
+The verifier intentionally treats a byte change caused by a nominally read-only
+VBoxSVC session as a verification failure.  The manifest inventory is rehashed
+before and after isolated registry access.  A changed, added or removed file
+prevents the powered-off environment from being sealed.
+
+The verifier does not prove a guest boot or destructive restore drill.  A pass may
+seal only the exact prepared powered-off rehearsal environment.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  ISOLATED REHEARSAL                 VERIFIED
+  POWERED-OFF REHEARSAL ENVIRONMENT  SEALED
+
+NOT AUTHORIZED OR CLAIMED
+
+  VM START                           NOT AUTHORIZED
+  RESTORE BOOT                       NOT OBSERVED
+  POWERED-OFF RECOVERY POINT         NOT SEALED
+  GUEST DELIVERY                     UNRESOLVED
+  COMPILER BUILD                     NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION           DENIED
+
+RULE
+
+A READ-ONLY QUERY THAT CHANGES EVIDENCE FAILS VERIFICATION.
+REGISTRATION IS NOT A BOOT PROOF.
+PREPARATION IS NOT A RESTORE.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
