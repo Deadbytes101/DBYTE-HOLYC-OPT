@@ -21,13 +21,36 @@ $BasePath = Join-Path $RepoRoot ($BaseRelative.Replace('/',[System.IO.Path]::Dir
 function Get-Count {
     param([Parameter(Mandatory=$true)][string]$Text,[Parameter(Mandatory=$true)][string]$Needle)
     if ($Needle.Length -eq 0) { throw 'empty needle' }
-    $Count=0; $Offset=0
+    $Count=0
+    $Offset=0
     while ($true) {
         $At=$Text.IndexOf($Needle,$Offset,[System.StringComparison]::Ordinal)
         if ($At -lt 0) { break }
-        $Count++; $Offset=$At+$Needle.Length
+        $Count++
+        $Offset=$At+$Needle.Length
     }
     return $Count
+}
+
+function Apply-Patch {
+    param(
+        [Parameter(Mandatory=$true)][string]$Text,
+        [Parameter(Mandatory=$true)][string]$Old,
+        [Parameter(Mandatory=$true)][string]$New,
+        [Parameter(Mandatory=$true)][string]$Label
+    )
+    $OldBefore=Get-Count -Text $Text -Needle $Old
+    $NewBefore=Get-Count -Text $Text -Needle $New
+    if ($OldBefore -ne 1 -or $NewBefore -ne 0) {
+        throw "R2 precondition mismatch $Label old=$OldBefore new=$NewBefore"
+    }
+    $Patched=$Text.Replace($Old,$New)
+    $OldAfter=Get-Count -Text $Patched -Needle $Old
+    $NewAfter=Get-Count -Text $Patched -Needle $New
+    if ($OldAfter -ne 0 -or $NewAfter -ne 1) {
+        throw "R2 postcondition mismatch $Label old=$OldAfter new=$NewAfter"
+    }
+    return $Patched
 }
 
 if (-not (Test-Path -LiteralPath $BasePath -PathType Leaf)) { throw "base ISO preparer missing: $BasePath" }
@@ -52,6 +75,7 @@ $NewSnapshot=@'
         )
     }
 '@
+$Source=Apply-Patch -Text $Source -Old $OldSnapshot -New $NewSnapshot -Label 'snapshot-filter'
 
 $OldRuntime=@'
 Wait-VBoxSVCExit
@@ -63,7 +87,7 @@ Wait-VBoxSVCExit
 $RuntimeProcesses = @(
     Get-Process -ErrorAction SilentlyContinue |
         Where-Object {
-            $_.ProcessName -match '^(?i)(VBoxSVC|VirtualBoxVM|VBoxHeadless|VirtualBox)$'
+            $_.ProcessName -match '(?i)^(VBoxSVC|VirtualBoxVM|VBoxHeadless|VirtualBox)$'
         }
 )
 if ($RuntimeProcesses.Count -ne 0) {
@@ -75,6 +99,7 @@ if ($RuntimeProcesses.Count -ne 0) {
 
 $MachineRoot = Join-Path $NewRoot 'Machine'
 '@
+$Source=Apply-Patch -Text $Source -Old $OldRuntime -New $NewRuntime -Label 'runtime-process-gate'
 
 $OldEarlyRemove=@'
     Remove-Item -LiteralPath $IncompletePath -Force -ErrorAction Stop
@@ -86,6 +111,7 @@ $NewEarlyRemove=@'
 
     $Report = [System.Collections.Generic.List[string]]::new()
 '@
+$Source=Apply-Patch -Text $Source -Old $OldEarlyRemove -New $NewEarlyRemove -Label 'retain-incomplete-marker'
 
 $OldReportHash=@'
     $OutputHash = (Get-FileHash -LiteralPath $Output -Algorithm SHA256).Hash
@@ -98,27 +124,14 @@ $NewReportHash=@'
 
     Write-Host "R3 STOP REPORT SHA256:  $StopReportHash"
 '@
+$Source=Apply-Patch -Text $Source -Old $OldReportHash -New $NewReportHash -Label 'remove-marker-after-report-hash'
 
-$Pairs=@(
-    @('snapshot',$OldSnapshot,$NewSnapshot),
-    @('runtime',$OldRuntime,$NewRuntime),
-    @('marker-retain',$OldEarlyRemove,$NewEarlyRemove),
-    @('marker-remove',$OldReportHash,$NewReportHash)
-)
-foreach ($Pair in $Pairs) {
-    $Label=[string]$Pair[0]; $Old=[string]$Pair[1]; $New=[string]$Pair[2]
-    $OldBefore=Get-Count -Text $Source -Needle $Old
-    $NewBefore=Get-Count -Text $Source -Needle $New
-    if ($OldBefore -ne 1 -or $NewBefore -ne 0) { throw "R2 precondition mismatch $Label old=$OldBefore new=$NewBefore" }
-    $Source=$Source.Replace($Old,$New)
-    $OldAfter=Get-Count -Text $Source -Needle $Old
-    $NewAfter=Get-Count -Text $Source -Needle $New
-    if ($OldAfter -ne 0 -or $NewAfter -ne 1) { throw "R2 postcondition mismatch $Label old=$OldAfter new=$NewAfter" }
-}
-
-$Tokens=$null; $ParseErrors=$null
+$Tokens=$null
+$ParseErrors=$null
 [void][System.Management.Automation.Language.Parser]::ParseInput($Source,[ref]$Tokens,[ref]$ParseErrors)
-if (@($ParseErrors).Count -ne 0) { throw 'patched ISO preparer parse failed: '+((@($ParseErrors)|ForEach-Object{$_.Message}) -join ' | ') }
+if (@($ParseErrors).Count -ne 0) {
+    throw 'patched ISO preparer parse failed: '+((@($ParseErrors)|ForEach-Object{$_.Message}) -join ' | ')
+}
 
 $Bytes=[System.Text.UTF8Encoding]::new($false).GetBytes($Source)
 $Sha=[System.Security.Cryptography.SHA256]::Create()
