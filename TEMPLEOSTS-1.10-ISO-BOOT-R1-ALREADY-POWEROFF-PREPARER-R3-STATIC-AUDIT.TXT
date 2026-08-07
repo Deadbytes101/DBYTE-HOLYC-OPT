@@ -1,0 +1,57 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / ISO BOOT R1 / ALREADY-POWEROFF PREPARER R3 / STATIC AUDIT
+
+TARGET
+
+  tools/RUN-PREPARE-TEMPLEOSTS-ISO-BOOT-R1-AFTER-R3-ALREADY-POWEROFF-R3.ps1
+  blob 9070829f451c6ffb6ffb8a8f1f03abcc588e37dc
+
+BOUND BASE
+
+  tools/PREPARE-TEMPLEOSTS-ISO-BOOT-R1-AFTER-R3-STOP.ps1
+  blob bd1ec076b0a34cf32792ffab39c7ced7697f5254
+
+CORRECTIONS
+
+1. Bind the truthful already-poweroff adjudication report path instead of the absent controlled-stop report.
+2. Replace the POWEROFF-ONCE report contract with:
+
+     running_vm_rows = 0
+     machine_state   = poweroff
+     CONTROLVM       = NOT-EXECUTED
+     STATUS          = R3-ALREADY-POWEROFF-PRESERVED
+
+3. Rename two manifest/report evidence labels from r3_stop_report_sha256 to r3_poweroff_evidence_sha256.
+4. Filter snapshot output to actual SnapshotName/UUID/Node rows.
+5. Require no VBoxSVC/VirtualBoxVM/VBoxHeadless/VirtualBox runtime process before creating the fresh isolated ISO root.
+6. Retain the INCOMPLETE marker until the preparation report is written and hashed.
+
+BASE PREPARATION INTENT OTHERWISE UNCHANGED
+
+  - copies VBOX/VDI/ISO only from the sealed isolated rehearsal
+  - requires exact sealed manifest/VBOX/VDI/ISO identities
+  - creates a distinct fresh ISO-BOOT-R1 root
+  - rewrites media paths only in the copied VBOX
+  - registers only the copy in a new isolated VBoxUserHome
+  - sets boot order dvd/disk/none/none
+  - disables NIC1-8, clipboard and drag-and-drop
+  - keeps exact ISO attached
+  - requires VBoxVGA / 9 MB
+  - verifies exact VDI and ISO UUIDs
+  - verifies zero snapshots/shared folders
+  - does not mutate R3
+  - does not start any VM
+
+MUTATION SURFACE
+
+Fresh-copy preparation mutations are registervm/modifyvm within the new isolated ISO root only.
+
+  R3 mutation        NONE
+  VM start           NONE
+  compiler build     NONE
+
+CONCLUSION
+
+Static audit PASS for the already-poweroff evidence transition into fresh exact ISO preparation.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
