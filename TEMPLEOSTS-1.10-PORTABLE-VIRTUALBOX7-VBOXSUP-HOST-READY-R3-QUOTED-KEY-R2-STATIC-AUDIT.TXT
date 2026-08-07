@@ -1,0 +1,126 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / PORTABLE VIRTUALBOX7 VBOXSUP HOST-READY R3 QUOTED-KEY R2 STATIC AUDIT
+
+TARGET
+
+tools/RUN-PORTABLE-VIRTUALBOX7-VBOXSUP-HOST-READY-R3-VERIFIER-QUOTED-KEY-R2.ps1
+blob	33bedb6865c217746f9a3dd5cbb2bfbea8a9f2e5
+
+BOUND BASE
+
+base_verifier	tools/VERIFY-PORTABLE-VIRTUALBOX7-VBOXSUP-HOST-READY-R3.ps1
+base_blob	9d2cce9702aed0b955a779a07d3b61f78097933b
+storage_probe_report	D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-portable-vbox-r3-storage-surface-probe.txt
+storage_probe_sha256	4520FE5ECFA74E21395A84C0BDA0BAA7606C505259043C50BF9A8CD3B5FE34F8
+
+EVIDENCE BASIS
+
+The storage probe observed all of the following simultaneously:
+- VBoxSup numeric state 4 before and after read-only VBoxManage reads.
+- exact R3 VDI SHA256 and file ID unchanged.
+- isolated VirtualBox.xml SHA256 unchanged.
+- VBOX XML IDE controller contains HardDisk at port 1 / device 0 with exact VDI UUID.
+- machine-readable raw output contains quoted key "IDE-1-0" with exact R3 VDI path.
+- machine-readable raw output contains quoted key "IDE-ImageUUID-1-0" with exact VDI UUID.
+- human showvminfo exposes exact R3 VDI Location.
+- showmediuminfo exposes exact VDI UUID and target VM UUID.
+
+ROOT CAUSE VERIFIED
+
+The bound base verifier parser captures a raw machine-readable key as:
+
+    $Key = $Matches[1]
+
+It removes surrounding quotes from values, but not keys.
+VirtualBox 7.0.12 emits storage keys quoted while ordinary keys such as VMState are unquoted.
+Therefore the map stored literal quote characters around IDE-1-0 and the later unquoted required-key lookup failed.
+
+CORRECTION 1
+
+Exact source occurrence:
+
+    $Key = $Matches[1]
+
+is required exactly once and replaced exactly once with logic that:
+- casts the captured key to string;
+- checks length >= 2;
+- checks first and last characters are [char]34;
+- removes exactly those two surrounding quote characters;
+- otherwise leaves the key unchanged.
+
+No general key rewriting, case folding, whitespace normalization, delimiter change, or storage-specific hardcoding is introduced.
+
+CORRECTION 2
+
+The already-established final console-only NIC count correction is applied again to the same pristine base verifier:
+- enabled NIC pipeline is materialized with @(...);
+- Count is evaluated on the resulting array;
+- core NIC gates remain unchanged.
+
+PATCH DISCIPLINE
+
+- base verifier tree blob must equal 9d2cce9702aed0b955a779a07d3b61f78097933b.
+- local base verifier blob must equal the same exact blob.
+- storage probe report path is exact.
+- storage probe report SHA256 is exact.
+- key replacement old/new cardinality is required 1 -> 1.
+- NIC replacement old/new cardinality is required 1 -> 1.
+- patched source is reparsed with the PowerShell AST parser before invocation.
+- patched source SHA256 is emitted at runtime.
+- base verifier file is never rewritten.
+
+MUTATION SURFACE
+
+Runner itself:
+- git rev-parse: READ ONLY
+- git hash-object: READ ONLY
+- file reads/hashes: READ ONLY
+- in-memory string replacements only
+- no service mutation
+- no storage mutation
+- no VM start
+
+Invoked bound verifier:
+- sc query/qc only
+- Win32_SystemDriver read only
+- fsutil file queryfileid only
+- VBoxManage --version
+- VBoxManage list vms
+- VBoxManage list runningvms
+- VBoxManage showvminfo --machinereadable
+- VBoxManage snapshot list --machinereadable
+- VBoxManage showmediuminfo disk
+- artifact hashing/file-ID reads
+- report write outside R3 root
+
+Explicitly absent:
+- sc create/start/stop/delete
+- pnputil
+- devcon
+- VBoxManage startvm
+- VBoxManage controlvm
+- VBoxManage modifyvm
+- VBoxManage storageattach/storagectl
+- snapshot create/restore/delete
+- guestcontrol
+- compiler build
+
+EXPECTED SUCCESS SEMANTICS
+
+Success means:
+- exact VBoxSup service/payload remains ready;
+- exact R3 identities remain unchanged;
+- target remains poweroff;
+- running VM count remains zero;
+- quoted storage key is normalized and exact VDI attachment is verified;
+- disk-only boot/network/clipboard/dragdrop/graphics/snapshot/VDI UUID gates pass;
+- read-only report is written;
+- output may state VM RETRY AUTHORIZATION READY-FOR-SEPARATE-EXPLICIT-DECISION.
+
+Success does not start the VM and does not itself constitute guest boot proof.
+
+STATIC VERDICT
+
+PASS / RELEASEABLE AS READ-ONLY HOTFIXED VERIFIER RUNNER.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
