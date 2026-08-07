@@ -1,0 +1,150 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R8 BLANK REPORT ROW BINDING FAILURE OBSERVATION
+
+CLASS
+
+THE R8 REPORT-BOUND BOOT-ATTEMPT PREPARER FAILED CLOSED WHILE BINDING THE PROBE REPORT LINE ARRAY.
+THE EXACT PROBE REPORT CONTAINS INTENTIONAL BLANK SEPARATOR ROWS.
+R8 PASSED A STRING ARRAY CONTAINING EMPTY-STRING ELEMENTS TO A MANDATORY LINES PARAMETER THAT DID NOT DECLARE ALLOWEMPTYSTRING.
+POWERSHELL REJECTED THE ARRAY BEFORE THE REPORT FIELD CONTRACT COULD RUN.
+R2, THE ORIGINAL PREPARER AND VBOXMANAGE WERE NOT INVOKED.
+NO BOOT-ATTEMPT ROOT, ISOLATED REGISTRY OR PREPARATION REPORT WAS CREATED.
+VM START, RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  b77111e407fe9442ee041c8650b73faf7e08f74d
+
+Entrypoint:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R8.ps1
+
+Entrypoint blob:
+  8e051b4cff813de4160311c45833174180f11bd9
+
+Bound R2 blob declared by R8:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+Required probe-report path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vboxmanage-modifyvm-help-surface-probe.txt
+
+Required probe-report SHA256:
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+Requested boot-attempt root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Requested preparation report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+OBSERVED FAILURE
+
+Terminal error:
+
+  Cannot bind argument to parameter 'Lines' because it is an empty string.
+
+PowerShell classification:
+
+  ParameterBindingValidationException
+  ParameterArgumentValidationErrorEmptyStringNotAllowed
+
+The user-provided terminal output is the observed execution evidence.
+GitHub and the assistant environment did not execute the local PowerShell command.
+
+EXECUTION BOUNDARY
+
+R8 completed or necessarily reached:
+
+  file-backed R8 entrypoint parameter binding
+  R2 path construction
+  R2 exact tree/local blob checks before report assertions
+  probe-report path resolution
+  probe-report SHA256 comparison
+  probe report ReadAllLines loading
+
+R8 failed when the report line array was passed to a report helper whose Lines parameter was declared as:
+
+  [Parameter(Mandatory = $true)][string[]]$Lines
+
+The exact probe report intentionally contains empty separator lines.  In Windows PowerShell parameter binding, a mandatory string-array parameter without AllowEmptyString rejects an array containing an empty-string element.
+
+R8 failed before:
+
+  completing the first exact report-field assertion
+  validating the observed attempt matrix
+  reading or patching R2 source
+  creating the R2 dynamic scriptblock
+  invoking R2
+  binding or patching the original preparer
+  any VBoxManage invocation
+  default-registry queries
+  boot-attempt root creation
+  isolated VBOX_USER_HOME creation
+  copied VM registration
+  modifyvm execution
+  storageattach execution
+  manifest creation
+  preparation-report creation
+
+ROOT CAUSE
+
+R8's report format and report hash are internally consistent with blank separator rows.
+The defect is only the collection parameter annotation used by three report helper functions:
+
+  Get-ReportField
+  Assert-ReportField
+  Assert-Attempt
+
+Each function declares a mandatory string-array Lines parameter without AllowEmptyString.
+The helpers search only for exact key-plus-tab prefixes, so allowing blank elements does not weaken field cardinality or value comparison.
+
+ADJUDICATION
+
+A corrected entrypoint must:
+
+  preserve R8 and bind its exact tree and local blob
+  add AllowEmptyString to exactly the three Lines string-array parameters
+  retain the mandatory collection contract
+  retain exact report SHA256 binding
+  retain all exact field, attempt, output-size, output-hash and marker assertions
+  retain fixed --clipboard-mode and --drag-and-drop selection
+  retain R2 and original-preparer blob binding
+  inject a file-backed repository root before dynamic R8 execution
+  make no change to VirtualBox mutation or authorization state
+
+ONE DECISION
+
+Preserve R8 and create one file-backed R9 wrapper that applies only the three collection-binding annotations and the dynamic repository-root injection.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal             VERIFIED / SEALED
+  boot readiness                             ADJUDICATED
+  modifyvm help native matrix                OBSERVED
+  fixed switch contract                      ADJUDICATED
+  R8 invocation                              FAILED CLOSED / RECORDED
+  probe report parsing                       COLLECTION-BINDING DEFECT
+  boot-attempt root                          NOT CREATED BY THIS INVOCATION
+  boot-attempt copy                          NOT PREPARED
+  VM start                                   NOT AUTHORIZED
+  restore boot                               NOT OBSERVED
+  powered-off recovery point                 NOT SEALED
+  compiler build execution                   NOT AUTHORIZED
+  optimizer transformation                   DENIED
+
+RULE
+
+BLANK FORMAT ROWS ARE DATA ELEMENTS, NOT MISSING COLLECTIONS.
+ALLOW EMPTY STRING ELEMENTS WITHOUT WEAKENING EXACT FIELD MATCHING.
+DO NOT EDIT OR REPLACE THE FAILED R8 OBJECT.
+NO PREPARED BOOT COPY, NO VM START.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
