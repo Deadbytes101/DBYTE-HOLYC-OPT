@@ -1,0 +1,258 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VBOXMANAGE MODIFYVM HELP SURFACE PROBE OBSERVATION
+
+CLASS
+
+THE STANDALONE READ-ONLY VBOXMANAGE MODIFYVM HELP-SURFACE PROBE COMPLETED.
+VIRTUALBOX 7.0.12 RETURNED NONZERO EXIT CODES FOR ALL FOUR HELP OR USAGE FORMS.
+ALL FOUR OUTPUTS CONTAINED THE MODIFYVM USAGE MARKER, --CLIPBOARD-MODE AND --DRAG-AND-DROP.
+NO OUTPUT CONTAINED THE COMPACT --DRAGANDDROP SPELLING.
+THE BOOT-ATTEMPT ROOT REMAINED ABSENT.
+NO VIRTUALBOX REGISTRY QUERY, CONFIGURATION MUTATION OR VM START OCCURRED.
+THE OBSERVED MATRIX AUTHORIZES A VERSION-AND-REPORT-BOUND FIXED SWITCH CONTRACT.
+IT DOES NOT AUTHORIZE VM START, RESTORE BOOT, RECOVERY-POINT SEALING OR BUILD EXECUTION.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  f876c674ade590eaa496da219c64c1ee6ee5c490
+
+Entrypoint:
+  tools/PROBE-TEMPLEOSTS-VBOXMANAGE-MODIFYVM-HELP-SURFACE.ps1
+
+Probe blob:
+  c63d9b0a6157db6b5cc0aa10f548663622a038d9
+
+VBoxManage path:
+  D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+Observed VBoxManage version:
+  7.0.12r159484
+
+Requested absent boot-attempt root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Requested absent preparation report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+Observed probe report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vboxmanage-modifyvm-help-surface-probe.txt
+
+Observed probe-report SHA256:
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+OBSERVED NATIVE MATRIX
+
+ATTEMPT 1
+
+Arguments:
+  modifyvm --help
+
+Exit code:
+  2
+
+Stdout UTF-8 bytes:
+  0
+
+Stdout SHA256:
+  E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+
+Stderr UTF-8 bytes:
+  7057
+
+Stderr SHA256:
+  81512DB8141ECC159671E0D0FC558859D802AB0D9F1E2E9FE6F0C0ACA845A46B
+
+Markers:
+  VBoxManage modifyvm  True
+  --clipboard-mode     True
+  --clipboard          True
+  --drag-and-drop      True
+  --draganddrop        False
+
+ATTEMPT 2
+
+Arguments:
+  --help modifyvm
+
+Exit code:
+  1
+
+Stdout UTF-8 bytes:
+  70110
+
+Stdout SHA256:
+  221D40C22A784A7AE2BC6F241C4174B75B3745EB9686AE351E3FC479B818A899
+
+Stderr UTF-8 bytes:
+  0
+
+Stderr SHA256:
+  E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+
+Markers:
+  VBoxManage modifyvm  True
+  --clipboard-mode     True
+  --clipboard          True
+  --drag-and-drop      True
+  --draganddrop        False
+
+ATTEMPT 3
+
+Arguments:
+  help modifyvm
+
+Exit code:
+  1
+
+Stdout UTF-8 bytes:
+  70110
+
+Stdout SHA256:
+  221D40C22A784A7AE2BC6F241C4174B75B3745EB9686AE351E3FC479B818A899
+
+Stderr UTF-8 bytes:
+  0
+
+Stderr SHA256:
+  E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+
+Markers:
+  VBoxManage modifyvm  True
+  --clipboard-mode     True
+  --clipboard          True
+  --drag-and-drop      True
+  --draganddrop        False
+
+ATTEMPT 4
+
+Arguments:
+  modifyvm
+
+Exit code:
+  1
+
+Stdout UTF-8 bytes:
+  6834
+
+Stdout SHA256:
+  FC8D05B08C87A25ECCA0F8C307EFCB192326610676F4DE4A46C33E7C7501C5AF
+
+Stderr UTF-8 bytes:
+  0
+
+Stderr SHA256:
+  E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+
+Markers:
+  VBoxManage modifyvm  True
+  --clipboard-mode     True
+  --clipboard          True
+  --drag-and-drop      True
+  --draganddrop        False
+
+OBSERVED STATE BOUNDARY
+
+Probe report:
+  WRITTEN
+
+Boot-attempt root:
+  ABSENT
+
+Preparation report:
+  ABSENT
+
+VirtualBox registry query:
+  NOT-EXECUTED
+
+VirtualBox mutation:
+  NOT-EXECUTED
+
+VM start:
+  NOT-AUTHORIZED
+
+ADJUDICATION
+
+The matrix proves that VBoxManage 7.0.12 uses nonzero exit status for these help and
+usage surfaces.  Therefore exit code zero is not a valid availability criterion for
+this exact version.
+
+The matrix also proves, across four independent forms, the exact supported switch
+spellings required by the preparer:
+
+  clipboard:
+    --clipboard-mode
+
+  drag-and-drop:
+    --drag-and-drop
+
+The broader substring marker --clipboard is also true because --clipboard-mode
+contains it.  It is not independent evidence for selecting the shorter --clipboard
+spelling.  The exact --clipboard-mode marker is the authoritative clipboard result.
+
+The compact drag-and-drop spelling:
+
+  --draganddrop
+
+was false in every measured form and must not be selected.
+
+ONE DECISION
+
+Preserve R7 and the read-only probe.
+Create one direct-R2 preparer entrypoint that:
+
+  binds the exact R2 blob
+  binds probe-report SHA256 57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+  requires the exact observed version, attempts, exits, output sizes, hashes and markers
+  replaces dynamic Get-ModifyVmSwitches discovery with a fixed report-bound return
+  selects --clipboard-mode and --drag-and-drop only
+  preserves every R2 hardening and original-preparer blob contract
+  performs no native help invocation during preparation
+
+A mismatch in the report, version or any matrix field must fail before the original
+preparer is invoked.
+
+AUTHORIZED RESULT ON A LATER SUCCESSFUL PREPARATION
+
+  BOOT ATTEMPT COPY                  PREPARED
+  POWERED-OFF CORRECTED CONFIG       OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  VM START                           NOT AUTHORIZED
+  RESTORE BOOT                       NOT OBSERVED
+  TEMPLEOS DESKTOP                   NOT OBSERVED
+  POWERED-OFF RECOVERY POINT         NOT SEALED
+  GUEST DELIVERY                     UNRESOLVED
+  COMPILER BUILD                     NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION           DENIED
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal     VERIFIED / SEALED
+  boot readiness                     ADJUDICATED
+  modifyvm help native matrix        OBSERVED
+  fixed switch contract              ADJUDICATED
+  boot-attempt copy                  NOT PREPARED
+  VM start                           NOT AUTHORIZED
+  restore boot                       NOT OBSERVED
+  powered-off recovery point         NOT SEALED
+  build execution                    NOT AUTHORIZED
+
+RULE
+
+BIND THE EXACT VERSION AND PROBE REPORT.
+SELECT --CLIPBOARD-MODE AND --DRAG-AND-DROP ONLY.
+DO NOT INTERPRET NONZERO HELP EXIT STATUS AS OPTION FAILURE FOR THIS VERSION.
+DO NOT RUN ANOTHER NATIVE HELP PROBE INSIDE PREPARATION.
+NO PREPARED BOOT COPY, NO VM START.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
