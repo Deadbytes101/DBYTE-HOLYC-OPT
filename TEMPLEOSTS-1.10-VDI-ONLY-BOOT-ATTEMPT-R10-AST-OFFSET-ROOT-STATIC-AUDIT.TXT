@@ -1,0 +1,266 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R10 AST-OFFSET ROOT STATIC AUDIT
+
+CLASS
+
+THE R10 DIRECT-R8 BOOT-ATTEMPT PREPARER ENTRYPOINT WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+R10 PRESERVES AND BINDS THE FAILED R8 ENTRYPOINT BY EXACT TREE AND LOCAL BLOB.
+R10 RETAINS THE EXACT-THREE BLANK-ROW COLLECTION CORRECTION.
+R10 REPLACES ONLY THE EXECUTABLE R8 REPOROOT ASSIGNMENT USING ITS POWERSHELL AST EXTENT OFFSETS.
+R10 DOES NOT DEPEND ON ADJACENT DECLARATION LAYOUT.
+THE PROBE-REPORT, FIXED-SWITCH, R2, ORIGINAL-PREPARER AND VM PREPARATION CONTRACTS REMAIN UNCHANGED.
+NO VM START, RESTORE-BOOT CLAIM, RECOVERY-POINT SEAL OR BUILD AUTHORIZATION WAS ADDED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R10.ps1
+
+Blob:
+  5ad32de1be482802e53bca04d0630458f4e57741
+
+BOUND R8
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R8.ps1
+
+Required tree/local blob:
+  8e051b4cff813de4160311c45833174180f11bd9
+
+R8 continues to bind R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R2 continues to bind original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+R8 continues to bind probe-report SHA256:
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+OBSERVED R9 FAILURE BOUNDARY
+
+R9 failed with:
+
+  R8 file-backed repository-root injection source cardinality mismatch:
+  old=0 expected_old=1 new_before=0
+
+The failure was before dynamic R8 execution and before any VBoxManage command or boot-root creation.
+
+The R9 textual seam assumed adjacency among:
+
+  R2Relative declaration
+  RepoRoot assignment
+  R2Path construction
+
+The exact R8 source contains probe/version/path constants between R2Relative and RepoRoot.
+The executable assignment itself exists exactly once.
+
+R10 BLANK-ROW CORRECTION
+
+R10 binds the exact R8 blob and requires exactly three occurrences of:
+
+  [Parameter(Mandatory = $true)][string[]]$Lines,
+
+It replaces them with exactly three occurrences of:
+
+  [Parameter(Mandatory = $true)][AllowEmptyString()][string[]]$Lines,
+
+The retained target functions are:
+
+  Get-ReportField
+  Assert-ReportField
+  Assert-Attempt
+
+No report field, expected value or matrix assertion is changed.
+
+AST REPOSITORY-ROOT CLASSIFIER
+
+After the collection correction, R10 parses the complete R8 source with:
+
+  System.Management.Automation.Language.Parser.ParseInput
+
+Parser errors fail closed.
+
+R10 searches only AssignmentStatementAst nodes whose complete source extent equals:
+
+  $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+The exact executable assignment count must equal one.
+
+R10 independently counts VariableExpressionAst nodes whose UserPath is exactly:
+
+  PSScriptRoot
+
+The executable variable count before injection must equal one.
+
+AST-OFFSET SPLICE
+
+R10 takes the one matched assignment node and reads:
+
+  Extent.StartOffset
+  Extent.EndOffset
+
+It requires:
+
+  StartOffset >= 0
+  EndOffset > StartOffset
+  EndOffset <= source length
+
+Before replacement it slices the exact source extent and re-requires exact ordinal text:
+
+  $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+It then constructs only:
+
+  $RepoRoot = '<file-backed R10 repository root>'
+
+with embedded single quotes doubled.
+
+The final source is assembled by concatenating:
+
+  source prefix before StartOffset
+  new assignment
+  source suffix beginning at EndOffset
+
+No global textual replacement is used for repository-root injection.
+Strings, comments, here-strings, base64 constants and diagnostic text are therefore not replacement targets.
+
+POST-INJECTION CONTRACT
+
+R10 parses the final patched R8 source again.
+It requires:
+
+  exact executable PSScriptRoot variable count       0
+  exact old RepoRoot AssignmentStatementAst count    0
+
+The final source must differ from the original bound R8 source before scriptblock creation.
+
+UNCHANGED R8 CONTRACTS
+
+R10 does not alter R8 gates for:
+
+  exact probe-report path and SHA256
+  exact VBoxManage path recorded in the report
+  exact VirtualBox version 7.0.12r159484
+  exact four help/usage argument vectors
+  exact nonzero exit codes
+  exact stdout/stderr byte counts and SHA256 values
+  exact option markers
+  exact probe authorization rows
+  fixed --clipboard-mode selection
+  fixed --drag-and-drop selection
+  no native help invocation during preparation
+  R2 exact tree/local blob binding
+  R2 AST repository-root injection
+
+UNCHANGED R2 HARDENING
+
+R10 does not alter inherited R2 hardening for:
+
+  default and copied ISO binding
+  pre-detach ISO UUID proof
+  detached slot value-or-missing handling
+  all exposed NICs none
+  clipboard disabled
+  drag-and-drop disabled
+  VBoxVGA retention
+  9 MB VRAM retention
+  copied VDI UUID proof
+  machine-local DVD registry row handling
+  copied ISO detached proof
+  sealed rehearsal and default registry revalidation
+  incomplete-root preservation on post-creation failure
+
+MUTATION SURFACE
+
+R10 itself invokes no VBoxManage command before dynamic R8 execution.
+
+The inherited intended VirtualBox mutations remain limited to the new isolated boot-attempt copy:
+
+  registervm
+  modifyvm copied powered-off machine
+  storageattach copied DVD slot --medium none
+
+The inherited chain still contains no:
+
+  startvm
+  controlvm
+  savestate
+  poweroff
+  unregistervm
+  snapshot take
+  snapshot restore
+  snapshot delete
+  guestcontrol
+  compiler execution
+
+WRITE BOUNDARY
+
+Before dynamic R8 and the original preparer are invoked, R10 writes no boot root, registry, manifest or preparation report.
+
+On successful inherited preparation, writes remain restricted to:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+  its copied Machine files
+  its isolated VBoxUserHome
+  its boot-attempt manifest
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+Any failure after root creation must preserve the incomplete root and marker.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  BOOT ATTEMPT COPY                  PREPARED
+  POWERED-OFF CORRECTED CONFIG       OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  VM START                           NOT AUTHORIZED
+  RESTORE BOOT                       NOT OBSERVED
+  TEMPLEOS DESKTOP                   NOT OBSERVED
+  POWERED-OFF RECOVERY POINT         NOT SEALED
+  GUEST DELIVERY                     UNRESOLVED
+  COMPILER BUILD                     NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION           DENIED
+
+ADVERSARIAL JUDGMENT
+
+Executable repository-root injection is now tied to one parsed assignment node and its exact source extent, not neighboring declarations.
+This removes the layout assumption that caused R9 while remaining stricter than a raw global string replacement.
+
+A successful R10 run may prepare only a corrected powered-off copy.
+It still cannot authorize a VM start or establish restore boot.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal     VERIFIED / SEALED
+  boot readiness                     ADJUDICATED
+  modifyvm help native matrix        OBSERVED
+  fixed switch contract              ADJUDICATED
+  R9 invocation                      FAILED CLOSED / RECORDED
+  R10 AST-offset correction          STATICALLY AUDITED
+  boot-attempt copy                  EXECUTION PENDING
+  VM start                           NOT AUTHORIZED
+  restore boot                       NOT OBSERVED
+  powered-off recovery point         NOT SEALED
+  build execution                    NOT AUTHORIZED
+
+RULE
+
+RUN R10 ONLY.
+PATCH EXECUTABLE REPOROOT BY AST EXTENT, NOT DECLARATION ADJACENCY.
+ALLOW BLANK REPORT ROW ELEMENTS WITHOUT WEAKENING EXACT FIELD MATCHING.
+BIND THE EXACT R8 BLOB AND PROBE REPORT.
+PRESERVE ANY INCOMPLETE BOOT ROOT.
+DO NOT START THE SEALED REHEARSAL OR BOOT COPY.
+PREPARATION IS NOT A BOOT PROOF.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
