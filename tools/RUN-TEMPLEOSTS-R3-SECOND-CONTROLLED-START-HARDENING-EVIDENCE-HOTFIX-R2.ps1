@@ -128,7 +128,7 @@ $NewStartBoundary = @'
     $Start = Invoke-Native -FilePath $VBox -Arguments $StartArgs -Label 'second controlled VBoxManage startvm'
 '@
 
-$StartCommandNeedle = "$StartArgs = @('startvm', $ExpectedMachineUuid, '--type', 'gui')"
+$StartCommandNeedle = '$StartArgs = @(''startvm'', $ExpectedMachineUuid, ''--type'', ''gui'')'
 
 $OldHardeningBefore = Get-OccurrenceCount -Text $Source -Needle $OldHardening
 $NewHardeningBefore = Get-OccurrenceCount -Text $Source -Needle $NewHardening
