@@ -1,0 +1,153 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / PORTABLE VIRTUALBOX7 VBOXSUP HOST-READY R3 VERIFIER STATIC AUDIT
+
+AUDIT TYPE
+
+Static source review only.
+No claim of local PowerShell execution is made.
+No VM start is authorized by this audit.
+
+BOUND OBJECTS
+
+base_verifier_path	tools/VERIFY-PORTABLE-VIRTUALBOX7-VBOXSUP-HOST-READY-R3.ps1
+base_verifier_blob	9d2cce9702aed0b955a779a07d3b61f78097933b
+
+runner_path	tools/RUN-PORTABLE-VIRTUALBOX7-VBOXSUP-HOST-READY-R3-VERIFIER-NETWORK-COUNT-HOTFIX.ps1
+runner_blob	104cb6362ef23c8439a3d7ee398f40a4282a03b4
+
+bound_mutation_report_sha256	3C24420D77868E8D15F58A6412AF53635EEAFFF00337CCEB01E17C31183666F3
+bound_failed_boot_report_sha256	AC22D9A63234B8BC16FFFAE21BDAAE78704BDE6635A4072093EECCD070EE80D4
+bound_prepared_verification_sha256	26DC5258CF4692FD55EC95D81E48E3CFE05B4667BC20CDAC0CFFD58DC8433EF7
+bound_boot_authorization_sha256	F8596A2CDECB75BE1FEC02377E9B6A428F15A3F4FC2C81D33F27A0CD962C3482
+
+EXPECTED HOST PAYLOAD
+
+VBoxSup.sys SHA256	3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4
+VBoxSup.sys version	7.0.12.159484
+VBoxSup.inf SHA256	B34D56477E8273C6C2B177B38A7F5CBE1DD4708A1C2BAF7A2D2170302ECAC7F6
+VBoxSup.cat SHA256	09DFDCD84B7CE8970B32AF5BB18000738155C04444C6276B5353C98CB1CA6999
+signature requirement	Valid
+
+EXPECTED SERVICE CONTRACT
+
+service name	VBoxSup
+DisplayName	PortableVBoxSUP
+Type	1 / kernel driver
+Start	2 / auto
+ErrorControl	1
+ImagePath	exact D:\Portable-VirtualBox7\app64\drivers\vboxsup\VBoxSup.sys
+runtime state	numeric SC STATE 4
+CIM cardinality	1
+CIM state	Running
+
+EXPECTED R3 IDENTITIES
+
+current VBOX SHA256	8EADB39D54CABE5E7B791E5D7E05BCF4CBBF32D4AB6B58291BEC0B2FAD607C0C
+current VBOX file ID	0X000000000000000000050000000609A1
+previous VBOX SHA256	C93D128227EE80B647DB63FE64277CEF1BDC61C224110472C73CBFFEC63877A7
+previous VBOX file ID	0X000000000000000000040000000609A7
+VDI SHA256	90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+VDI file ID	0X000000000000000000010000000609A2
+ISO SHA256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+ISO file ID	0X000000000000000000010000000609A3
+isolated VirtualBox.xml SHA256	99DB185525D245B1AAFF6937B459518089435882373A55CD2159D03FC82FDCBF
+VDI UUID	55c1f29d-a681-402e-b90d-bfbb6b09f207
+machine UUID	9c98691e-27cd-4487-a306-587969c2c78c
+
+READ-ONLY EXTERNAL COMMAND SURFACE
+
+sc.exe query VBoxSup
+sc.exe qc VBoxSup
+fsutil.exe file queryfileid <bound R3 artifact>
+VBoxManage.exe --version
+VBoxManage.exe list vms
+VBoxManage.exe list runningvms
+VBoxManage.exe showvminfo <target UUID> --machinereadable
+VBoxManage.exe snapshot <target UUID> list --machinereadable
+VBoxManage.exe showmediuminfo disk <bound R3 VDI>
+Get-CimInstance Win32_SystemDriver
+
+NEGATIVE COMMAND SURFACE
+
+startvm	ABSENT
+controlvm	ABSENT
+modifyvm	ABSENT
+storageattach	ABSENT
+registervm	ABSENT
+unregistervm	ABSENT
+snapshot take	ABSENT
+snapshot restore	ABSENT
+snapshot delete	ABSENT
+sc create	ABSENT
+sc start	ABSENT
+sc stop	ABSENT
+sc delete	ABSENT
+pnputil mutation	ABSENT
+devcon mutation	ABSENT
+wrapper execution	ABSENT
+guestcontrol	ABSENT
+compiler build	ABSENT
+
+RUNTIME ENVIRONMENT BOUNDARY
+
+The verifier temporarily sets process-local VBOX_USER_HOME to the prepared R3 VBoxUserHome for isolated VBoxManage reads and restores/removes that environment variable in a finally block.
+This is not a persistent host setting mutation.
+
+DRIFT GATES
+
+Before VirtualBox reads, the verifier binds:
+- exact VBoxSup payload hashes/signature/service properties/state;
+- exact R3 current/previous VBOX hashes and NTFS file IDs;
+- exact VDI/ISO hashes and NTFS file IDs;
+- exact isolated VirtualBox.xml hash.
+
+After VirtualBox reads, it rechecks:
+- VBoxSup SC numeric state 4;
+- VBoxSup/INF/CAT hashes unchanged;
+- current/previous VBOX hashes and file IDs unchanged;
+- VDI/ISO hashes and file IDs unchanged;
+- isolated VirtualBox.xml hash unchanged.
+
+VIRTUALBOX STATE GATES
+
+version	7.0.12r159484
+registered target	one exact Temple1.10 row
+running VMs	0
+VMState	poweroff
+CfgFile	exact R3 current VBOX
+VDI attachment	exact R3 VDI
+ISO attachment	detached / none-or-missing machine-readable slot
+boot order	disk / none / none / none
+NIC keys	at least one / all none
+clipboard	disabled
+drag-and-drop	disabled
+graphicscontroller	vboxvga
+VRAM	9 MB
+snapshot rows	0
+VDI UUID	exact expected UUID
+
+PRE-RELEASE CORRECTION
+
+The base verifier was not released for user execution before static review found one final console-only collection-shape hazard:
+
+  (... pipeline ...).Count
+
+under StrictMode.
+The bounded runner binds the exact base blob and replaces exactly one occurrence with explicit @() materialization before computing Count.
+It reparses the patched source before invocation.
+The correction does not alter any verification gate or external command surface.
+
+ADJUDICATION
+
+Base verifier: UNEXECUTED / BOUND.
+Hotfix runner: STATICALLY REVIEWED.
+Host mutation: NOT PERFORMED BY VERIFIER.
+VM start: NOT PERFORMED BY VERIFIER.
+Successful verifier outcome may state only:
+
+  VBOXSUP HOST READY + R3 STATE VERIFIED READ-ONLY
+  VM RETRY AUTHORIZATION READY-FOR-SEPARATE-EXPLICIT-DECISION
+
+It does not itself authorize or execute the retry.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
