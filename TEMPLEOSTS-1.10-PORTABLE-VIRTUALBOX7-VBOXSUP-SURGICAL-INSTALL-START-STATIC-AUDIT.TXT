@@ -1,0 +1,139 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / PORTABLE VIRTUALBOX7
+VBOXSUP SURGICAL INSTALL+START STATIC AUDIT
+
+AUDITED FILE
+
+tools/INSTALL-START-PORTABLE-VIRTUALBOX7-VBOXSUP-SURGICAL.ps1
+
+SEALED BLOB
+
+3318e33079efe68306f1c62f7bad8daefc4d83f8
+
+INTENT
+
+Resolve only the observed host VirtualBox support-driver registration gap before any VM retry.
+
+BOUND EVIDENCE
+
+loader-surface report SHA256
+  7C9ABBAE87AA926F11D73A16B17C24AC287EEBB7AB620A63C9A6EBA58866AA2C
+
+wrapper PE report SHA256
+  7B830675C981216B58497F9080ADA5025F7FB2EFE1521CE506F5CFA56BC7E512
+
+VBoxSup.sys
+  SHA256 3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4
+  version 7.0.12.159484
+  Authenticode must be Valid
+
+VBoxSup.inf
+  SHA256 B34D56477E8273C6C2B177B38A7F5CBE1DD4708A1C2BAF7A2D2170302ECAC7F6
+
+VBoxSup.cat
+  SHA256 09DFDCD84B7CE8970B32AF5BB18000738155C04444C6276B5353C98CB1CA6999
+
+PRE-MUTATION GATES
+
+- exact portable root required
+- exact evidence report paths and hashes required
+- exact SYS/INF/CAT hashes required
+- exact VBoxSup.sys version required
+- valid Authenticode required
+- administrator token required
+- zero VBox/VirtualBox processes required
+- VBoxSup registry service key must be absent
+- sc query VBoxSup must return service-does-not-exist exit 1060
+- output evidence path must be absent
+
+AUTHORIZED MUTATION SURFACE
+
+Exactly two intended Windows service-control mutations:
+
+1. sc create VBoxSup
+   binPath = exact portable app64\drivers\vboxsup\VBoxSup.sys
+   type = kernel
+   start = auto
+   error = normal
+   DisplayName = PortableVBoxSUP
+
+2. sc start VBoxSup
+
+This follows the observed Portable-VirtualBox upstream VBoxSup route rather than invoking the broad wrapper.
+
+POST-CREATE GATES
+
+Registry service object must exist and must resolve to:
+
+  ImagePath    exact portable VBoxSup.sys
+  Type         1 / kernel driver
+  Start        2 / AUTO_START
+  ErrorControl 1
+  DisplayName  PortableVBoxSUP
+
+POST-START GATES
+
+- sc query must return exit 0
+- numeric STATE must be 4
+- CIM driver rows are recorded when available
+- SYS/INF/CAT hashes must remain exact
+
+LOCALE HARDENING
+
+Running-state proof uses numeric sc STATE 4 only.
+It does not require the localized RUNNING text token.
+
+POWERSHELL COLLECTION HARDENING
+
+Add-ScEvidence Lines explicitly allows empty collection and empty string entries.
+This avoids the previously observed Windows PowerShell List[string] blank-row binding defect.
+
+FAILURE SEMANTICS
+
+If failure occurs after entering the mutation boundary:
+
+- write one external failure report when possible
+- record whether create/start succeeded
+- do NOT automatically stop/delete/rollback the service
+- preserve actual host state for inspection
+- rethrow the failure
+
+The script intentionally does not hide or repair a partial host mutation.
+
+NEGATIVE COMMAND SURFACE
+
+NO:
+
+- Portable-VirtualBox7.exe execution
+- VBoxManage
+- VM start
+- controlvm / poweroff
+- VM registration/config/media mutation
+- snapshot mutation
+- pnputil installation
+- devcon installation
+- INF installation
+- network/USB driver mutation
+- guest delivery
+- guest build
+- optimizer transformation
+
+PERSISTENCE NOTE
+
+The selected upstream-compatible service contract uses AUTO_START.
+Therefore a successful create persists a VBoxSup service definition until a separately authorized cleanup removes it.
+No cleanup is included in this script.
+
+STATIC VERDICT
+
+VBOXSUP SURGICAL CREATE+START MUTATION IS BOUNDED TO THE OBSERVED HOST BLOCKER.
+
+USER EXECUTION
+NOT OBSERVED AT AUDIT TIME.
+
+VM RETRY
+NOT AUTHORIZED BY THIS AUDIT.
+A SEPARATE READ-ONLY POST-MUTATION VERIFIER IS REQUIRED FIRST.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
