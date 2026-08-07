@@ -1,0 +1,299 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R14 GENERATION-AWARE R3 STATIC AUDIT
+
+CLASS
+
+THE R14 DIRECT-R2 PREPARER AND ITS PRESERVATION GUARD WERE REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+R14 IMPLEMENTS THE SETTINGS-GENERATION POLICY DERIVED FROM THE OBSERVED R2 FAILURE, INSPECTION AND ADJUDICATION.
+R14 DOES NOT REUSE R1 OR R2.
+THE ONLY NEW PREPARATION ROOT IS R3.
+NO VM START, RESTORE BOOT, RECOVERY-POINT SEAL, GUEST DELIVERY, COMPILER BUILD OR OPTIMIZER TRANSFORMATION IS AUTHORIZED.
+
+AUDITED OBJECTS
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+R14 preparer:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R14.ps1
+
+R14 blob:
+  4ddfa4597c23b58b41731bbc180b119fef1f3f3f
+
+Preservation guard:
+  tools/RUN-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R14-PRESERVATION-GUARD.ps1
+
+Guard blob:
+  f9f153ca0d7e1b8042c4a048b95fc5b1dd790002
+
+Generation policy fragment:
+  tools/r14/R2-GENERATION-POLICY-INJECTION.ps1.txt
+
+Policy blob:
+  41c05f339f378e325a115860000193fbbbf86e29
+
+BOUND R2 AND MODIFYVM FRAGMENTS
+
+R2 preparer:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R2.ps1
+  blob 796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+Old dynamic modifyvm-help fragment:
+  tools/r12/R2-OLD-MODIFYVM-BLOCK.txt
+  blob 7464fbe67b9456cc7eb679255c98b3ecbc6cdecc
+
+Fixed report-bound modifyvm fragment:
+  tools/r12/R2-NEW-MODIFYVM-BLOCK.txt
+  blob 36b5df298e4d657d54c1603e98104a8fe8f0ce0e
+
+R14 requires tree and local blobs for all four source objects before dynamic R2 creation.
+
+BOUND EVIDENCE
+
+Modifyvm help-surface report SHA256:
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+R2 incomplete inspection report SHA256:
+  9C2F6A2C2838CF00412F37BA2753DBB1718605FBE165B6D9D2A9FFBFC5E2D42A
+
+R2 adjudication report SHA256:
+  7580785C1CCDD4471344F8B7BD9E361F0CC6D6B36DF9A798756C1C2A84EA26B5
+
+R14 binds each report by exact path and whole-file SHA256 before dynamic R2 execution.
+
+OBSERVED R2 GENERATION EVIDENCE
+
+Current R2 VBOX:
+  Machine\Temple1.10.vbox
+  SHA256 8EADB39D54CABE5E7B791E5D7E05BCF4CBBF32D4AB6B58291BEC0B2FAD607C0C
+  file ID 0X00000000000000000005000000060670
+
+R2 companion:
+  Machine\Temple1.10.vbox-prev
+  SHA256 C93D128227EE80B647DB63FE64277CEF1BDC61C224110472C73CBFFEC63877A7
+  file ID 0X00000000000000000004000000060676
+
+Pre-registration copied/sealed VBOX SHA256:
+  69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+Observed facts:
+  current VBOX does not equal pre-registration generation
+  .vbox-prev does not equal pre-registration generation
+  current and previous VBOX generations are distinct file objects
+  VDI and ISO copied file objects remained stable through the correction sequence
+  relative media locations remained Temple1.10.vdi and TempleOSTS.iso
+  target ISO attachment count became zero
+
+Therefore VBOX NTFS file-ID continuity is not a valid correctness condition for this route.
+
+PRESERVATION GUARD
+
+Before R14 executes, the guard requires:
+
+R1 exact:
+  VBOX SHA256 and file ID
+  VDI SHA256 and file ID
+  ISO SHA256 and file ID
+
+R2 exact:
+  current VBOX SHA256 and file ID
+  .vbox-prev SHA256 and file ID
+  VDI SHA256 and file ID
+  ISO SHA256 and file ID
+  BOOT-ATTEMPT-INCOMPLETE.txt present
+  BOOT-ATTEMPT-MANIFEST.txt absent
+  generation inventory includes exactly Temple1.10.vbox and Temple1.10.vbox-prev among the recognized current/prev/new generation names
+
+The guard requires:
+  r3 root absent
+  final preparation report absent
+
+The guard itself invokes no VBoxManage command and performs no VirtualBox mutation.
+After all preservation checks pass it invokes the exact R14 file with the user's arguments unchanged.
+
+DIRECT R2 CONTRACT
+
+R14 invokes R2 directly.
+It does not execute R12 or R13.
+
+R14 replaces the exact R2 dynamic modifyvm-help fragment with the fixed report-bound switch object:
+  Clipboard --clipboard-mode
+  DragDrop  --drag-and-drop
+
+No native modifyvm help command is executed during preparation.
+
+R14 injects its generation policy into the generated original-preparer source after all existing R2 hardening transforms and before R2's final source-change guard.
+
+R14 parses the final patched R2 source with the PowerShell AST.
+It requires exactly one executable assignment:
+  $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+It requires exactly one executable PSScriptRoot variable expression before replacement.
+It range-checks and rechecks the exact AST extent, replaces only that assignment with the file-backed repository path, parses again, and requires zero executable PSScriptRoot references before scriptblock creation.
+
+NEW ROOT CONTRACT
+
+Only accepted new root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3
+
+It must be absent before execution.
+
+Final preparation report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+It must also be absent before execution.
+
+RELATIVE MEDIA POLICY
+
+The copied R3 VBOX is not rewritten to host absolute media paths.
+Before registration the policy parses the unchanged copied VBOX and requires:
+  exact target VDI UUID row count 1
+  exact target ISO UUID row count 1
+  VDI location Temple1.10.vdi
+  ISO location TempleOSTS.iso
+  sealed absolute VDI occurrence count 0
+  copied absolute VDI occurrence count 0
+  VDI basename occurrence count 1
+  sealed absolute ISO occurrence count 0
+  copied absolute ISO occurrence count 0
+  ISO basename occurrence count 1
+
+No Write-Utf8Text call is made for media relocation.
+The pre-registration and post-media-policy VBOX SHA256 values are therefore equal.
+
+UNCHANGED SEMANTIC CORRECTION GATES
+
+Inherited R2/original-preparer gates remain required:
+  isolated registry initially empty
+  copied machine exact registration
+  copied ISO exact before correction
+  boot1 disk
+  boot2 none
+  boot3 none
+  boot4 none
+  every exposed NIC none
+  clipboard disabled
+  drag-and-drop disabled
+  graphicscontroller vboxvga
+  VRAM 9 MB
+  copied ISO UUID exact before detach
+  copied ISO detached from machine slot/path
+  zero snapshots
+  copied VDI UUID exact after correction
+  default registry unchanged and rebound to live ISO
+  sealed rehearsal and live artifacts revalidated
+
+The read-only R2 XML replay is not substituted for these post-showvminfo semantic gates.
+
+GENERATION-AWARE POST-CORRECTION POLICY
+
+After correction and service shutdown, the policy obtains the current VBOX file ID without requiring it to equal the pre-registration copied VBOX file ID.
+
+It still requires:
+  post-correction current VBOX does not alias the sealed VBOX file object
+  copied VDI file ID unchanged
+  copied ISO file ID unchanged
+  current VBOX SHA256 differs from the pre-registration VBOX SHA256
+
+It requires the recognized VBOX generation inventory to contain:
+  Temple1.10.vbox
+  Temple1.10.vbox-prev
+
+and no Temple1.10.vbox-new within that recognized generation set.
+
+It requires .vbox-prev to:
+  exist
+  have a file ID distinct from current VBOX
+  have a file ID distinct from sealed VBOX
+  have a SHA256 distinct from current VBOX
+  parse as XML
+  contain exactly one Machine node
+  contain the exact target machine UUID
+
+It computes but does not require:
+  whether .vbox-prev SHA256 equals the pre-registration VBOX SHA256
+
+This is intentional because R2 observed False after multiple settings saves.
+
+FINAL XML POSTCONDITION
+
+The final current VBOX must retain:
+  target VDI registry location Temple1.10.vdi
+  target ISO registry location TempleOSTS.iso when the optional local ISO registry row exists
+  zero attached target ISO UUID nodes
+
+The inherited R2 hardening allows zero or one detached machine-local ISO registry row and requires every present row to match the expected relative ISO location.
+
+MANIFEST AND REPORT GENERATION IDENTITIES
+
+The manifest terminology becomes:
+  boot_vbox_pre_media_policy_sha256
+  boot_vbox_post_media_policy_sha256
+  boot_vbox_post_correction_sha256
+
+The prior single ambiguous boot_vbox_file_id field is replaced by:
+  boot_vbox_pre_registration_file_id
+  boot_vbox_post_correction_file_id
+  boot_vbox_prev_sha256
+  boot_vbox_prev_file_id
+  boot_vbox_prev_matches_pre_registration_hash
+
+The final preparation report records the same generation identity fields.
+Console output likewise reports pre-registration and post-correction current VBOX IDs plus .vbox-prev identity.
+
+The immutable inventory continues to hash the current VBOX, .vbox-prev, VDI, ISO and VirtualBox.xml.
+Only bounded VBoxSVC.log generations are classified volatile by the inherited inventory function.
+
+MUTATION SURFACE
+
+The preservation guard performs no VirtualBox mutation.
+R14 itself performs no VirtualBox mutation before invoking dynamic R2.
+
+The inherited original-preparer mutation surface on R3 remains limited to:
+  registervm copied R3 machine in isolated VBOX_USER_HOME
+  modifyvm R3 boot order
+  modifyvm R3 NIC1 through NIC8
+  modifyvm R3 clipboard
+  modifyvm R3 drag-and-drop
+  storageattach R3 DVD slot --medium none
+
+No startvm command is introduced.
+
+FAILURE PRESERVATION
+
+The inherited original-preparer catch remains unchanged.
+If R3 is created and a later failure occurs, it rewrites BOOT-ATTEMPT-INCOMPLETE.txt with failure evidence, prints the incomplete root, preserves the root and rethrows.
+R3 must then become permanent evidence and must never be deleted or reused.
+
+If the guard or R14 fails before R3 creation, R3 remains absent.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  R3 BOOT ATTEMPT COPY                 PREPARED
+  POWERED-OFF CORRECTED CONFIGURATION  OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  R1 reuse                              DENIED
+  R2 reuse                              DENIED
+  VM start                              NOT-AUTHORIZED
+  restore boot                          NOT-OBSERVED
+  TempleOS desktop                      NOT-OBSERVED
+  powered-off recovery point            NOT-SEALED
+  guest delivery                        UNRESOLVED
+  compiler build                        NOT-AUTHORIZED
+  optimizer transformation              DENIED
+
+NEXT RULE
+
+RUN ONLY THE R14 PRESERVATION GUARD.
+IF R3 IS CREATED AND ANY FAILURE OCCURS, PRESERVE R3 PERMANENTLY.
+IF R3 PREPARATION SUCCEEDS, THE NEXT STEP IS A SEPARATE READ-ONLY R3 VERIFIER, NOT A VM START.
+DO NOT START R1, R2, R3 OR THE SEALED REHEARSAL.
+PREPARATION IS NOT A BOOT PROOF.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
