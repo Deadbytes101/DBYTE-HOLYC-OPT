@@ -1,0 +1,143 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT INCOMPLETE R2 INSPECTOR LINES BINDING FAILURE OBSERVATION
+
+CLASS
+
+THE READ-ONLY R2 INSPECTOR FAILED CLOSED BEFORE WRITING ITS EXTERNAL REPORT.
+THE FAILURE IS A POWERSHELL PARAMETER-BINDING DEFECT IN THE INSPECTOR'S Add-NodeAttributes HELPER.
+THE REPORT-BUILDER LIST INTENTIONALLY CONTAINS EMPTY STRING SEPARATOR ROWS.
+THE HELPER DECLARED ITS Lines PARAMETER AS A MANDATORY List[string] WITHOUT AllowEmptyString.
+WHEN THE POPULATED LIST WAS PASSED TO Add-NodeAttributes, WINDOWS POWERSHELL REJECTED AN EMPTY STRING DURING PARAMETER BINDING.
+NO VBOXMANAGE COMMAND, VIRTUALBOX MUTATION OR VM START OCCURRED DURING THIS INSPECTION ATTEMPT.
+R1 AND R2 REMAIN PRESERVED EVIDENCE OBJECTS.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Inspector path:
+  tools/INSPECT-TEMPLEOSTS-VDI-ONLY-BOOT-INCOMPLETE-R2.ps1
+
+Failed inspector blob:
+  efaecd9ca56042e927a457596da487484ceefb77
+
+Preserved R1 root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Preserved R2 root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+
+Expected absent final preparation report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+Intended inspection report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r2-incomplete-inspection.txt
+
+OBSERVED ERROR
+
+  Cannot bind argument to parameter 'Lines' because it is an empty string.
+
+PowerShell classification:
+  ParameterBindingValidationException
+
+FullyQualifiedErrorId prefix:
+  ParameterArgumentValidationErrorEmptyStringNotAllowed
+
+SOURCE CAUSE
+
+The failed inspector creates:
+
+  $Lines = [System.Collections.Generic.List[string]]::new()
+
+and intentionally adds blank separator rows with:
+
+  $Lines.Add('')
+
+The same populated list is later passed to:
+
+  Add-NodeAttributes -Lines $Lines ...
+
+The failed helper signature is exactly:
+
+  [Parameter(Mandatory = $true)][System.Collections.Generic.List[string]]$Lines
+
+It does not include:
+
+  [AllowEmptyCollection()]
+  [AllowEmptyString()]
+
+This is the same PowerShell mandatory-collection binding class previously observed with report arrays containing blank separator rows.
+
+FAILURE BOUNDARY
+
+Before the failure the inspector may perform only its documented read-only operations:
+  path validation
+  SHA256 reads
+  fsutil file queryfileid reads
+  XML reads and parsing
+  filesystem inventory reads
+  in-memory report-list construction
+
+The only persistent write in the inspector is the final external WriteAllText call after all Add-NodeAttributes loops.
+The observed parameter-binding exception occurred before that write.
+Therefore no successful inspection report was produced by this invocation.
+
+The inspector source contains no VBoxManage invocation surface.
+It does not register, modify, attach, detach, start, stop or otherwise mutate a VM.
+
+STATE
+
+R1:
+  PRESERVED
+  NEVER REUSE
+
+R2:
+  PRESERVED
+  NEVER REUSE
+
+Final preparation report:
+  NOT OBSERVED
+
+R2 inspection report:
+  NOT WRITTEN BY FAILED INVOCATION
+
+VBoxManage during failed inspection:
+  NOT EXECUTED
+
+VirtualBox mutation during failed inspection:
+  NOT EXECUTED
+
+VM start:
+  NOT AUTHORIZED
+
+ONE DECISION
+
+Preserve the failed inspector blob unchanged.
+Create one bounded hotfix runner that:
+  binds failed inspector blob efaecd9ca56042e927a457596da487484ceefb77
+  parses it with the PowerShell AST
+  selects exactly one Add-NodeAttributes FunctionDefinitionAst
+  changes only the Lines parameter binding attributes to allow empty string and empty collection values
+  parses the corrected inspector again
+  invokes it with the user's same R1/R2/report arguments
+
+Do not rerun the failed inspector directly.
+Do not run any boot preparer.
+Do not create r3.
+Do not start any VM.
+
+RULE
+
+PRESERVE R1.
+PRESERVE R2.
+FIX ONLY THE READ-ONLY INSPECTOR PARAMETER BINDING.
+NO VBOXMANAGE.
+NO VIRTUALBOX MUTATION.
+NO VM START.
+NO R3 PREPARATION YET.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
