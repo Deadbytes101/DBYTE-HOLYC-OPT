@@ -1,0 +1,145 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT INCOMPLETE R2 INSPECTOR CONDITIONAL COLLECTION FAILURE OBSERVATION
+
+CLASS
+
+THE FIRST BOUNDED INSPECTOR BINDING HOTFIX WAS EXECUTED BY THE USER.
+THE Add-NodeAttributes Lines BINDING CORRECTION WAS APPLIED IN MEMORY AND THE DYNAMIC INSPECTOR STARTED.
+THE INSPECTOR THEN FAILED CLOSED BEFORE REPORT WRITE WITH:
+  The property 'Count' cannot be found on this object. Verify that the property exists.
+
+THIS FAILURE OCCURRED IN THE READ-ONLY INSPECTION WORKFLOW.
+NO VBOXMANAGE INVOCATION, VIRTUALBOX MUTATION OR VM START WAS AUTHORIZED BY THE INSPECTOR OR HOTFIX RUNNER.
+THE R1 AND R2 ROOTS REMAIN PERMANENT EVIDENCE AND MUST NOT BE MODIFIED OR REUSED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Bound failed inspector blob:
+  efaecd9ca56042e927a457596da487484ceefb77
+
+Binding hotfix runner blob:
+  9a9b2316a0cc640a76de59dd5d1134608656311b
+
+Observed patched inspector SHA256:
+  F554F9CAF993BECB6E51639ECC1678EC6A06D245DECF7FE57BD5A5F5DECA40DD
+
+Observed failure:
+  The property 'Count' cannot be found on this object. Verify that the property exists.
+
+PowerShell classification:
+  PropertyNotFoundStrict
+
+External inspection report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r2-incomplete-inspection.txt
+
+Observed result:
+  NOT WRITTEN
+
+STATE BOUNDARY
+
+The hotfix runner itself performs only Git reads, source reads, in-memory AST/source transformation, source hashing and dynamic invocation of the read-only inspector.
+
+The inspector has no VBoxManage invocation surface.
+It reads filesystem objects, hashes, NTFS file IDs and XML state, then writes one external report only after report construction completes.
+
+The observed exception occurred before the final report write completed.
+No evidence supports any new mutation of R1 or R2 from this failed inspection.
+
+STATIC COLLECTION REVIEW
+
+The original inspector already materializes most multi-value objects with direct array subexpressions:
+  @(...)
+
+Examples include:
+  target VDI registry rows
+  target ISO registry rows
+  attached ISO rows
+  boot-order nodes
+  network adapter nodes
+  graphics nodes
+  clipboard/drag nodes
+  storage-device nodes
+  machine files
+  VBOX-like files
+  isolated registry machine entries
+
+Two collection assignments use a different form:
+
+  $HomeFiles = if (...) {
+      @( ... )
+  }
+  else {
+      @()
+  }
+
+  $HomeDirectories = if (...) {
+      @( ... )
+  }
+  else {
+      @()
+  }
+
+PowerShell emits the result of an if statement through normal pipeline enumeration before assignment.
+Therefore the inner @() does not guarantee that the receiving variable remains an array:
+  zero emitted items can become $null
+  one emitted item can become a scalar
+  multiple emitted items become an array
+
+The inspector later reads:
+  $HomeFiles.Count
+  $HomeDirectories.Count
+
+Under Set-StrictMode -Version Latest, a null or scalar object without a Count property can produce the observed PropertyNotFoundStrict failure.
+
+ADJUDICATION
+
+The exact runtime error does not identify which Count expression failed.
+Therefore this record does not claim that HomeFiles or HomeDirectories was directly observed as the failing variable.
+
+However, static review identifies these two conditional assignments as the only obvious collection-shape contracts that are not explicitly materialized at the outer assignment boundary before later Count access.
+
+A bounded next correction is authorized to:
+  preserve the exact original failed inspector blob
+  reapply the already-audited Add-NodeAttributes Lines binding correction
+  change only HomeFiles and HomeDirectories assignment shape so the entire conditional result is wrapped in an outer @(...)
+  leave all filesystem, hash, XML, report and authorization logic unchanged
+
+The correction must not add VBoxManage or any VirtualBox mutation command.
+
+R1/R2 PRESERVATION
+
+R1:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+R2:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+
+Both roots remain permanent evidence.
+Neither may be deleted, modified, registered, started or reused.
+
+NOT AUTHORIZED
+
+R1 reuse
+R2 reuse
+R3 preparation
+VM start
+restore boot
+powered-off recovery-point seal
+guest delivery
+compiler build
+optimizer transformation
+
+ONE DECISION
+
+Create one direct bounded inspector hotfix from the original failed inspector blob.
+Apply the already-audited Lines binding correction plus explicit outer-array materialization for HomeFiles and HomeDirectories.
+Run only that read-only inspector path.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
