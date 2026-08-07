@@ -1,0 +1,148 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED REHEARSAL R3 EMPTY PSSCRIPTROOT FAILURE OBSERVATION
+
+CLASS
+
+ISOLATED REHEARSAL PREPARATION DID NOT START.
+R3 SUCCESSFULLY PATCHED THE R2 EXTENSION-REPLACEMENT CONTRACT.
+R3 THEN EXECUTED THE PATCHED R2 TEXT AS A DYNAMIC SCRIPTBLOCK.
+THE R2 SCRIPTBLOCK LOST FILE-BACKED PSSCRIPTROOT CONTEXT.
+R2 FAILED WHILE RESOLVING ITS REPOSITORY ROOT BEFORE PRINTING ITS HEADER.
+NO ORIGINAL PREPARER CODE, VIRTUALBOX COMMAND OR HOST COPY OPERATION RAN.
+NO REHEARSAL ROOT OR REPORT WAS CREATED.
+RECOVERY POINT REMAINS NOT SEALED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  5bde68bb54bd3ffeacb7a84d22c30aad0f364653
+
+Command:
+  tools/PREPARE-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL-R3.ps1
+
+Requested rehearsal root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1
+
+Requested report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-isolated-rehearsal-preparation.txt
+
+OBSERVED R3 BINDING
+
+  original R2 wrapper blob
+    5ba96e9792911ba2f254d1bbf87f1e45db925677
+
+  extension contract
+    OLD-IN-NEW CARDINALITY / EXACT-ONE-REPLACEMENT
+
+  patched R2 source SHA256
+    73A31907FDAF55F5202D0F8E5F973B678349D5BE152F725AC03CBF0FF165359D
+
+OBSERVED FAILURE
+
+  terminal error
+    Cannot bind argument to parameter 'Path' because it is an empty string.
+
+  R3 call site
+    & $R2 @InvokeArguments
+
+  R2 source seam reached
+    $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+  dynamic scriptblock PSScriptRoot
+    EMPTY
+
+  R2 header
+    NOT PRINTED
+
+  original preparer header
+    NOT PRINTED
+
+ROOT CAUSE
+
+PSScriptRoot is a file-backed automatic variable.  R3 read R2 as text, patched
+it, constructed a ScriptBlock and invoked that ScriptBlock.  The dynamically
+constructed R2 code therefore had no script-file path and PSScriptRoot was an
+empty string.
+
+R2 attempted to evaluate:
+
+  $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+PowerShell rejected the empty Path argument before R2 could bind the original
+preparer blob or print any R2/original-preparer header.
+
+The extension-cardinality correction itself succeeded.  This failure is an
+execution-context anchor defect, not a replacement-cardinality defect and not a
+VirtualBox or recovery-artifact failure.
+
+OBSERVED EXECUTION BOUNDARY
+
+Before failure, R3:
+
+  bound the R2 tree and local blob exactly
+  replaced the R2 helper postcondition exactly once
+  computed patched R2 source SHA256
+  created the patched R2 ScriptBlock
+
+It had not:
+
+  resolved the R2 repository root
+  bound the original preparer tree or local blob
+  applied R2 preparer hardening replacements
+  created the original-preparer ScriptBlock
+  inspected VirtualBox service state
+  invoked VBoxManage
+  created a rehearsal directory
+  copied or rewrote any VBOX, VDI or ISO
+  changed VBOX_USER_HOME
+  registered a disposable VM
+  written a failure marker, manifest or preparation report
+
+MUTATION BOUNDARY
+
+No rehearsal root was created.
+No sealed bundle, live VirtualBox artifact or evidence report was changed.
+No VM registration, start, stop, snapshot, attachment or medium operation ran.
+No guest delivery or compiler execution occurred.
+
+CORRECTION CONTRACT
+
+  preserve R2 and R3 unchanged
+  bind the R2 tree and local blob exactly
+  retain the old-in-new extension-cardinality correction
+  remove the dynamic R2 dependency on automatic PSScriptRoot
+  derive the repository root from the new file-backed wrapper context
+  inject that exact absolute root into patched R2 source
+  require exactly one R2 PSScriptRoot anchor before replacement
+  require zero R2 PSScriptRoot references after replacement
+  retain all R2 original-preparer blob and replacement gates
+  do not create or reuse a rehearsal root before all wrapper gates pass
+  do not start a VM
+  do not authorize restore boot or build execution
+
+CURRENT STATUS
+
+  configuration-exact bundle             VERIFIED / IDENTITY SEALED
+  restore route                          ADJUDICATED
+  isolated rehearsal                     NOT PREPARED
+  disposable VM registration             NOT ATTEMPTED
+  restore boot                            NOT OBSERVED
+  powered-off recovery point              NOT SEALED
+  guest delivery                          UNRESOLVED
+  compiler build execution                NOT AUTHORIZED
+  optimizer transformation                DENIED
+
+RULE
+
+FILE CONTEXT IS NOT PRESERVED BY DYNAMIC SCRIPTBLOCK CONSTRUCTION.
+INJECT AN EXPLICIT ROOT; DO NOT GUESS FROM CURRENT DIRECTORY.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
