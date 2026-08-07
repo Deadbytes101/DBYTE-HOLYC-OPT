@@ -1,0 +1,102 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 PORTABLE VIRTUALBOX7 VBOXSUP INSTALLATION GAP OBSERVATION
+
+CLASS
+
+HOST SUPPORT-DRIVER INSTALLATION/REGISTRATION GAP.
+
+THIS RECORD IS BASED ON USER-OBSERVED READ-ONLY INSPECTION OUTPUT.
+NO ASSISTANT-SIDE POWERSHELL EXECUTION IS CLAIMED.
+NO DRIVER INSTALLATION, DRIVER START, VBOXMANAGE MUTATION, OR VM START IS AUTHORIZED BY THIS RECORD.
+
+BOUND PRIOR HOST-DRIVER INSPECTION
+
+Report SHA256:
+  510E65B93889271010509F917DEE681E95273DD001B1BF3A9F222663410CD6F8
+
+Observed post-failed-start R3 identities:
+  current VBOX hash/file-ID match pre-start: True / True
+  previous VBOX hash/file-ID match pre-start: True / True
+  VDI hash/file-ID match pre-start: True / True
+  ISO hash/file-ID match pre-start: True / True
+  isolated registry hash match pre-start: True
+
+Observed hardening failure:
+  Error opening VBoxDrvStub: STATUS_OBJECT_NAME_NOT_FOUND
+  NtCreateFile -> 0xc0000034
+  Error -101 in supR3HardenedWinReSpawn
+  NtCreateFile(\Device\VBoxDrvStub) failed: STATUS_OBJECT_NAME_NOT_FOUND
+
+BOUND DRIVER-LOADER SURFACE INSPECTION
+
+Report SHA256:
+  7C9ABBAE87AA926F11D73A16B17C24AC287EEBB7AB620A63C9A6EBA58866AA2C
+
+Portable root:
+  D:\Portable-VirtualBox7
+
+VBoxSup.sys:
+  path: D:\Portable-VirtualBox7\app64\drivers\vboxsup\VBoxSup.sys
+  bytes: 1060600
+  SHA256: 3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4
+  version: 7.0.12.159484
+  Authenticode status: Valid
+  signer: Microsoft Windows Hardware Compatibility Publisher
+
+VBoxSup package directory:
+  VBoxSup.cat present
+  VBoxSup.inf present
+  VBoxSup.sys present
+
+VBoxSup.inf SHA256:
+  B34D56477E8273C6C2B177B38A7F5CBE1DD4708A1C2BAF7A2D2170302ECAC7F6
+
+Observed INF contract:
+  DriverPackageType=KernelService
+  [DefaultInstall.NTAMD64]
+  CopyFiles=VBoxSup_CopyFiles
+  [DefaultInstall.NTAMD64.Services]
+  AddService=VBoxSup,0x00000002,VBoxSup_Service
+  ServiceType=1
+  StartType=1
+  ErrorControl=1
+  ServiceBinary=%12%\VBoxSup.sys
+
+Observed host registry/service state:
+  VBox-related service registry rows: 2
+  VBoxNetAdp present
+  VBoxSDS present
+  VBoxSup absent
+
+Observed CIM system drivers:
+  VBox-related rows: 1
+  VBoxNetAdp only
+  VBoxSup absent
+
+Observed pnputil inventory:
+  /enum-drivers exit code: 0
+  VirtualBox/VBox/Oracle context rows: 0
+
+ADJUDICATION
+
+The support-driver payload is present on disk and VBoxSup.sys carries a valid Windows hardware compatibility signature.
+
+The VBoxSup INF explicitly defines installation of a kernel service named VBoxSup and places VBoxSup.sys under the system driver directory.
+
+At observation time, the host has no VBoxSup service/driver object and pnputil does not expose a matching VirtualBox driver package.
+
+Therefore the observed hardening failure is consistent with an installation/registration gap, not a missing portable payload and not observed R3 media/config drift.
+
+The exact intended Portable-VirtualBox7 driver-loading mechanism is NOT YET SEALED.
+The current text-surface inspection does not prove whether the portable wrapper uses SetupAPI, devcon, pnputil, direct service control, or another loader route.
+
+ONE DECISION
+
+Do not retry the VM.
+Do not create/start VBoxSup manually yet.
+Do not install the INF yet.
+Do not reinstall VirtualBox yet.
+
+Next inspect Portable-VirtualBox7.exe statically for embedded loader strings/import-adjacent evidence and bind that evidence before selecting one host mutation.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
