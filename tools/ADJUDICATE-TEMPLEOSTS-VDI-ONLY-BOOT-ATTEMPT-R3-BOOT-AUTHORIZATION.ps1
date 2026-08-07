@@ -172,7 +172,8 @@ function Convert-MachineReadable {
         }
         $Value = $Raw
         if ($Raw.Length -ge 2 -and $Raw[0] -eq '"' -and $Raw[$Raw.Length - 1] -eq '"') {
-            $Value = $Raw.Substring(1, $Raw.Length - 2).Replace('\"', '"').Replace('\\', '\')
+            $Inner = $Raw.Substring(1, $Raw.Length - 2)
+            $Value = $Inner.Replace('\"', '"').Replace('\\', '\')
         }
         $Map[$Key] = [string]$Value
     }
@@ -300,7 +301,7 @@ if (-not [string]::IsNullOrEmpty($OriginalVBoxUserHome)) {
     throw "process VBOX_USER_HOME must be unset: $OriginalVBoxUserHome"
 }
 
-$Version = $null
+$Version = @()
 $Registered = @()
 $Running = @()
 $ShowLines = @()
