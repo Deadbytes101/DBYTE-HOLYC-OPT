@@ -1,0 +1,94 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 NO-BOOTABLE-MEDIUM / CONTROLLED STOP STATIC AUDIT
+
+CLASSIFY
+
+The second controlled R3 start succeeded at the VirtualBox host boundary after VBoxSup installation.
+The user-supplied VM screenshot visually observed the firmware message:
+
+No bootable medium found!
+Please insert a bootable medium and reboot.
+
+R3 is therefore runtime evidence for a VDI-only boot failure and must not be converted in-place into the ISO experiment.
+A controlled stop is required before preparing a fresh isolated exact-ISO boot route.
+
+BOUND EVIDENCE
+
+second_attempt_report	D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-second-controlled-boot-attempt.txt
+second_attempt_report_sha256	E6780E727989B974727402F782CA16B1B870FBF05591FACA6D131F6244F71430
+machine_uuid	9c98691e-27cd-4487-a306-587969c2c78c
+vboxsup_sys_sha256	3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4
+virtualbox_version	7.0.12r159484
+
+SCRIPT
+
+path	tools/STOP-TEMPLEOSTS-R3-NO-BOOTABLE-MEDIUM-CONTROLLED.ps1
+blob	06f7270ab7b8d97fc9a3fce06f3e86ed65375398
+
+PRE-MUTATION GATES
+
+- exact VBoxManage path.
+- exact R3 root.
+- exact second-attempt report path and SHA256.
+- exact VBoxSup.sys SHA256.
+- VBoxSup numeric STATE 4 before isolated VirtualBox reads.
+- process-scoped VBOX_USER_HOME must be unset before binding.
+- isolated VBOX_USER_HOME is R3/VBoxUserHome only.
+- exact VirtualBox version 7.0.12r159484.
+- list runningvms must contain exactly one row.
+- the single running row must exactly equal "Temple1.10" {9c98691e-27cd-4487-a306-587969c2c78c}.
+- showvminfo must expose VMState=running.
+- VBoxSup numeric STATE 4 is rechecked at the irreversible stop boundary.
+
+AUTHORIZED MUTATION SURFACE
+
+Exactly one intended VM mutation command exists:
+
+VBoxManage controlvm 9c98691e-27cd-4487-a306-587969c2c78c poweroff
+
+The command is issued once.
+No automatic retry exists.
+No startvm exists.
+No modifyvm exists.
+No storageattach exists.
+No snapshot mutation exists.
+No guestcontrol exists.
+No service create/start/stop/delete exists.
+No compiler build exists.
+
+POST-MUTATION OBSERVATION
+
+After controlvm poweroff exit 0:
+- showvminfo is polled read-only for VMState=poweroff.
+- list runningvms must become zero rows.
+- VBoxSup must remain numeric STATE 4.
+- the report records post-stop SHA256 and NTFS file IDs for current VBOX, previous VBOX, VDI, ISO, and isolated VirtualBox.xml.
+- the report records VBoxSup.sys SHA256.
+
+Post-stop VBOX/VDI hashes are observations, not assumed to equal pre-start values.
+If the guest or VirtualBox wrote state during runtime, the observed post-stop bytes must be preserved for adjudication.
+
+FAILURE BEHAVIOR
+
+PoweroffIssued is set before crossing the controlvm boundary.
+If controlvm was issued but post-observation fails, the script attempts a failure report.
+It does not start the VM again.
+It does not attach ISO.
+It does not perform cleanup or rollback mutation.
+
+NEXT ROUTE BOUNDARY
+
+The controlled stop does not itself authorize the ISO route.
+The resulting stop report SHA256 and post-stop identities will bind the next fresh exact-ISO preparation.
+R3 remains preserved as the VDI-only no-boot evidence root.
+
+STATIC VERDICT
+
+CONTROLLED STOP SCRIPT	STATIC PASS
+R3 CURRENT STATE	RUNNING / NO-BOOTABLE-MEDIUM VISUALLY OBSERVED
+CONTROLVM POWEROFF	AUTHORIZED ONLY THROUGH EXACT SCRIPT OBJECT
+ISO ATTACH	NOT AUTHORIZED IN R3
+COMPILER BUILD	NOT AUTHORIZED
+PR	MUST REMAIN DRAFT
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
