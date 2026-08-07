@@ -1,0 +1,233 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R3 BOOT AUTHORIZATION ADJUDICATOR STATIC AUDIT
+
+CLASS
+
+THE R3 BOOT-AUTHORIZATION ADJUDICATOR WAS REVIEWED STATICALLY BEFORE USER EXECUTION.
+NO ASSISTANT-SIDE POWERSHELL EXECUTION IS CLAIMED.
+THE ADJUDICATOR DOES NOT START THE VM AND DOES NOT AUTHORIZE A START BY ITSELF.
+ITS ONLY PURPOSE IS TO BIND THE COMPLETED R3 PREPARED VERIFICATION EVIDENCE AND INTERROGATE THE R3 ISOLATED VIRTUALBOX REGISTRY USING READ-ONLY COMMANDS BEFORE A SEPARATE EXPLICIT BOOT DECISION.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/ADJUDICATE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3-BOOT-AUTHORIZATION.ps1
+
+Final blob:
+  3305b44288cc3a7db97271d019549b07f28f72e0
+
+BOUND PREPARED VERIFICATION
+
+Path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-prepared-verification.txt
+
+Required SHA256:
+  26DC5258CF4692FD55EC95D81E48E3CFE05B4667BC20CDAC0CFFD58DC8433EF7
+
+Prepared root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3
+
+Output report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-boot-authorization-adjudication.txt
+
+The output must be absent before execution.
+
+BOUND R3 FILE IDENTITIES
+
+Current VBOX SHA256:
+  8EADB39D54CABE5E7B791E5D7E05BCF4CBBF32D4AB6B58291BEC0B2FAD607C0C
+
+Current VBOX file ID:
+  0X000000000000000000050000000609A1
+
+Previous VBOX SHA256:
+  C93D128227EE80B647DB63FE64277CEF1BDC61C224110472C73CBFFEC63877A7
+
+Previous VBOX file ID:
+  0X000000000000000000040000000609A7
+
+VDI SHA256:
+  90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+VDI file ID:
+  0X000000000000000000010000000609A2
+
+ISO SHA256:
+  DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+ISO file ID:
+  0X000000000000000000010000000609A3
+
+The adjudicator rechecks these identities both before and after all VirtualBox read commands.
+
+ISOLATED REGISTRY
+
+The adjudicator uses only:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3\VBoxUserHome
+
+It requires the process-scoped VBOX_USER_HOME to be unset before execution.
+It stores the prior process value, sets VBOX_USER_HOME only for the bounded read section, and restores the prior value in finally.
+
+It records the SHA256 of:
+  VBoxUserHome\VirtualBox.xml
+before the read section and requires the same SHA256 after the read section.
+
+VBoxSVC.log is not used as a correctness identity because it is volatile evidence by the sealed R3 manifest policy.
+
+READ-ONLY VBOXMANAGE SURFACE
+
+The only VirtualBox command forms in the adjudicator are:
+
+  VBoxManage --version
+  VBoxManage list vms
+  VBoxManage list runningvms
+  VBoxManage showvminfo <target UUID> --machinereadable
+  VBoxManage snapshot <target UUID> list --machinereadable
+  VBoxManage showmediuminfo disk <R3 VDI>
+
+No mutation command is present.
+
+Explicitly absent from the execution surface:
+  registervm
+  unregistervm
+  modifyvm
+  storageattach
+  startvm
+  controlvm
+  snapshot take
+  snapshot restore
+  snapshot delete
+  guestcontrol
+  compiler execution
+
+SNAPSHOT SEMANTICS
+
+The adjudicator deliberately reuses the already-proven snapshot-list behavior from the original preparer:
+  exit code 0 -> return captured rows
+  nonzero plus exactly 'This machine does not have any snapshots' -> normalize to empty inventory
+  any other nonzero result -> fail
+
+This avoids falsely rejecting a zero-snapshot machine solely because VBoxManage represents that state with a nonzero exit code in this route.
+
+MACHINE-READABLE SEMANTICS
+
+The parser is aligned with the original preparer's proven ConvertFrom-VBoxMachineReadable behavior:
+  split on first '='
+  ignore non key/value rows
+  strip optional surrounding quotes from keys and values
+  decode escaped quote and escaped backslash sequences
+  reject empty normalized keys
+  reject duplicate normalized keys
+
+The final implementation uses numeric character constants:
+  [char]92 for backslash
+  [char]34 for double quote
+
+This removes source-level escaping ambiguity while retaining the same intended normalization semantics.
+
+RUNTIME REGISTRY GATES
+
+VirtualBox version:
+  7.0.12r159484
+
+Registered inventory:
+  exactly one non-empty VM row
+  exact Temple1.10 target row / UUID
+
+Running inventory:
+  zero non-empty rows
+
+showvminfo must prove:
+  name Temple1.10
+  UUID 9c98691e-27cd-4487-a306-587969c2c78c
+  VMState poweroff
+  CfgFile exact R3 Temple1.10.vbox
+  IDE-1-0 exact R3 Temple1.10.vdi
+  boot1 disk
+  boot2 none
+  boot3 none
+  boot4 none
+  clipboard disabled
+  draganddrop disabled
+  graphicscontroller vboxvga
+  vram 9
+  at least one exposed nic1..nic8 field
+  every exposed nic1..nic8 field none
+  zero machine shared-folder mapping keys
+  IDE-0-1 either none or missing
+
+Snapshot inventory:
+  zero SnapshotName/SnapshotUUID/SnapshotNode rows
+
+VDI medium info:
+  exact UUID 55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+POST-READ DRIFT GATES
+
+After all VirtualBox reads, require unchanged:
+  current VBOX SHA256 and file ID
+  previous VBOX SHA256 and file ID
+  VDI SHA256 and file ID
+  ISO SHA256 and file ID
+  isolated VirtualBox.xml SHA256
+
+If any of these changes, adjudication fails and no boot authorization report is written.
+
+REPORT RESULT ON SUCCESS
+
+The external report records:
+  prepared verification SHA256
+  prepared root
+  VirtualBox version
+  machine name and UUID
+  poweroff state
+  exact config path
+  exact VDI attachment and UUID
+  detached/missing ISO slot
+  boot1..boot4
+  network/clipboard/drag-and-drop state
+  shared-folder key count
+  graphicscontroller and VRAM
+  snapshot row count
+  registered VM row count
+  running VM row count
+  isolated registry SHA256 before and after
+  VBOXMANAGE READ-ONLY-ONLY
+  VIRTUALBOX MUTATION NOT-EXECUTED
+  VM START NOT-EXECUTED
+  BOOT AUTHORIZATION READY-FOR-SEPARATE-EXPLICIT-DECISION
+
+PRE-RELEASE STATIC CORRECTIONS
+
+The first unexecuted draft used an ambiguous source-level backslash decoder.
+It was corrected before user execution.
+
+A later static comparison against the original preparer found that the generic read helper did not model the proven zero-snapshot nonzero-exit behavior.
+The final blob added the dedicated read-only snapshot inventory helper and aligned the machine-readable parser and registered-target semantics with the already-proven original preparer.
+
+No user execution occurred for either pre-release draft.
+
+NOT AUTHORIZED
+
+VM start
+restore boot
+guest execution
+guest delivery
+compiler build
+optimizer transformation
+PR ready-for-review
+PR merge
+
+NEXT RULE
+
+RUN ONLY THE R3 BOOT-AUTHORIZATION ADJUDICATOR.
+IF IT PASSES, RECORD THE OBSERVED REPORT SHA256 AND THEN MAKE A SEPARATE EXPLICIT DECISION ABOUT ONE CONTROLLED BOOT ATTEMPT.
+DO NOT START THE VM AS PART OF THE ADJUDICATION.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
