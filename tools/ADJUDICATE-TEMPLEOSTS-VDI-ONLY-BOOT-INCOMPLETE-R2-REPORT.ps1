@@ -123,7 +123,7 @@ function Convert-VBoxLikeRow {
         [string]$Line
     )
 
-    $Parts = @($Line.Split("`t"))
+    $Parts = @($Line.Split([char]9))
     if ($Parts.Count -ne 5 -or $Parts[0] -cne 'vbox_like_file') {
         throw "vbox_like_file row shape mismatch: $Line"
     }
@@ -144,6 +144,41 @@ function Convert-VBoxLikeRow {
         FileId = $Parts[4]
         Raw = $Line
     }
+}
+
+function Test-ReplayRow {
+    param(
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [string]$Line
+    )
+
+    $ExactTabPrefixes = @(
+        "machine_file`t",
+        "vbox_like_file`t",
+        "vbox_user_home_file`t"
+    )
+    foreach ($Prefix in $ExactTabPrefixes) {
+        if ($Line.StartsWith($Prefix, [System.StringComparison]::Ordinal)) {
+            return $true
+        }
+    }
+
+    $StructuralPrefixes = @(
+        'boot_order_',
+        'network_adapter_',
+        'clipboard_drag_',
+        'graphics_',
+        'storage_device_',
+        'isolated_registry_',
+        'registry_machine_entry_'
+    )
+    foreach ($Prefix in $StructuralPrefixes) {
+        if ($Line.StartsWith($Prefix, [System.StringComparison]::Ordinal)) {
+            return $true
+        }
+    }
+    return $false
 }
 
 $Report = (Resolve-Path -LiteralPath $InspectionReportPath -ErrorAction Stop).Path
@@ -240,8 +275,10 @@ $CompanionMatchesPreRegistration =
     $Companion.SHA256 -ceq $ExpectedPreRegistrationVBoxHash
 
 $ReplayRows = @(
-    $Lines | Where-Object {
-        $_ -match '^(?:machine_file|vbox_like_file|boot_order_[^\t]*|network_adapter_[^\t]*|clipboard_drag_[^\t]*|graphics_[^\t]*|storage_device_[^\t]*|vbox_user_home_file|isolated_registry_[^\t]*|registry_machine_entry_[^\t]*)\t'
+    foreach ($Line in $Lines) {
+        if (Test-ReplayRow -Line $Line) {
+            $Line
+        }
     }
 )
 if ($ReplayRows.Count -le 0) {
