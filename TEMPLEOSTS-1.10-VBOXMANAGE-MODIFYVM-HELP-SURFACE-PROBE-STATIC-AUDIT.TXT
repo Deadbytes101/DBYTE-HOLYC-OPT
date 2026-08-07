@@ -1,0 +1,282 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VBOXMANAGE MODIFYVM HELP SURFACE PROBE STATIC AUDIT
+
+CLASS
+
+THE STANDALONE VBOXMANAGE MODIFYVM HELP-SURFACE PROBE WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+THE PROBE MEASURES NATIVE EXIT CODES AND REDIRECTED STDOUT AND STDERR WITHOUT USING
+WINDOWS POWERSHELL'S NATIVE ERROR-RECORD PIPELINE.
+THE PROBE DOES NOT QUERY A VIRTUALBOX REGISTRY, CREATE A BOOT ROOT OR EXECUTE A
+VIRTUALBOX MUTATION COMMAND.
+VM START, RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/PROBE-TEMPLEOSTS-VBOXMANAGE-MODIFYVM-HELP-SURFACE.ps1
+
+Blob:
+  c63d9b0a6157db6b5cc0aa10f548663622a038d9
+
+OBSERVED FAILURE INPUT
+
+The preceding R7 invocation established:
+
+  R7 direct-R2 source contracts passed
+  R2 bound the original preparer
+  original-preparer option discovery was reached
+  zero help attempts had exit code zero
+  boot-attempt root was not created
+  preparation report was not written
+  no VirtualBox mutation was reached
+
+The terminal did not expose individual help-attempt exit codes or output markers.
+
+PROBE INPUT CONTRACT
+
+The probe requires:
+
+  exact VBoxManage executable path supplied by the caller
+  exact boot-attempt root path:
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+  exact absent preparation-report path:
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+  absent probe output path
+  existing probe-output parent directory
+  process VBOX_USER_HOME unset
+
+It rejects execution if:
+
+  the boot-attempt root already exists
+  the preparation report already exists
+  the probe report already exists
+  process VBOX_USER_HOME is set
+  VBoxManage version differs from 7.0.12r159484
+
+NATIVE PROCESS CONTRACT
+
+The probe uses:
+
+  System.Diagnostics.Process
+  System.Diagnostics.ProcessStartInfo
+
+For every native invocation it sets:
+
+  UseShellExecute false
+  CreateNoWindow true
+  RedirectStandardOutput true
+  RedirectStandardError true
+  StandardOutputEncoding UTF-8
+  StandardErrorEncoding UTF-8
+
+It reads stdout and stderr asynchronously and separately.
+It waits at most fifteen seconds for each native process.
+A timed-out process is killed and the probe fails closed.
+
+The probe does not use:
+
+  native-command 2>&1 through the PowerShell pipeline
+  ErrorActionPreference relaxation
+  LASTEXITCODE as an indirect global value
+
+The exit code is read directly from the completed Process object.
+
+VERSION GATE
+
+The first invocation is:
+
+  VBoxManage --version
+
+The probe requires:
+
+  native exit code 0
+  combined trimmed text exactly 7.0.12r159484
+
+No help-surface result is produced for another VirtualBox version.
+
+ARGUMENT VECTOR CONTRACT
+
+The probe constructs a List[object] containing exactly four string arrays.
+This prevents PowerShell array flattening.
+
+The read-only argument vectors are:
+
+  modifyvm --help
+  --help modifyvm
+  help modifyvm
+  modifyvm
+
+Every argument is restricted to a simple non-shell character class.
+No VM name or UUID is supplied.
+None of these vectors can identify a target VM for modification.
+
+MEASURED OUTPUT CONTRACT
+
+For every attempt the probe records:
+
+  exact argument text
+  native exit code
+  UTF-8 re-encoded stdout byte count
+  UTF-8 re-encoded stdout SHA256
+  UTF-8 stdout base64
+  UTF-8 re-encoded stderr byte count
+  UTF-8 re-encoded stderr SHA256
+  UTF-8 stderr base64
+  presence of VBoxManage modifyvm
+  presence of --clipboard-mode
+  presence of --clipboard
+  presence of --drag-and-drop
+  presence of --draganddrop
+
+The byte counts and hashes describe the .NET-decoded strings re-encoded as UTF-8.
+They are not represented as raw console-code-page byte captures.
+The complete decoded text remains recoverable from the base64 report fields.
+
+The probe does not authorize a help form based on these markers.
+It only measures them for later adjudication.
+
+STATE-PRESERVATION CONTRACT
+
+Before and after all native help invocations the probe requires:
+
+  boot-attempt root absent
+  preparation report absent
+  process VBOX_USER_HOME unchanged and unset
+
+The probe does not call:
+
+  list vms
+  list runningvms
+  showvminfo
+  showmediuminfo
+  registervm
+  unregistervm
+  modifyvm with a target
+  storageattach
+  snapshot
+  startvm
+  controlvm
+  guestcontrol
+
+No default or isolated VirtualBox registry is selected or queried.
+
+WRITE BOUNDARY
+
+The only intended write is one external UTF-8 report selected by OutPath.
+The output parent directory must already exist.
+
+The report is written only after:
+
+  exact version verification
+  all four native attempts complete
+  boot-root absence revalidation
+  preparation-report absence revalidation
+  process VBOX_USER_HOME revalidation
+
+The report contains base64 output material and may be larger than the terminal summary.
+
+TERMINAL SUMMARY
+
+The probe prints for every attempt:
+
+  argument vector
+  exit code
+  stdout bytes and SHA256
+  stderr bytes and SHA256
+  usage marker
+  clipboard-mode marker
+  clipboard marker
+  drag-and-drop marker
+  draganddrop marker
+
+It then prints:
+
+  report path
+  report SHA256
+  boot-attempt root absent
+  VirtualBox registry query not executed
+  VirtualBox mutation not executed
+  VM start not authorized
+
+NEGATIVE COMMAND SURFACE
+
+The audited probe contains no VM mutation route.
+
+It does not contain an invocation of:
+
+  registervm
+  unregistervm
+  storageattach
+  startvm
+  controlvm
+  savestate
+  poweroff
+  snapshot take
+  snapshot restore
+  snapshot delete
+  guestcontrol
+  compiler execution
+
+The word modifyvm appears only inside the four no-target help or usage argument vectors
+and marker strings.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  MODIFYVM HELP NATIVE MATRIX         OBSERVED
+  READ-ONLY PROBE REPORT              WRITTEN
+
+NOT AUTHORIZED OR CLAIMED
+
+  HELP FORM ACCEPTED FOR PREPARATION   NOT YET ADJUDICATED
+  BOOT ATTEMPT COPY                    NOT PREPARED
+  VM START                             NOT AUTHORIZED
+  RESTORE BOOT                         NOT OBSERVED
+  POWERED-OFF RECOVERY POINT           NOT SEALED
+  GUEST DELIVERY                       UNRESOLVED
+  COMPILER BUILD                       NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION             DENIED
+
+ADVERSARIAL JUDGMENT
+
+The previous preparer proved only that no measured help form returned exit code zero.
+It did not prove that all output was irrelevant, and it did not justify accepting
+nonzero output.
+
+The probe closes that evidence gap without weakening the preparer or creating any
+boot-attempt object.
+
+Only after the exact exit-code and marker matrix is observed may a later decision bind
+one help form or replace dynamic option discovery with an exact version-specific
+contract.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal       VERIFIED / SEALED
+  boot readiness                       ADJUDICATED
+  R7 invocation                        FAILED CLOSED / RECORDED
+  modifyvm help-surface probe           STATICALLY AUDITED
+  modifyvm help native matrix           EXECUTION PENDING
+  boot-attempt copy                     NOT PREPARED
+  VM start                              NOT AUTHORIZED
+  restore boot                          NOT OBSERVED
+  powered-off recovery point            NOT SEALED
+  build execution                       NOT AUTHORIZED
+
+RULE
+
+RUN THE READ-ONLY PROBE ONLY.
+DO NOT RUN R7 AGAIN UNTIL THE HELP SURFACE IS ADJUDICATED.
+DO NOT CREATE OR REUSE A BOOT ROOT.
+DO NOT ACCEPT NONZERO HELP OUTPUT WITHOUT EXACT CONTENT EVIDENCE.
+NO PREPARED BOOT COPY, NO VM START.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
