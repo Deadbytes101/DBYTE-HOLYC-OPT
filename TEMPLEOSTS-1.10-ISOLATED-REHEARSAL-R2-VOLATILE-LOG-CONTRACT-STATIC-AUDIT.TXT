@@ -1,0 +1,232 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED REHEARSAL R2 VOLATILE LOG CONTRACT STATIC AUDIT
+
+CLASS
+
+THE R2 ISOLATED REHEARSAL VERIFIER WRAPPER WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+THE ORIGINAL VERIFIER IS PRESERVED AND BOUND BY TREE AND LOCAL BLOB.
+THE R2 WRAPPER PATCHES ONLY INVENTORY CLASSIFICATION AND REPORTING IN MEMORY.
+NO VIRTUALBOX MUTATION COMMAND WAS ADDED.
+THE OBSERVED VBoxSVC.log.1 FILE IS NOT DELETED, RENAMED OR REPLACED.
+VM START, RESTORE BOOT AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/VERIFY-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL-R2.ps1
+
+Blob:
+  46123974c89c61cd02acdddbbe9e5bc6fbbc7562
+
+BOUND ORIGINAL
+
+Path:
+  tools/VERIFY-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL.ps1
+
+Required tree/local blob:
+  fe7437577605a8e72f27c7fa0c0f54558d62af6c
+
+The wrapper requires:
+
+  the original file exists
+  HEAD:path resolves to exactly the required blob
+  the local worktree file hashes to exactly the required blob
+  every old replacement seam occurs exactly once
+  every new replacement seam is absent before replacement
+  every new replacement seam occurs exactly once after replacement
+  retained old text inside a new extension block is counted explicitly
+
+PATCHED CONTRACT
+
+The original full-tree comparison is split into two classes.
+
+Immutable class:
+
+  every manifest path not classified as a VBoxSVC service log
+  exact relative path set required
+  exact byte count required
+  exact SHA256 required
+  checked before isolated registry access
+  checked again after isolated VBoxSVC shutdown
+
+Bounded volatile class:
+
+  VBoxUserHome\VBoxSVC.log
+  VBoxUserHome\VBoxSVC.log.1
+  VBoxUserHome\VBoxSVC.log.2
+  and further positive decimal rotations only
+
+The actual path regular expression is case-sensitive and anchored:
+
+  ^VBoxUserHome\\VBoxSVC\.log(?:\.[1-9][0-9]*)?$
+
+No other directory, basename, extension, case variant, zero suffix or decorated
+path is classified as volatile.
+
+ROTATION SEQUENCE CONTRACT
+
+For both the manifest volatile set and each observed volatile set, R2 requires:
+
+  one active VBoxSVC.log represented by suffix zero
+  numbered suffixes parse as positive Int32 decimal values
+  suffix values are unique
+  sorted suffix values equal their zero-based indices
+
+Therefore an accepted set must be exactly:
+
+  0
+  0,1
+  0,1,2
+  0,1,2,3
+  ...
+
+The following fail:
+
+  no active VBoxSVC.log
+  VBoxSVC.log.0
+  VBoxSVC.log.01
+  VBoxSVC.log.2 without VBoxSVC.log.1
+  duplicate suffixes
+  a suffix outside Int32
+  any path outside the exact VBoxUserHome\VBoxSVC.log namespace
+
+REPORTING CONTRACT
+
+The patched verifier records:
+
+  original manifest inventory count
+  immutable inventory count
+  manifest volatile-log count
+  observed volatile-log count before isolated access
+  observed volatile-log count after isolated access
+  total final rehearsal file count
+  each volatile path, byte count and SHA256 before isolated access
+  each volatile path, byte count and SHA256 after isolated access
+
+Volatile rows are measured, not silently discarded.
+Their hashes are not required to equal the preparation-era log hashes because the
+observed VBoxSVC session itself rotates and writes those service logs.
+
+UNCHANGED GATES
+
+R2 retains all original verifier gates for:
+
+  resource commit and clean tracked resource tree
+  exact sealed reports and manifests
+  exact recovery-bundle VBOX, VDI and ISO hashes
+  exact recovery-bundle NTFS file IDs
+  exact rehearsal manifest and preparation-report fields
+  exact disposable VBOX, VDI and ISO hashes
+  exact disposable VBOX, VDI and ISO NTFS file IDs
+  distinct sealed, live and disposable file objects
+  exact default registry membership before and after isolation
+  exact isolated registry membership
+  powered-off VM state
+  exact VBOX, VDI and ISO attachment paths
+  exact machine, VDI and ISO UUIDs
+  zero running rows
+  zero snapshot rows
+  zero shared-folder rows
+  process-scope VBOX_USER_HOME isolation and restoration
+  VBoxSVC shutdown before registry-context changes
+  exact live VBOX, VDI and ISO identities after isolation
+  exact sealed reports and recovery-bundle identities after isolation
+  rejection of an existing output report
+  output report creation only after every gate passes
+
+NEGATIVE COMMAND SURFACE
+
+R2 adds no command that can:
+
+  register or unregister a VM
+  start, stop or control a VM
+  create, restore or delete a snapshot
+  attach or detach storage
+  create, clone, modify or close a medium
+  rewrite the disposable VBOX, VDI or ISO
+  modify the default registry
+  deliver guest files
+  execute the compiler
+
+The original verifier operations remain version and read/query operations only.
+
+DYNAMIC EXECUTION REVIEW
+
+The original verifier does not depend on $PSScriptRoot.
+R2 resolves and blob-checks the original file from its own file-backed context,
+then creates the patched original verifier as a scriptblock.
+The prior nested-wrapper empty-$PSScriptRoot defect does not apply to this object.
+
+WRITE BOUNDARY
+
+Before every gate succeeds, R2 and the patched verifier do not write:
+
+  the rehearsal root
+  the VBoxSVC logs
+  the isolated registry
+  the disposable VBOX, VDI or ISO
+  the recovery bundle
+  the default registry
+  the live VBOX, VDI or ISO
+  the external verification report
+
+VirtualBox itself may rotate service logs when a read/query session opens.  R2
+measures that bounded side effect and fails on every non-log file change.
+
+After all gates succeed, the verifier writes only the requested external report.
+
+ADVERSARIAL JUDGMENT
+
+Whole-tree byte identity across VBoxSVC sessions was an invalid invariant because
+service logs are session-generated and were observed rotating.  Expanding volatility
+to all logs or all VBoxUserHome content would be costume rigor and would hide real
+registry drift.  R2 instead grants volatility to one exact basename family while
+keeping VirtualBox.xml, machine configuration, media and evidence files immutable.
+
+A successful R2 run may seal only:
+
+  ISOLATED POWERED-OFF REHEARSAL ENVIRONMENT
+
+under the explicit bounded VBoxSVC log volatility contract.
+
+It must not seal or authorize:
+
+  VM START
+  RESTORE BOOT
+  POWERED-OFF RECOVERY POINT
+  GUEST DELIVERY
+  GUEST BACKUP AND RESTORE
+  COMPILER BUILD
+  OPTIMIZER TRANSFORMATION
+
+CURRENT STATUS
+
+  isolated rehearsal preparation            COMPLETE / OBSERVED
+  first verifier invocation                  FAILED CLOSED
+  observed VBoxSVC log rotation              RECORDED
+  R2 verifier                                STATICALLY AUDITED
+  immutable rehearsal inventory              EXECUTION PENDING
+  bounded volatile log inventory             EXECUTION PENDING
+  isolated powered-off environment           NOT SEALED
+  VM start                                   NOT AUTHORIZED
+  restore boot                               NOT OBSERVED
+  powered-off recovery point                 NOT SEALED
+  build execution                            NOT AUTHORIZED
+
+RULE
+
+VOLATILE PATHS MUST BE EXACT, BOUNDED AND REPORTED.
+VBOXSVC SERVICE LOGS ARE NOT MACHINE CONFIGURATION.
+VIRTUALBOX.XML AND EVERY NON-LOG FILE REMAIN BYTE-EXACT EVIDENCE.
+DO NOT DELETE OBSERVED LOG ROTATIONS TO FORCE AN OLD TREE SHAPE.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
