@@ -1,0 +1,76 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 SECOND CONTROLLED START / HOTFIX POSTCONDITION FAILURE OBSERVATION
+
+CLASSIFY
+
+The second-start hardening-evidence hotfix runner was executed from exact Git head 5317f62ef0e4b5b056c1fec5afbd983f9e3cd0a4 with exact runner blob 413b63b758db14fae1ade09e08aee30743576de3.
+The runner failed during its own in-memory source-patch postcondition check.
+The base second-start launcher was not invoked.
+No VM start boundary was crossed by this run.
+
+OBSERVED USER OUTPUT
+
+HEAD	5317f62ef0e4b5b056c1fec5afbd983f9e3cd0a4
+RUNNER BLOB	413b63b758db14fae1ade09e08aee30743576de3
+LOCAL SYNC	VERIFIED
+
+failure	hotfix postcondition mismatch hardening_old=0 hardening_new=1 report_old=1 report_new=1 start_old=0 start_new=1
+failure_location	RUN-TEMPLEOSTS-R3-SECOND-CONTROLLED-START-HARDENING-EVIDENCE-HOTFIX.ps1:154
+
+ROOT CAUSE
+
+The old hardening-report needle was one line:
+
+$Lines.Add("hardening_log_sha256`t$($Hardening.Hash)")
+
+The new replacement block intentionally contains that same line plus a new capture-error row:
+
+$Lines.Add("hardening_log_sha256`t$($Hardening.Hash)")
+$Lines.Add("hardening_log_capture_error`t$($Hardening.Error)")
+
+Therefore after replacement:
+- the complete new block occurs exactly once;
+- the old single-line needle still occurs exactly once as a substring of the new block.
+
+The runner postcondition incorrectly required old_report=0 and new_report=1.
+That postcondition is logically impossible for this replacement shape.
+
+START BOUNDARY ADJUDICATION
+
+The failure happened before:
+- patched-source AST acceptance completed for invocation;
+- PATCHED LAUNCHER SHA output;
+- scriptblock creation/invocation of the base launcher;
+- SECOND START BOUNDARY output;
+- VBoxManage startvm invocation.
+
+Therefore this run did not execute the authorized VM mutation.
+The powered-off R3 state remains the last verified VM state unless changed independently outside this runner.
+
+CORRECTION INTENT
+
+Do not weaken the postcondition to accept ambiguous substring counts.
+Instead replace a larger exact multiline report boundary:
+
+old:
+    hardening_log_sha256 row
+    foreach hardening tail opener
+
+new:
+    hardening_log_sha256 row
+    hardening_log_capture_error row
+    foreach hardening tail opener
+
+This makes old/new cardinality independently testable as 1 -> 0 and 0 -> 1.
+The hardening-function replacement and StartIssued-before-startvm correction remain unchanged.
+
+OUTCOME
+
+FAILED HOTFIX RUNNER	PRESERVED / DO NOT RERUN
+BASE SECOND-START LAUNCHER	UNEXECUTED
+VM START	NOT-EXECUTED-BY-THIS-RUN
+AUTOMATIC ROLLBACK	NOT-APPLICABLE
+BUILD	NOT-AUTHORIZED
+PR	MUST REMAIN DRAFT
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
