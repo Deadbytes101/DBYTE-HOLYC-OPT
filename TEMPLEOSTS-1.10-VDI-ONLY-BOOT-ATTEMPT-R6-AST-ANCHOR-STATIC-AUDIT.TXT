@@ -1,0 +1,298 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R6 AST ANCHOR STATIC AUDIT
+
+CLASS
+
+THE R6 BOOT-ATTEMPT PREPARER ENTRYPOINT WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+R6 PRESERVES AND BINDS THE FAILED R5 ENTRYPOINT BY EXACT TREE AND LOCAL BLOB.
+R6 REPLACES ONLY THE R5 RAW REPOSITORY-ROOT ANCHOR COUNT AND THE R5 DYNAMIC REPOSITORY-ROOT ANCHOR.
+THE R5 NATIVE-STDERR CORRECTION AND ALL LOWER WRAPPER AND PREPARER CONTRACTS REMAIN BOUND.
+NO VIRTUALBOX COMMAND, CONFIGURATION MUTATION OR AUTHORIZATION STATE WAS ADDED BY R6.
+VM START, RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R6.ps1
+
+Blob:
+  f722cf2fb34e5df482d8769a5ebb22e1b8f26e98
+
+BOUND CHAIN
+
+R5 path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R5.ps1
+
+Required R5 tree/local blob:
+  8ffc92184d5ba46c387fc3d7f6ef9e2e09709259
+
+R5 continues to bind R4 blob:
+  fcdec4c784f2d0610d8227aeb95ac138fa7e77d4
+
+R4 continues to bind R3 blob:
+  462a54f375439f60d9aefc37a62b9b3dd41e681e
+
+R3 continues to bind R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R2 continues to bind original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+OBSERVED FAILURE BOUNDARY
+
+The failed R5 invocation reported:
+
+  exact_variable=1
+  anchor=4
+
+The exact-variable result came from PowerShell AST classification and was correct.
+The anchor result came from a raw text count and included non-executable patch data.
+
+R5 failed before:
+
+  R4 repository-root replacement
+  R4 scriptblock creation
+  R4 invocation
+  R3, R2 or original-preparer invocation
+  VBoxManage help probing
+  boot-attempt root creation
+  isolated registry creation
+  copied-machine registration or correction
+
+R6 EXECUTABLE ANCHOR CLASSIFIER
+
+R6 injects one function into dynamic R5 source:
+
+  Get-ExactRepoRootAssignmentCount
+
+The function parses supplied source using:
+
+  System.Management.Automation.Language.Parser.ParseInput
+
+It rejects every parser error before returning a result.
+
+It searches the AST only for nodes satisfying:
+
+  node is AssignmentStatementAst
+  node extent text equals exactly:
+    $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+The comparison is ordinal and case-sensitive.
+
+Because the search is over AssignmentStatementAst nodes, the following cannot count:
+
+  single-quoted strings
+  double-quoted strings that do not execute as assignments
+  here-string source templates
+  base64 constants
+  diagnostic messages
+  regex patterns
+  longer identifiers
+  comments
+
+The exact source object is blob-bound, and its executable assignment uses the exact
+spacing and case required by the extent comparison.
+
+R5 RAW COUNT REPLACEMENT
+
+R6 replaces exactly one R5 block:
+
+  [regex]::Matches(... '$RepoRoot = Split-Path -Parent $PSScriptRoot' ...).Count
+
+with exactly one call:
+
+  Get-ExactRepoRootAssignmentCount
+
+The call classifies the already patched R4 source immediately before R5 applies its
+full executable repository-root seam replacement.
+
+R6 does not remove or weaken the existing full-seam exact replacement.  R5 still
+requires the complete block containing:
+
+  R3 relative-path declaration
+  executable RepoRoot assignment
+  R3 path-construction start
+
+to occur exactly once before replacement and exactly once as the new injected seam
+after replacement.
+
+R6 REPOSITORY-ROOT EXECUTION CONTRACT
+
+R6 is file-backed and derives the real repository root from its own valid PSScriptRoot.
+
+Before dynamic R5 execution, R6:
+
+  binds exact R5 tree and local blobs
+  patches the classifier helper into R5 source exactly once
+  patches the raw R4 anchor count exactly once
+  parses patched R5 source
+  requires exactly one executable PSScriptRoot variable token
+  replaces the exact R5 file-backed repository-root seam once
+  parses final dynamic R5 source
+  requires zero executable PSScriptRoot variable tokens
+  requires patched source differs from the bound R5 source
+  creates the R5 scriptblock only after all source gates pass
+
+The injected repository path is emitted as a single-quoted PowerShell literal.
+Any single quote in the path is doubled before injection.
+
+REPLACEMENT CONTRACT
+
+For every R6 source replacement:
+
+  old seam must occur exactly once
+  new seam must be absent before replacement
+  new seam must occur exactly once after replacement
+  retained old text inside a new seam is counted explicitly
+
+R6 source seams are:
+
+  helper insertion after the existing PSScriptRoot AST classifier
+  R5 raw R4 anchor count
+  R5 executable repository-root seam
+
+No lower wrapper source is edited in the repository.
+All corrections remain in-memory and blob-bound.
+
+UNCHANGED R5 CONTRACT
+
+R6 preserves the R5 native-help stderr correction:
+
+  typed help argument arrays remain unchanged
+  ErrorActionPreference is Continue only around each native help invocation
+  stdout and stderr are captured together
+  LASTEXITCODE is saved before policy restoration
+  ErrorActionPreference is restored in finally
+  only exit code zero contributes help text
+  supported clipboard and drag-and-drop switches remain mandatory
+
+UNCHANGED PREPARER CONTRACT
+
+R6 does not alter the original preparer gates for:
+
+  exact verification and readiness report hashes
+  exact sealed rehearsal manifest and machine artifacts
+  exact NTFS file IDs
+  exact default registered target and live ISO attachment
+  default target powered off
+  zero running rows, snapshots and shared folders
+  new disjoint boot-attempt root
+  copied VBOX, VDI and ISO identities
+  distinct copied NTFS file objects
+  copied-only VBOX path rewriting
+  empty isolated VBOX_USER_HOME
+  copied VM registration
+  disk-only boot order
+  all exposed NICs disabled
+  clipboard disabled
+  drag-and-drop disabled
+  copied ISO detached
+  VBoxVGA and 9 MB VRAM retained
+  zero running rows, snapshots and shared folders after correction
+  sealed rehearsal and default registry revalidation
+  incomplete-root preservation after any post-creation failure
+  manifest and external-report creation only after all gates pass
+
+NEGATIVE COMMAND SURFACE
+
+R6 itself invokes no VBoxManage command.
+It performs Git blob checks, PowerShell parsing, exact source replacements and dynamic
+invocation of the previously audited R5 chain.
+
+The inherited chain still contains no:
+
+  startvm
+  controlvm
+  savestate
+  poweroff
+  unregistervm
+  snapshot take
+  snapshot restore
+  snapshot delete
+  clonemedium
+  modifymedium
+  closemedium
+  guestcontrol
+  compiler execution
+
+The inherited intended VirtualBox mutations remain limited to the new isolated
+boot-attempt copy:
+
+  registervm
+  modifyvm
+  storageattach --medium none
+
+WRITE BOUNDARY
+
+Before the original preparer creates the requested new root, R6 and the wrapper chain
+write no boot-attempt root, isolated registry, manifest or external report.
+
+On successful preparation, writes remain limited to:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+  its copied machine files
+  its isolated VBOX_USER_HOME
+  its boot-attempt manifest
+  the requested external preparation report
+
+The sealed rehearsal, default registry, live VM artifacts and recovery bundle remain
+read-only inputs and are revalidated by the inherited preparer.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  BOOT ATTEMPT COPY                  PREPARED
+  POWERED-OFF CORRECTED CONFIG       OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  VM START                           NOT AUTHORIZED
+  RESTORE BOOT                       NOT OBSERVED
+  TEMPLEOS DESKTOP                   NOT OBSERVED
+  POWERED-OFF RECOVERY POINT         NOT SEALED
+  GUEST DELIVERY                     UNRESOLVED
+  COMPILER BUILD                     NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION           DENIED
+
+ADVERSARIAL JUDGMENT
+
+An executable source contract cannot be proven by counting characters that also
+appear inside the source-patching machinery used to enforce that contract.
+
+R6 does not accept an arbitrary RepoRoot assignment.  It accepts only an AST
+AssignmentStatementAst whose complete source extent is the exact expected assignment.
+It then retains the existing full-seam exact replacement as an independent second
+gate.
+
+A successful R6 run may prepare only a corrected powered-off boot-attempt copy.
+It still cannot authorize a VM start or establish a restore boot.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal     VERIFIED / SEALED
+  boot readiness                     ADJUDICATED
+  R5 invocation                      FAILED CLOSED / RECORDED
+  R6 AST anchor correction           STATICALLY AUDITED
+  boot-attempt copy                  EXECUTION PENDING
+  VM start                           NOT AUTHORIZED
+  restore boot                       NOT OBSERVED
+  powered-off recovery point         NOT SEALED
+  build execution                    NOT AUTHORIZED
+
+RULE
+
+RUN R6 ONLY.
+COUNT EXECUTABLE ASSIGNMENTS AS AST NODES, NOT SUBSTRINGS.
+PRESERVE ANY INCOMPLETE BOOT ROOT.
+DO NOT START THE SEALED REHEARSAL OR BOOT COPY.
+PREPARATION IS NOT A BOOT PROOF.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
