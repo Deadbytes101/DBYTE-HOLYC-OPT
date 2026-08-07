@@ -1,0 +1,235 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R11 COPIED VBOX VDI PATH REWRITE FAILURE OBSERVATION
+
+CLASS
+
+THE R11 PREPARATION CHAIN PASSED THE MIXED-SEPARATOR PROBE REPORT CONTRACT, R8, R2 AND ORIGINAL-PREPARER SOURCE GATES.
+THE ORIGINAL PREPARER COMPLETED ITS DEFAULT-REGISTRY READ-ONLY PREFLIGHT, CREATED THE BOOT-ATTEMPT ROOT, WROTE THE INCOMPLETE MARKER, COPIED THE SEALED VBOX/VDI/ISO AND PASSED THE COPIED-FILE IDENTITY AND DISTINCT-NTFS-OBJECT GATES.
+THE PREPARER THEN FAILED CLOSED BEFORE WRITING THE COPIED VBOX BECAUSE THE SEALED ABSOLUTE VDI PATH DID NOT OCCUR EXACTLY ONCE IN THE COPIED VBOX TEXT.
+THE INCOMPLETE ROOT IS NOW EVIDENCE AND MUST NOT BE DELETED OR REUSED.
+NO ISOLATED VBOX_USER_HOME WAS SELECTED, NO COPIED VM WAS REGISTERED, NO TARGET MODIFYVM OR STORAGEATTACH MUTATION OCCURRED, AND NO VM WAS STARTED.
+RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  250eaeabc36e3fbf1f12ddd7e0c3c22c3ed9755e
+
+Entrypoint:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R11.ps1
+
+R11 blob:
+  8ae109b0323d5631c92693316d800189212a9948
+
+Bound R8 blob:
+  8e051b4cff813de4160311c45833174180f11bd9
+
+Bound R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R2-bound original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+Bound probe-report SHA256:
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+Observed patched R8 SHA256:
+  A4F4551E51B8439658A786B8F37A8D2F5D34395B4A27988399855EB152B8C5E2
+
+Observed patched R2 SHA256:
+  5088A39F9AAD21F7389C5C425050B4916FDD4E4C7F1D532033B4DC2D8EF57875
+
+Observed patched original-source SHA256:
+  EAE413A23523D89193E47D3F1573F85659395B0E3B7641B8934F97B7903E0B00
+
+Requested boot-attempt root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Requested preparation report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+OBSERVED WRAPPER OUTPUT
+
+  BOUND R8 PREPARER:    8e051b4cff813de4160311c45833174180f11bd9
+  REPORT ROW BINDING:   ALLOW EMPTY STRING / EXACT THREE PARAMETERS
+  REPORT SEPARATORS:    REAL TAB + LITERAL BACKTICK-T / COMBINED EXACT-ONE
+  ROOT CLASSIFIER:      POWERSHELL AST / EXACT ASSIGNMENT STATEMENT
+  ROOT REPLACEMENT:     AST STARTOFFSET/ENDOFFSET SPLICE
+  INJECTED REPO ROOT:   D:\TECHNICAL\DBYTE-HOLYC-OPT
+  PATCHED R8 SHA:       A4F4551E51B8439658A786B8F37A8D2F5D34395B4A27988399855EB152B8C5E2
+
+OBSERVED R8 OUTPUT
+
+  BOUND R2 PREPARER:    796f23166f2ddf14f2e981a14fc31cc5732c5c71
+  BOUND PROBE REPORT:   57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+  EXECUTION PATH:       DIRECT R2 / R3-R7 NOT INVOKED
+  OPTION DISCOVERY:     FIXED REPORT-BOUND CONTRACT
+  CLIPBOARD SWITCH:     --clipboard-mode
+  DRAGDROP SWITCH:      --drag-and-drop
+  NATIVE HELP CALLS:    NONE DURING PREPARATION
+  R2 ROOT CONTRACT:     AST ASSIGNMENT 1 BEFORE / 0 AFTER
+  INJECTED REPO ROOT:   D:\TECHNICAL\DBYTE-HOLYC-OPT
+  PATCHED R2 SHA:       5088A39F9AAD21F7389C5C425050B4916FDD4E4C7F1D532033B4DC2D8EF57875
+
+OBSERVED ORIGINAL-PREPARER OUTPUT
+
+  ORIGINAL PREPARER:    3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+  DEFAULT ISO BINDING:  BEFORE + AFTER
+  BOOT ISO UUID:        PRE-DETACH PROOF
+  DETACHED SLOT:        VALUE OR MISSING
+  NIC CARDINALITY:      AT LEAST ONE / ALL NONE
+  GRAPHICS RETENTION:   VBOXVGA / 9 MB
+  DVD REGISTRY ROW:     ZERO OR ONE / LOCAL PATH IF PRESENT
+  MODIFYVM SWITCHES:    REPORT-BOUND / VERSION-EXACT
+  DYNAMIC CONTEXT:      NO PSSCRIPTROOT REFERENCES
+  PATCHED SOURCE SHA:   EAE413A23523D89193E47D3F1573F85659395B0E3B7641B8934F97B7903E0B00
+
+OBSERVED FAILURE
+
+  INCOMPLETE BOOT ROOT: D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+  INCOMPLETE BOOT ROOT WAS PRESERVED FOR REVIEW.
+  boot-copy VDI path rewrite source cardinality mismatch: old=0 new_before=0
+
+PowerShell failure location:
+  dynamically patched original preparer, line 522
+
+The user-provided terminal output is the observed execution evidence.
+GitHub and the assistant environment did not execute the local PowerShell command.
+
+BOUND EXECUTION SEQUENCE BEFORE FAILURE
+
+Because the exact original-preparer source was blob-bound and the failure occurred at the first copied-VBOX media-path rewrite, reaching that point establishes that the preceding gates completed without throwing.
+
+Completed before root creation:
+  exact verification-report and readiness-report identity checks
+  resource HEAD and clean tracked-tree checks
+  sealed rehearsal manifest/VBOX/VDI/ISO identity checks
+  sealed file-ID checks
+  fixed report-bound switch selection
+  default VirtualBox service-exit gate
+  default VBoxManage version read
+  default registered/running inventory reads
+  default target showvminfo read
+  default target and attachment validation
+  default snapshot inventory read
+  live VBOX/VDI/ISO identity checks
+  live VDI file-ID check
+  default VirtualBox service-exit gate before copy preparation
+
+These were read-only VirtualBox operations.  They were not configuration mutations.
+
+Completed after root creation:
+  created Machine directory
+  created VBoxUserHome directory
+  set RootCreated true
+  wrote BOOT-ATTEMPT-INCOMPLETE.txt
+  copied sealed Temple1.10.vbox
+  copied sealed Temple1.10.vdi
+  copied sealed TempleOSTS.iso
+  recorded COPY-SEALED-MACHINE-FILES in the in-memory mutation-step list
+  verified copied VBOX still had the expected sealed VBOX hash before rewrite
+  verified copied VDI bytes and SHA256
+  verified copied ISO bytes and SHA256
+  queried copied VBOX/VDI/ISO NTFS file IDs
+  required copied VBOX file ID distinct from sealed VBOX
+  required copied VDI file ID distinct from sealed VDI and live VDI
+  required copied ISO file ID distinct from sealed ISO
+  read the copied VBOX text
+
+Failure occurred at:
+  exact replacement old value = sealed VDI absolute path
+  exact replacement new value = copied VDI absolute path
+
+The observed result:
+  old=0
+  new_before=0
+
+proves only that neither of those two complete absolute path strings occurred in the copied VBOX text at the required cardinality.
+It does not establish what media-location representation the VBOX actually contains.
+
+NOT REACHED
+
+  copied VBOX write after VDI/ISO path replacement
+  REWRITE-COPIED-VBOX-MEDIA-PATHS mutation-step record
+  DVD controller extraction from rewritten copied VBOX
+  process VBOX_USER_HOME assignment to the incomplete root
+  isolated VBoxManage version query
+  isolated registry inventory queries
+  registervm
+  copied-target showvminfo
+  boot-order modifyvm
+  NIC modifyvm
+  clipboard modifyvm
+  drag-and-drop modifyvm
+  storageattach ISO detach
+  copied-target post-correction validation
+  boot manifest creation
+  final preparation report creation
+  deletion of the incomplete marker
+  VM start
+  compiler execution
+
+ADJUDICATION
+
+The incomplete root is now the primary evidence object for resolving the media-location representation.
+Do not infer a relative filename, absolute path or another XML form from old=0.
+
+The next operation must be one standalone read-only filesystem/XML inspector that:
+  binds the exact incomplete root path
+  requires BOOT-ATTEMPT-INCOMPLETE.txt
+  inventories every file and directory under the root
+  verifies copied VBOX/VDI/ISO hashes and sizes
+  records copied NTFS file IDs
+  verifies copied VBOX has not been rewritten by requiring the sealed VBOX hash
+  parses the copied VBOX XML without writing it
+  records every HardDisk location attribute
+  records every DVDImages Image location attribute
+  records the target VDI and ISO UUID rows
+  records raw-text occurrence counts for sealed absolute path, copied absolute path and basename forms
+  verifies no final boot-attempt manifest exists
+  verifies no preparation report exists
+  verifies process VBOX_USER_HOME remains unchanged
+  performs no VBoxManage call and no mutation
+  writes one report outside the incomplete root
+
+ONE DECISION
+
+PRESERVE THE R11 INCOMPLETE ROOT.
+INSPECT IT READ-ONLY BEFORE DESIGNING ANOTHER PREPARER OR CHOOSING A NEW BOOT-ATTEMPT ROOT.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal      VERIFIED / SEALED
+  boot readiness                      ADJUDICATED
+  modifyvm switch contract            ADJUDICATED
+  R11 report/source contracts         PASSED / OBSERVED
+  default registry preflight          READ-ONLY / PASSED BY EXECUTION PATH
+  incomplete boot root                CREATED / PRESERVE
+  sealed machine files copied         PASSED BY EXECUTION PATH
+  copied VBOX path rewrite            FAILED CLOSED / RECORDED
+  copied VM registration              NOT EXECUTED
+  copied VM configuration mutation    NOT EXECUTED
+  boot-attempt copy                    INCOMPLETE / NOT PREPARED
+  VM start                             NOT AUTHORIZED
+  restore boot                         NOT OBSERVED
+  powered-off recovery point          NOT SEALED
+  compiler build execution            NOT AUTHORIZED
+  optimizer transformation            DENIED
+
+RULE
+
+DO NOT DELETE OR REUSE D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1.
+DO NOT START OR REGISTER THE INCOMPLETE COPY.
+MEASURE THE COPIED VBOX MEDIA-LOCATION REPRESENTATION BEFORE CHANGING REWRITE POLICY.
+NO VM START.
+NO RESTORE-BOOT CLAIM.
+NO RECOVERY CLAIM.
+NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
