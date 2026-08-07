@@ -1,0 +1,306 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R7 DIRECT R2 STATIC AUDIT
+
+CLASS
+
+THE R7 DIRECT R2 BOOT-ATTEMPT ENTRYPOINT WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+R7 PRESERVES AND BINDS THE R2 HARDENING WRAPPER BY EXACT TREE AND LOCAL BLOB.
+R7 DOES NOT INVOKE THE R3, R4, R5 OR R6 WRAPPER CHAIN.
+R7 PATCHES ONLY R2 WRAPPER EXECUTION MECHANICS BEFORE R2 BINDS AND PATCHES THE ORIGINAL PREPARER.
+THE ORIGINAL VM-PREPARATION HARDENING AND MUTATION SEQUENCE REMAIN OWNED BY R2 AND THE ORIGINAL PREPARER.
+NO VM START, RESTORE-BOOT CLAIM, RECOVERY-POINT SEAL OR BUILD AUTHORIZATION WAS ADDED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R7.ps1
+
+Blob:
+  8b1c3989843c3344b7b81e7e1aa65d877b3261df
+
+DIRECT BOUND OBJECT
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R2.ps1
+
+Required tree/local blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R2 continues to bind original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+SUPERSEDED WRAPPER EXECUTION PATH
+
+R7 does not dynamically invoke:
+
+  R3 blob 462a54f375439f60d9aefc37a62b9b3dd41e681e
+  R4 blob fcdec4c784f2d0610d8227aeb95ac138fa7e77d4
+  R5 blob 8ffc92184d5ba46c387fc3d7f6ef9e2e09709259
+  R6 blob f722cf2fb34e5df482d8769a5ebb22e1b8f26e98
+
+Those objects remain preserved in the repository as evidence of the observed wrapper
+failure sequence.
+
+R7 does not reinterpret their failed invocations as successful preparation evidence.
+
+SOURCE NEWLINE CONTRACT
+
+R7 reads the exact checked-out R2 source after tree and local blob verification.
+
+It classifies line separators by counting:
+
+  CRLF pairs
+  bare LF characters not preceded by CR
+
+It fails closed when:
+
+  both styles occur
+  neither style occurs
+  a replacement template contains a standalone carriage return
+
+Each old and new multiline replacement template is normalized first to LF and then
+converted to the one observed R2 source newline style before exact replacement.
+
+This removes the representation-dependent fixed-LF defect observed in the R6 chain
+without normalizing or rewriting the R2 file on disk.
+
+The R2 repository file remains unchanged.
+
+TYPED HELP-ARGUMENT CORRECTION
+
+R7 replaces exactly one R2 source template:
+
+  nested PowerShell arrays containing two help argument sequences
+
+with:
+
+  List[object]
+  first item  string[] { modifyvm, --help }
+  second item string[] { --help, modifyvm }
+
+This prevents PowerShell collection flattening while retaining both read-only option
+probe forms.
+
+R7 requires:
+
+  old seam count exactly one before replacement
+  new seam count zero before replacement
+  old seam count zero after replacement
+  new seam count exactly one after replacement
+
+NATIVE STDERR CORRECTION
+
+R7 replaces exactly one native help execution loop inside R2's generated
+Get-ModifyVmSwitches function.
+
+For each typed argument array the corrected loop:
+
+  stores the current ErrorActionPreference
+  sets ErrorActionPreference to Continue only around the native help command
+  merges stdout and stderr into the captured row set
+  stores LASTEXITCODE before leaving the try block
+  restores the exact previous ErrorActionPreference in finally
+  contributes captured text only when the stored exit code equals zero
+
+The correction does not:
+
+  treat stderr as a successful exit code
+  suppress a nonzero exit code
+  invent clipboard or drag-and-drop switch names
+  remove the alternate help form
+  weaken script-wide Stop behavior outside the native call
+
+R2 still requires a supported clipboard option and a supported drag-and-drop option
+before invoking the original preparer.
+
+R2 REPOSITORY-ROOT CONTRACT
+
+R7 parses the patched R2 source with:
+
+  System.Management.Automation.Language.Parser.ParseInput
+
+Before injection it requires:
+
+  exact PSScriptRoot VariableExpressionAst count  1
+  exact AssignmentStatementAst extent:
+    $RepoRoot = Split-Path -Parent $PSScriptRoot
+  exact assignment count                         1
+
+R7 injects its file-backed repository root as a single-quoted PowerShell literal.
+Single quotes in the path are doubled.
+
+After injection R7 requires:
+
+  exact PSScriptRoot VariableExpressionAst count  0
+  exact old RepoRoot AssignmentStatementAst count 0
+  final patched R2 source parses without errors
+  patched source differs from the bound R2 source
+
+Text inside longer variable names, strings, here-strings, regexes or diagnostics does
+not count as an executable PSScriptRoot dependency.
+
+R2 AND ORIGINAL-PREPARER CONTRACTS RETAINED
+
+After R7 execution-mechanics corrections, R2 still performs its existing gates for:
+
+  exact original-preparer tree and local blob
+  zero PSScriptRoot references in original-preparer source
+  exact-one hardening replacements
+  optional exact ISO attachment binding
+  exact default ISO binding before and after preparation
+  copied ISO binding before correction
+  pre-detach copied ISO UUID proof
+  detached-slot value-or-missing handling
+  all exposed NICs present and disabled
+  VBoxVGA retention
+  9 MB VRAM retention
+  optional machine-local DVD registry row
+  local copied-ISO path if that row remains
+  copied VDI UUID proof after detach
+  copied VBOX XML proof that ISO UUID is not attached
+
+R7 does not remove, reorder or rewrite those R2 hardening templates.
+
+UNCHANGED PREPARER INPUT BOUNDARY
+
+The inherited original preparer still requires:
+
+  exact resource commit 37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
+  clean tracked resource tree
+  rehearsal verification report SHA256
+    F16F263F1A9217022F24FC318DC0CB4A9BEAFA295723AFB889C043EF428E51E8
+  boot-readiness report SHA256
+    C96EA11818CCEF207D914F165CD6B5822ADFC71B4712E7025371E085D3627461
+  sealed rehearsal manifest and exact machine artifacts
+  exact sealed and live NTFS file identities
+  powered-off default target
+  zero running rows, snapshots and shared folders
+  absent new boot-attempt root
+  absent external preparation report
+  unset process VBOX_USER_HOME
+
+UNCHANGED COPY AND MUTATION BOUNDARY
+
+Only after every precondition and help-option gate succeeds may the inherited preparer:
+
+  create the new boot-attempt root
+  copy sealed VBOX, VDI and ISO files into distinct NTFS objects
+  rewrite copied VBOX media paths
+  create a new isolated VBOX_USER_HOME
+  register only the copied VM
+  set boot1 disk and boot2 through boot4 none
+  disable NIC1 through NIC8
+  disable clipboard
+  disable drag-and-drop
+  detach the copied ISO from the copied DVD slot
+
+The intended VirtualBox mutations remain limited to:
+
+  registervm
+  modifyvm
+  storageattach --medium none
+
+NEGATIVE COMMAND SURFACE
+
+R7 itself invokes no VBoxManage command.
+It performs Git blob checks, source newline classification, exact source replacements,
+PowerShell AST checks and dynamic R2 invocation.
+
+The inherited chain still contains no:
+
+  startvm
+  controlvm
+  savestate
+  poweroff
+  unregistervm
+  snapshot take
+  snapshot restore
+  snapshot delete
+  clonemedium
+  modifymedium
+  closemedium
+  guestcontrol
+  compiler execution
+
+WRITE BOUNDARY
+
+Before R2 invokes the original preparer, R7 writes no:
+
+  boot-attempt root
+  isolated registry
+  copied machine artifact
+  manifest
+  external preparation report
+
+On successful inherited preparation, writes remain restricted to:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+  its copied machine files
+  its isolated VBoxUserHome
+  its boot-attempt manifest
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+If failure occurs after root creation, the inherited incomplete-root preservation
+contract remains active.  The root must not be deleted or reused.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  BOOT ATTEMPT COPY                  PREPARED
+  POWERED-OFF CORRECTED CONFIG       OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  VM START                           NOT AUTHORIZED
+  RESTORE BOOT                       NOT OBSERVED
+  TEMPLEOS DESKTOP                   NOT OBSERVED
+  POWERED-OFF RECOVERY POINT         NOT SEALED
+  GUEST DELIVERY                     UNRESOLVED
+  COMPILER BUILD                     NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION           DENIED
+
+ADVERSARIAL JUDGMENT
+
+The repeated R3-through-R6 wrapper failures were failures in source-patcher execution
+mechanics, not evidence against the VM-preparation design.
+
+Another nested patcher would retain the same unnecessary representation surface.
+R7 instead selects the lowest object that owns all required VM hardening, R2, and
+applies the two proven wrapper-mechanics corrections directly to that exact object.
+
+R7 therefore reduces execution depth while preserving every lower identity,
+configuration and mutation gate.
+
+A successful R7 execution may establish only a corrected powered-off copy.
+It still cannot authorize VM start or establish restore boot.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal     VERIFIED / SEALED
+  boot readiness                     ADJUDICATED
+  R6 invocation                      FAILED CLOSED / RECORDED
+  R7 direct R2 entrypoint            STATICALLY AUDITED
+  boot-attempt copy                  EXECUTION PENDING
+  VM start                            NOT AUTHORIZED
+  restore boot                       NOT OBSERVED
+  powered-off recovery point         NOT SEALED
+  build execution                    NOT AUTHORIZED
+
+RULE
+
+RUN R7 ONLY.
+R3 THROUGH R6 ARE PRESERVED EVIDENCE, NOT THE EXECUTION PATH.
+NORMALIZE REPLACEMENT SEAMS TO THE BOUND SOURCE OBJECT.
+PRESERVE ANY INCOMPLETE BOOT ROOT.
+DO NOT START THE SEALED REHEARSAL OR BOOT COPY.
+PREPARATION IS NOT A BOOT PROOF.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
