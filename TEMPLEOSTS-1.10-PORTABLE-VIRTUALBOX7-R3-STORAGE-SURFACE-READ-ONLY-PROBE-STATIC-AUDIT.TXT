@@ -1,0 +1,117 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / PORTABLE VIRTUALBOX7 R3 STORAGE SURFACE READ-ONLY PROBE STATIC AUDIT
+
+TARGET
+
+tools/PROBE-PORTABLE-VIRTUALBOX7-R3-STORAGE-SURFACE-READ-ONLY.ps1
+blob	37ada60aad4e81fc4b08c1da73764f2a50f84e22
+
+PURPOSE
+
+Resolve the failed host-ready verifier assumption that VBoxManage --machinereadable must expose the R3 hard disk under the exact key IDE-1-0.
+Capture raw storage evidence before changing any verifier schema or authorizing any VM retry.
+
+STATIC REVIEW ONLY
+
+No claim of local PowerShell execution is made.
+This audit reviews the committed source object only.
+
+BOUND INPUTS
+
+VBoxManage	D:\Portable-VirtualBox7\app64\VBoxManage.exe
+R3 root	D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3
+mutation report SHA256	3C24420D77868E8D15F58A6412AF53635EEAFFF00337CCEB01E17C31183666F3
+
+R3 identities required before probe:
+current VBOX SHA256	8EADB39D54CABE5E7B791E5D7E05BCF4CBBF32D4AB6B58291BEC0B2FAD607C0C
+previous VBOX SHA256	C93D128227EE80B647DB63FE64277CEF1BDC61C224110472C73CBFFEC63877A7
+VDI SHA256	90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+ISO SHA256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+isolated VirtualBox.xml SHA256	99DB185525D245B1AAFF6937B459518089435882373A55CD2159D03FC82FDCBF
+VBoxSup.sys SHA256	3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4
+
+Exact NTFS file IDs for current VBOX, previous VBOX, VDI and ISO are also required before the probe and rechecked after the reads.
+
+READ-ONLY COMMAND SURFACE
+
+- fsutil file queryfileid
+- sc query VBoxSup
+- VBoxManage --version
+- VBoxManage list runningvms
+- VBoxManage showvminfo TARGET --machinereadable
+- VBoxManage showvminfo TARGET
+- VBoxManage showmediuminfo disk R3-VDI
+
+No VBoxManage mutation command exists.
+No service mutation command exists.
+No wrapper execution exists.
+No VM start exists.
+
+FAIL-CLOSED PRECONDITIONS
+
+- prior failed verifier final report path must still be absent
+- probe output must be absent
+- mutation report must match exact SHA256
+- exact R3 and VBoxSup identities must match
+- VBoxSup must expose numeric STATE 4 before VBoxManage reads
+- zero running VMs is required
+- VirtualBox version must be exactly 7.0.12r159484
+- VDI showmediuminfo must expose UUID 55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+STORAGE EVIDENCE CAPTURE
+
+1. Current Temple1.10.vbox is parsed read-only with XML XPath local-name() so default namespace handling does not depend on PowerShell property navigation.
+2. Every StorageController row is recorded with observed name/bus/PortCount.
+3. Every AttachedDevice row is recorded with controller/type/port/device/hotpluggable/Image UUID.
+4. Entire VBoxManage showvminfo --machinereadable output is preserved as raw rows.
+5. Machine-readable keys are inventoried without requiring IDE-1-0; surrounding quotes are only normalized for an additional key-view row while raw keys remain preserved.
+6. Storage-related subsets from machine-readable and human showvminfo are recorded.
+7. Entire showmediuminfo disk output is recorded.
+
+COLLECTION REVIEW
+
+- StorageController nodes are materialized with @(...).
+- AttachedDevice/Image nodes are materialized with @(...).
+- running VM rows are materialized with @(...).
+- storage machine-readable rows are materialized with @(...).
+- storage human-readable rows are materialized with @(...).
+- native command Output is explicitly stored as [string[]].
+- ParsedKeyRows and XmlRows are concrete List[string] objects.
+
+Therefore all reviewed .Count uses have stable collection shape.
+
+POST-READ DRIFT GATES
+
+After VBoxManage reads, the probe requires:
+- VBoxSup numeric STATE 4 again
+- current VBOX hash + file ID unchanged
+- previous VBOX hash + file ID unchanged
+- VDI hash + file ID unchanged
+- ISO hash + file ID unchanged
+- isolated VirtualBox.xml hash unchanged
+- VBoxSup.sys hash unchanged
+
+The probe intentionally does not gate on a particular storage-key name. Interpretation follows from captured evidence in a separate adjudication step.
+
+AUTHORIZED EFFECTS
+
+- temporary process-local VBOX_USER_HOME assignment, restored in finally
+- external evidence report write only after all gates pass
+- VirtualBox may update volatile logging as a consequence of read-only VBoxManage use; volatile logs are not treated as configuration identity
+
+DENIED EFFECTS
+
+SC MUTATION	DENIED
+DRIVER INSTALL/START	DENIED
+VBOXMANAGE MUTATION	DENIED
+VM START	DENIED
+VM RETRY	DENIED
+R3 CONFIG/MEDIA CHANGE	DENIED
+GUEST BUILD	DENIED
+
+STATIC VERDICT
+
+R3 STORAGE SURFACE PROBE SOURCE IS SUITABLE FOR READ-ONLY USER EXECUTION.
+VM RETRY REMAINS NOT AUTHORIZED.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
