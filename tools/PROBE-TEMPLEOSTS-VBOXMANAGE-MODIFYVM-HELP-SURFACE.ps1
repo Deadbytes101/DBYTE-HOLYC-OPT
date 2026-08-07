@@ -113,6 +113,15 @@ function Invoke-NativeCapture {
         }
         $StdoutTask = $Process.StandardOutput.ReadToEndAsync()
         $StderrTask = $Process.StandardError.ReadToEndAsync()
+        if (-not $Process.WaitForExit(15000)) {
+            try {
+                $Process.Kill()
+            }
+            catch {
+                # Preserve the primary timeout classification.
+            }
+            throw "${Label} timed out after 15 seconds"
+        }
         $Process.WaitForExit()
         $Stdout = [string]$StdoutTask.Result
         $Stderr = [string]$StderrTask.Result
@@ -212,17 +221,18 @@ if ($VersionText -cne $ExpectedVersion) {
     throw "VBoxManage version mismatch: observed=$VersionText expected=$ExpectedVersion"
 }
 
-$AttemptVectors = @(
-    [string[]]@('modifyvm', '--help'),
-    [string[]]@('--help', 'modifyvm'),
-    [string[]]@('help', 'modifyvm'),
-    [string[]]@('modifyvm')
-)
+$AttemptVectors = [System.Collections.Generic.List[object]]::new()
+$AttemptVectors.Add([string[]]@('modifyvm', '--help'))
+$AttemptVectors.Add([string[]]@('--help', 'modifyvm'))
+$AttemptVectors.Add([string[]]@('help', 'modifyvm'))
+$AttemptVectors.Add([string[]]@('modifyvm'))
+
 $Results = [System.Collections.Generic.List[object]]::new()
 for ($Index = 0; $Index -lt $AttemptVectors.Count; $Index++) {
+    $Arguments = [string[]]$AttemptVectors[$Index]
     $Results.Add((
         Invoke-NativeCapture `
-            -Arguments $AttemptVectors[$Index] `
+            -Arguments $Arguments `
             -Label ("modifyvm help attempt {0}" -f ($Index + 1))
     ))
 }
