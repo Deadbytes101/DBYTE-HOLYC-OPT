@@ -1,0 +1,311 @@
+$OldBootRootConstant = @'
+$ExpectedBootRoot =
+    'D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1'
+'@
+$NewBootRootConstant = @'
+$ExpectedBootRoot =
+    'D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3'
+'@
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old $OldBootRootConstant `
+    -New $NewBootRootConstant `
+    -Label 'R14 new boot-attempt root'
+
+$OldMediaRewriteBlock = @'
+    $VBoxText = [System.IO.File]::ReadAllText($BootVBox)
+    $VBoxText = Invoke-ExactTextReplacement `
+        -Source $VBoxText `
+        -Old $SealedVdi.Path `
+        -New $BootVdi `
+        -Label 'boot-copy VDI path rewrite'
+    $VBoxText = Invoke-ExactTextReplacement `
+        -Source $VBoxText `
+        -Old $SealedIso.Path `
+        -New $BootIso `
+        -Label 'boot-copy ISO path rewrite'
+    Write-Utf8Text -Path $BootVBox -Text $VBoxText
+    $MutationSteps.Add('REWRITE-COPIED-VBOX-MEDIA-PATHS')
+    $BootVBoxAfterRewriteHash = (
+        Get-FileHash -LiteralPath $BootVBox -Algorithm SHA256
+    ).Hash
+    $DvdController = Get-DvdControllerName -VBoxPath $BootVBox
+'@
+$NewMediaRewriteBlock = @'
+    $VBoxText = [System.IO.File]::ReadAllText($BootVBox)
+    [xml]$PreRegistrationVBox = $VBoxText
+    $PreHardDisks = @(
+        $PreRegistrationVBox.SelectNodes(
+            "//*[local-name()='MediaRegistry']/*[local-name()='HardDisks']/*[local-name()='HardDisk']"
+        )
+    )
+    $PreDvdImages = @(
+        $PreRegistrationVBox.SelectNodes(
+            "//*[local-name()='MediaRegistry']/*[local-name()='DVDImages']/*[local-name()='Image']"
+        )
+    )
+    $PreTargetVdi = @(
+        $PreHardDisks | Where-Object {
+            (ConvertTo-NormalizedUuid `
+                -Value $_.GetAttribute('uuid') `
+                -Label 'pre-registration HardDisk UUID') -ceq $ExpectedVdiUuid
+        }
+    )
+    $PreTargetIso = @(
+        $PreDvdImages | Where-Object {
+            (ConvertTo-NormalizedUuid `
+                -Value $_.GetAttribute('uuid') `
+                -Label 'pre-registration DVD Image UUID') -ceq $ExpectedIsoUuid
+        }
+    )
+    if ($PreTargetVdi.Count -ne 1) {
+        throw "pre-registration target VDI row count mismatch: $($PreTargetVdi.Count)"
+    }
+    if ($PreTargetIso.Count -ne 1) {
+        throw "pre-registration target ISO row count mismatch: $($PreTargetIso.Count)"
+    }
+    if ($PreTargetVdi[0].GetAttribute('location') -cne 'Temple1.10.vdi') {
+        throw (
+            'pre-registration target VDI location mismatch: ' +
+            $PreTargetVdi[0].GetAttribute('location')
+        )
+    }
+    if ($PreTargetIso[0].GetAttribute('location') -cne 'TempleOSTS.iso') {
+        throw (
+            'pre-registration target ISO location mismatch: ' +
+            $PreTargetIso[0].GetAttribute('location')
+        )
+    }
+
+    $SealedVdiAbsoluteCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape($SealedVdi.Path),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    $CopiedVdiAbsoluteCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape($BootVdi),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    $VdiBasenameCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape('Temple1.10.vdi'),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    $SealedIsoAbsoluteCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape($SealedIso.Path),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    $CopiedIsoAbsoluteCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape($BootIso),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    $IsoBasenameCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape('TempleOSTS.iso'),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    if (
+        $SealedVdiAbsoluteCount -ne 0 -or
+        $CopiedVdiAbsoluteCount -ne 0 -or
+        $VdiBasenameCount -ne 1 -or
+        $SealedIsoAbsoluteCount -ne 0 -or
+        $CopiedIsoAbsoluteCount -ne 0 -or
+        $IsoBasenameCount -ne 1
+    ) {
+        throw (
+            'pre-registration relative media representation mismatch: ' +
+            "sealed_vdi_abs=$SealedVdiAbsoluteCount " +
+            "copied_vdi_abs=$CopiedVdiAbsoluteCount " +
+            "vdi_basename=$VdiBasenameCount " +
+            "sealed_iso_abs=$SealedIsoAbsoluteCount " +
+            "copied_iso_abs=$CopiedIsoAbsoluteCount " +
+            "iso_basename=$IsoBasenameCount"
+        )
+    }
+
+    $MutationSteps.Add('PRESERVE-COPIED-VBOX-RELATIVE-MEDIA-LOCATIONS')
+    $BootVBoxAfterRewriteHash = $BootVBoxBeforeRewrite.SHA256
+    $DvdController = Get-DvdControllerName -VBoxPath $BootVBox
+'@
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old $OldMediaRewriteBlock `
+    -New $NewMediaRewriteBlock `
+    -Label 'inspection-bound relative media policy'
+
+$OldPostCorrectionIdentity = @'
+    if ((Get-FileId -Path $BootVBox -Label 'boot-copy VBOX after correction') -cne $BootVBoxFileId) {
+        throw 'boot-copy VBOX file ID changed during correction'
+    }
+    if ((Get-FileId -Path $BootVdi -Label 'boot-copy VDI after correction') -cne $BootVdiFileId) {
+        throw 'boot-copy VDI file ID changed during correction'
+    }
+    if ((Get-FileId -Path $BootIso -Label 'boot-copy ISO after correction') -cne $BootIsoFileId) {
+        throw 'boot-copy ISO file ID changed during correction'
+    }
+'@
+$NewPostCorrectionIdentity = @'
+    $BootVBoxPostCorrectionFileId = Get-FileId `
+        -Path $BootVBox `
+        -Label 'boot-copy VBOX after correction'
+    if ($BootVBoxPostCorrectionFileId -ceq $SealedVBoxFileId) {
+        throw 'boot-copy post-correction VBOX aliases sealed VBOX file object'
+    }
+    if ((Get-FileId -Path $BootVdi -Label 'boot-copy VDI after correction') -cne $BootVdiFileId) {
+        throw 'boot-copy VDI file ID changed during correction'
+    }
+    if ((Get-FileId -Path $BootIso -Label 'boot-copy ISO after correction') -cne $BootIsoFileId) {
+        throw 'boot-copy ISO file ID changed during correction'
+    }
+    if ($BootVBoxAfter.SHA256 -ceq $BootVBoxBeforeRewrite.SHA256) {
+        throw 'boot-copy current VBOX hash did not change across correction'
+    }
+
+    $BootVBoxPrev = Join-Path $MachineRoot 'Temple1.10.vbox-prev'
+    $VBoxGenerationFiles = @(
+        Get-ChildItem -LiteralPath $MachineRoot -Force -File |
+            Where-Object {
+                $_.Name -match '^Temple1\.10\.vbox(?:-prev|-new)?$'
+            } |
+            Sort-Object Name
+    )
+    $VBoxGenerationNames = @(
+        $VBoxGenerationFiles | ForEach-Object { $_.Name }
+    )
+    if (
+        $VBoxGenerationNames.Count -ne 2 -or
+        -not ($VBoxGenerationNames -ccontains 'Temple1.10.vbox') -or
+        -not ($VBoxGenerationNames -ccontains 'Temple1.10.vbox-prev')
+    ) {
+        throw (
+            'boot-copy VBOX generation inventory mismatch: ' +
+            ($VBoxGenerationNames -join '|')
+        )
+    }
+    if (-not (Test-Path -LiteralPath $BootVBoxPrev -PathType Leaf)) {
+        throw 'boot-copy VBOX previous generation is missing'
+    }
+    $BootVBoxPrevHash = (
+        Get-FileHash -LiteralPath $BootVBoxPrev -Algorithm SHA256
+    ).Hash
+    $BootVBoxPrevFileId = Get-FileId `
+        -Path $BootVBoxPrev `
+        -Label 'boot-copy VBOX previous generation'
+    if ($BootVBoxPrevFileId -ceq $BootVBoxPostCorrectionFileId) {
+        throw 'boot-copy VBOX current and previous generations share a file ID'
+    }
+    if ($BootVBoxPrevFileId -ceq $SealedVBoxFileId) {
+        throw 'boot-copy VBOX previous generation aliases sealed VBOX file object'
+    }
+    if ($BootVBoxPrevHash -ceq $BootVBoxAfter.SHA256) {
+        throw 'boot-copy VBOX current and previous generations share a SHA256'
+    }
+
+    [xml]$BootVBoxPrevXml = [System.IO.File]::ReadAllText($BootVBoxPrev)
+    $BootVBoxPrevMachines = @(
+        $BootVBoxPrevXml.SelectNodes("//*[local-name()='Machine']")
+    )
+    if ($BootVBoxPrevMachines.Count -ne 1) {
+        throw "boot-copy VBOX previous-generation Machine count mismatch: $($BootVBoxPrevMachines.Count)"
+    }
+    $BootVBoxPrevMachineUuid = ConvertTo-NormalizedUuid `
+        -Value $BootVBoxPrevMachines[0].GetAttribute('uuid') `
+        -Label 'boot-copy VBOX previous-generation machine UUID'
+    if ($BootVBoxPrevMachineUuid -cne $ExpectedTargetUuid) {
+        throw "boot-copy VBOX previous-generation machine UUID mismatch: $BootVBoxPrevMachineUuid"
+    }
+    $BootVBoxPrevMatchesPreRegistration =
+        $BootVBoxPrevHash -ceq $BootVBoxBeforeRewrite.SHA256
+    $MutationSteps.Add('OBSERVE-VBOX-CURRENT-AND-PREVIOUS-SETTINGS-GENERATIONS')
+'@
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old $OldPostCorrectionIdentity `
+    -New $NewPostCorrectionIdentity `
+    -Label 'generation-aware VBOX post-correction identity'
+
+$OldXmlPostconditionCall = @'
+    Assert-BootVBoxXml `
+        -VBoxPath $BootVBox `
+        -ExpectedVdiPath $BootVdi `
+        -ExpectedIsoRegistryPath $BootIso
+'@
+$NewXmlPostconditionCall = @'
+    Assert-BootVBoxXml `
+        -VBoxPath $BootVBox `
+        -ExpectedVdiPath 'Temple1.10.vdi' `
+        -ExpectedIsoRegistryPath 'TempleOSTS.iso'
+'@
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old $OldXmlPostconditionCall `
+    -New $NewXmlPostconditionCall `
+    -Label 'relative media XML postcondition'
+
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old '$Manifest.Add("boot_vbox_pre_rewrite_sha256`t$($BootVBoxBeforeRewrite.SHA256)")' `
+    -New '$Manifest.Add("boot_vbox_pre_media_policy_sha256`t$($BootVBoxBeforeRewrite.SHA256)")' `
+    -Label 'manifest pre-media-policy label'
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old '$Manifest.Add("boot_vbox_post_rewrite_sha256`t$BootVBoxAfterRewriteHash")' `
+    -New '$Manifest.Add("boot_vbox_post_media_policy_sha256`t$BootVBoxAfterRewriteHash")' `
+    -Label 'manifest post-media-policy label'
+
+$OldManifestVBoxFileId = @'
+    $Manifest.Add("boot_vbox_file_id`t$BootVBoxFileId")
+'@
+$NewManifestVBoxFileId = @'
+    $Manifest.Add("boot_vbox_pre_registration_file_id`t$BootVBoxFileId")
+    $Manifest.Add("boot_vbox_post_correction_file_id`t$BootVBoxPostCorrectionFileId")
+    $Manifest.Add("boot_vbox_prev_sha256`t$BootVBoxPrevHash")
+    $Manifest.Add("boot_vbox_prev_file_id`t$BootVBoxPrevFileId")
+    $Manifest.Add("boot_vbox_prev_matches_pre_registration_hash`t$BootVBoxPrevMatchesPreRegistration")
+'@
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old $OldManifestVBoxFileId `
+    -New $NewManifestVBoxFileId `
+    -Label 'manifest VBOX generation identities'
+
+$OldReportVBoxFileId = @'
+    $Report.Add("boot_vbox_file_id`t$BootVBoxFileId")
+'@
+$NewReportVBoxFileId = @'
+    $Report.Add("boot_vbox_pre_registration_file_id`t$BootVBoxFileId")
+    $Report.Add("boot_vbox_post_correction_file_id`t$BootVBoxPostCorrectionFileId")
+    $Report.Add("boot_vbox_prev_sha256`t$BootVBoxPrevHash")
+    $Report.Add("boot_vbox_prev_file_id`t$BootVBoxPrevFileId")
+    $Report.Add("boot_vbox_prev_matches_pre_registration_hash`t$BootVBoxPrevMatchesPreRegistration")
+'@
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old $OldReportVBoxFileId `
+    -New $NewReportVBoxFileId `
+    -Label 'report VBOX generation identities'
+
+$OldConsoleVBoxFileId = @'
+    Write-Host "VBOX FILE ID:         $BootVBoxFileId"
+'@
+$NewConsoleVBoxFileId = @'
+    Write-Host "VBOX PRE FILE ID:     $BootVBoxFileId"
+    Write-Host "VBOX POST FILE ID:    $BootVBoxPostCorrectionFileId"
+    Write-Host "VBOX PREV SHA256:     $BootVBoxPrevHash"
+    Write-Host "VBOX PREV FILE ID:    $BootVBoxPrevFileId"
+    Write-Host "VBOX PREV IS PRECOPY: $BootVBoxPrevMatchesPreRegistration"
+'@
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old $OldConsoleVBoxFileId `
+    -New $NewConsoleVBoxFileId `
+    -Label 'console VBOX generation identities'
