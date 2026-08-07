@@ -1,0 +1,237 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT INCOMPLETE R2 INSPECTOR MATERIALIZATION HOTFIX STATIC AUDIT
+
+CLASS
+
+THE DIRECT MATERIALIZATION HOTFIX RUNNER WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+THE RUNNER BINDS THE EXACT ORIGINAL FAILED INSPECTOR SOURCE OBJECT AND APPLIES ONLY THREE IN-MEMORY COLLECTION-SHAPE CORRECTIONS:
+  Add-NodeAttributes Lines accepts blank separator rows
+  HomeFiles conditional output is materialized by an outer array subexpression
+  HomeDirectories conditional output is materialized by an outer array subexpression
+
+THE FILESYSTEM, HASH, NTFS FILE-ID, XML, REPORT AND AUTHORIZATION LOGIC OF THE INSPECTOR IS OTHERWISE UNCHANGED.
+NO VBOXMANAGE OR VIRTUALBOX MUTATION COMMAND WAS ADDED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/RUN-TEMPLEOSTS-VDI-ONLY-BOOT-INCOMPLETE-R2-INSPECTOR-MATERIALIZATION-HOTFIX.ps1
+
+Final blob:
+  230652c82481f8f2e5ed331cfe883eec1185509c
+
+BOUND ORIGINAL FAILED INSPECTOR
+
+Path:
+  tools/INSPECT-TEMPLEOSTS-VDI-ONLY-BOOT-INCOMPLETE-R2.ps1
+
+Required tree and local blob:
+  efaecd9ca56042e927a457596da487484ceefb77
+
+The runner rejects execution unless both Git tree and local worktree objects equal that exact blob.
+
+OBSERVED FAILURE CONTEXT
+
+The prior bounded Lines hotfix produced patched inspector SHA256:
+  F554F9CAF993BECB6E51639ECC1678EC6A06D245DECF7FE57BD5A5F5DECA40DD
+
+The dynamic inspector then failed with:
+  The property 'Count' cannot be found on this object. Verify that the property exists.
+
+PowerShell classification:
+  PropertyNotFoundStrict
+
+No external inspection report was produced.
+
+The runtime exception did not identify the specific Count expression.
+This audit therefore does not claim a directly observed failing variable.
+
+LINES CORRECTION
+
+The runner parses the exact failed inspector and selects only FunctionDefinitionAst nodes whose exact name is:
+  Add-NodeAttributes
+
+Required count:
+  1
+
+Inside that exact function extent it requires one old Lines signature and zero corrected signatures before replacement.
+
+Old:
+  [Parameter(Mandatory = $true)][System.Collections.Generic.List[string]]$Lines,
+
+New:
+  [Parameter(Mandatory = $true)][AllowEmptyCollection()][AllowEmptyString()][System.Collections.Generic.List[string]]$Lines,
+
+This is the same correction already statically audited and observed to pass the previous parameter-binding failure boundary.
+
+CONDITIONAL COLLECTION CLASSIFICATION
+
+After the Lines correction the runner parses the inspector again.
+It finds AssignmentStatementAst nodes by exact left-side variable name.
+
+Required variables:
+  HomeFiles
+  HomeDirectories
+
+Required assignment count:
+  exactly 1 for each variable
+
+Before replacement each selected assignment extent must begin with:
+  $HomeFiles = if (
+  $HomeDirectories = if (
+
+The original shape places inner @() expressions inside an if statement whose output is then assigned.
+PowerShell pipeline enumeration can collapse that conditional output to null or a scalar before assignment.
+The inspector later accesses Count on both variables under Set-StrictMode -Version Latest.
+
+SURGICAL MATERIALIZATION
+
+The new HomeFiles assignment is structurally:
+
+  $HomeFiles = @(
+      if (Test-Path ... ) {
+          Get-ChildItem ... -File |
+              Sort-Object FullName
+      }
+  )
+
+The new HomeDirectories assignment is structurally:
+
+  $HomeDirectories = @(
+      if (Test-Path ... ) {
+          Get-ChildItem ... -Directory |
+              Sort-Object FullName
+      }
+  )
+
+The outer @() now owns the entire conditional output boundary.
+The intended collection shape is therefore explicit for zero, one or multiple items.
+
+AST OFFSET SAFETY
+
+The two assignment nodes are collected from the same post-Lines-correction AST.
+They are sorted by Extent.StartOffset descending before source splicing.
+This prevents the first replacement from invalidating the offset of the earlier assignment.
+
+Every assignment extent is range checked against the current source length before splice.
+The observed extent text is rechecked by exact variable-specific prefix before replacement.
+
+FINAL PARSE AND PROOF
+
+The fully corrected inspector is parsed again.
+The final source must still contain exactly one Add-NodeAttributes function.
+That function must contain the corrected Lines signature exactly once.
+
+The final source must contain exactly one assignment for each:
+  HomeFiles
+  HomeDirectories
+
+Each final assignment extent must begin with:
+  $HomeFiles = @(
+  $HomeDirectories = @(
+
+Only after these gates pass is a scriptblock created.
+
+UNCHANGED INSPECTION CONTRACT
+
+The dynamic inspector still requires:
+  exact R2 incomplete root
+  exact preserved R1 root
+  absent final preparation report
+  absent pre-existing inspection output
+  exact R1 VBOX hash and exact R1 VBOX/VDI/ISO file IDs
+  R2 incomplete marker present
+  R2 final manifest absent
+  exact R2 VDI bytes/hash
+  exact R2 ISO bytes/hash
+  exact machine UUID
+  exact target VDI UUID row count 1
+
+It still observes:
+  current R2 VBOX SHA256 and file ID
+  whether current VBOX equals the pre-registration hash
+  target VDI location
+  target ISO registry rows and locations
+  attached target ISO count
+  VBOX-like file inventory and file IDs
+  boot-order XML nodes
+  network-adapter XML nodes
+  clipboard/drag XML nodes
+  graphics XML nodes
+  storage-device XML nodes
+  VBoxUserHome inventory
+  isolated VirtualBox.xml machine-registry entries
+
+The only persistent write remains one external UTF-8 inspection report after all reads and report construction complete.
+
+NEGATIVE COMMAND SURFACE
+
+The materialization runner performs only:
+  Git tree/local blob reads
+  failed inspector source read
+  in-memory AST classification and source splicing
+  source hashing
+  dynamic invocation of the corrected read-only inspector
+
+It adds no:
+  VBoxManage invocation
+  registervm
+  unregistervm
+  modifyvm
+  storageattach
+  startvm
+  controlvm
+  savestate
+  poweroff
+  snapshot mutation
+  guestcontrol
+  compiler execution
+
+R1/R2 STATE RULE
+
+R1 remains permanent evidence:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+R2 remains permanent evidence:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+
+Neither root may be deleted, modified, registered, started or reused by this inspection workflow.
+
+No r3 preparation is authorized by this audit.
+
+AUTHORIZED ACTION
+
+Run only:
+  tools/RUN-TEMPLEOSTS-VDI-ONLY-BOOT-INCOMPLETE-R2-INSPECTOR-MATERIALIZATION-HOTFIX.ps1
+
+to obtain the read-only R2 inspection report.
+
+NOT AUTHORIZED
+
+R1 reuse
+R2 reuse
+R3 preparation
+VM start
+restore boot
+powered-off recovery-point seal
+guest delivery
+compiler build
+optimizer transformation
+
+RULE
+
+RUN THE MATERIALIZED READ-ONLY INSPECTION ONLY.
+PRESERVE R1 AND R2.
+NO VBOXMANAGE.
+NO VIRTUALBOX MUTATION.
+NO VM START.
+NO R3 YET.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
