@@ -244,6 +244,7 @@ try {
     Require-NativeSuccess -Result $Running
     $RunningRows = @($Running.Output | Where-Object { $_.Trim().Length -gt 0 })
     $TargetPattern = '^"' + [regex]::Escape($ExpectedMachineName) + '"\s+\{' + [regex]::Escape($ExpectedMachineUuid) + '\}$'
+    $TargetPattern = $TargetPattern.Replace('\\s', '\s').Replace('\\{', '\{').Replace('\\}', '\}')
     if ($RunningRows.Count -ne 1 -or $RunningRows[0] -notmatch $TargetPattern) { throw "pre-stop running inventory mismatch: $($RunningRows -join ' | ')" }
 
     $Info = Get-ShowInfo -VBox $VBox
