@@ -243,9 +243,8 @@ try {
     $Running = Invoke-Native -FilePath $VBox -Arguments @('list', 'runningvms') -Label 'pre-stop running inventory'
     Require-NativeSuccess -Result $Running
     $RunningRows = @($Running.Output | Where-Object { $_.Trim().Length -gt 0 })
-    $TargetPattern = '^"' + [regex]::Escape($ExpectedMachineName) + '"\s+\{' + [regex]::Escape($ExpectedMachineUuid) + '\}$'
-    $TargetPattern = $TargetPattern.Replace('\\s', '\s').Replace('\\{', '\{').Replace('\\}', '\}')
-    if ($RunningRows.Count -ne 1 -or $RunningRows[0] -notmatch $TargetPattern) { throw "pre-stop running inventory mismatch: $($RunningRows -join ' | ')" }
+    $ExpectedRunningRow = '"' + $ExpectedMachineName + '" {' + $ExpectedMachineUuid + '}'
+    if ($RunningRows.Count -ne 1 -or $RunningRows[0].Trim() -cne $ExpectedRunningRow) { throw "pre-stop running inventory mismatch: $($RunningRows -join ' | ')" }
 
     $Info = Get-ShowInfo -VBox $VBox
     if ((Get-RequiredValue -Map $Info -Key 'VMState') -ine 'running') { throw "pre-stop VMState is not running: $(Get-RequiredValue -Map $Info -Key 'VMState')" }
