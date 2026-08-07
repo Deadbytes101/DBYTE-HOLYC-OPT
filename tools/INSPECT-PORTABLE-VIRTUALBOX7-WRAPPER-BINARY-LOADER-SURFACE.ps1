@@ -228,6 +228,10 @@ if ($WrapperHash -cne $ExpectedWrapperHash) {
     )
 }
 $WrapperSignature = Get-AuthenticodeSignature -LiteralPath $WrapperPath
+$WrapperSigner = '<missing>'
+if ($null -ne $WrapperSignature.SignerCertificate) {
+    $WrapperSigner = [string]$WrapperSignature.SignerCertificate.Subject
+}
 
 $Bytes = [System.IO.File]::ReadAllBytes($WrapperPath)
 $AsciiRows = @(Get-AsciiStrings -Bytes $Bytes -MinimumLength 4)
@@ -297,7 +301,7 @@ $Lines.Add("wrapper_bytes`t$($WrapperItem.Length)")
 $Lines.Add("wrapper_sha256`t$WrapperHash")
 $Lines.Add("wrapper_version`t$($WrapperItem.VersionInfo.FileVersion)")
 $Lines.Add("wrapper_signature_status`t$($WrapperSignature.Status)")
-$Lines.Add("wrapper_signature_signer`t$($WrapperSignature.SignerCertificate.Subject)")
+$Lines.Add("wrapper_signature_signer`t$WrapperSigner")
 $Lines.Add('')
 $Lines.Add("ascii_string_count`t$($AsciiRows.Count)")
 $Lines.Add("utf16le_string_count`t$($Utf16Rows.Count)")
