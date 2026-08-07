@@ -69,6 +69,14 @@ $StopReportHash = (Get-FileHash -LiteralPath $StopReport -Algorithm SHA256).Hash
 '@
 $Source=Apply-Patch $Source $OldStopGate $NewStopGate 'truthful-poweroff-report-contract'
 
+$OldEvidenceLabel='r3_stop_report_sha256`t$StopReportHash'
+$NewEvidenceLabel='r3_poweroff_evidence_sha256`t$StopReportHash'
+$OldEvidenceCount=Get-Count $Source $OldEvidenceLabel
+$NewEvidenceCount=Get-Count $Source $NewEvidenceLabel
+if($OldEvidenceCount -ne 2 -or $NewEvidenceCount -ne 0){throw "R3 evidence label precondition mismatch old=$OldEvidenceCount new=$NewEvidenceCount"}
+$Source=$Source.Replace($OldEvidenceLabel,$NewEvidenceLabel)
+if((Get-Count $Source $OldEvidenceLabel) -ne 0 -or (Get-Count $Source $NewEvidenceLabel) -ne 2){throw 'R3 evidence label postcondition mismatch'}
+
 $OldSnapshot=@'
     if ($Result.ExitCode -eq 0) { return [string[]]@($Result.Output | Where-Object { $_.Trim().Length -gt 0 }) }
 '@
@@ -142,9 +150,10 @@ try{$PatchedHash=-join($Sha.ComputeHash($Bytes)|ForEach-Object{$_.ToString('X2')
 Write-Host "BOUND ISO PREPARER:     $ExpectedBaseBlob"
 Write-Host 'POWER STATE CONTRACT:   ALREADY POWEROFF / CONTROLVM NOT EXECUTED'
 Write-Host 'CORRECTION 1:           TRUTHFUL POWEROFF ADJUDICATION REPORT BINDING'
-Write-Host 'CORRECTION 2:           SNAPSHOT ROWS FILTERED TO ACTUAL SNAPSHOT KEYS'
-Write-Host 'CORRECTION 3:           NO VBOX RUNTIME PROCESS BEFORE NEW ISOLATED HOME'
-Write-Host 'CORRECTION 4:           INCOMPLETE MARKER RETAINED UNTIL REPORT HASHED'
+Write-Host 'CORRECTION 2:           TRUTHFUL POWEROFF EVIDENCE LABELS / 2 OCCURRENCES'
+Write-Host 'CORRECTION 3:           SNAPSHOT ROWS FILTERED TO ACTUAL SNAPSHOT KEYS'
+Write-Host 'CORRECTION 4:           NO VBOX RUNTIME PROCESS BEFORE NEW ISOLATED HOME'
+Write-Host 'CORRECTION 5:           INCOMPLETE MARKER RETAINED UNTIL REPORT HASHED'
 Write-Host 'VM START:               NONE'
 Write-Host "PATCHED PREPARER SHA:   $PatchedHash"
 
