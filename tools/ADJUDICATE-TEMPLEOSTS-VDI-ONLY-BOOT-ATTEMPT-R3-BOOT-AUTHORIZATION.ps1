@@ -147,75 +147,119 @@ function Invoke-VBoxRead {
     return $Captured
 }
 
-function Convert-MachineReadable {
+function Invoke-VBoxSnapshotInventory {
+    param(
+        [Parameter(Mandatory = $true)][string]$Uuid,
+        [Parameter(Mandatory = $true)][string]$Label
+    )
+
+    $OldEap = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = 'Continue'
+        $Captured = @(
+            & $script:VBox 'snapshot' $Uuid 'list' '--machinereadable' 2>&1 |
+                ForEach-Object { [string]$_ }
+        )
+        $ExitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $OldEap
+    }
+
+    if ($ExitCode -eq 0) {
+        return $Captured
+    }
+    if (
+        $Captured.Count -eq 1 -and
+        $Captured[0].Trim() -ceq 'This machine does not have any snapshots'
+    ) {
+        return @()
+    }
+    throw "${Label} failed exit=$ExitCode`n$($Captured -join "`n")"
+}
+
+function ConvertFrom-VBoxMachineReadable {
     param(
         [Parameter(Mandatory = $true)]
         [AllowEmptyCollection()]
         [AllowEmptyString()]
-        [string[]]$Lines,
-        [Parameter(Mandatory = $true)][string]$Label
+        [string[]]$Lines
     )
 
-    $Map = [ordered]@{}
+    $Result = @{}
     $Backslash = [string][char]92
     $Quote = [string][char]34
     $EscapedQuote = $Backslash + $Quote
     $EscapedBackslash = $Backslash + $Backslash
 
     foreach ($Line in $Lines) {
-        if ([string]::IsNullOrWhiteSpace($Line)) {
+        $Equals = $Line.IndexOf('=')
+        if ($Equals -le 0) {
             continue
         }
-        $Match = [regex]::Match($Line, '^([^=]+)=(.*)$')
-        if (-not $Match.Success) {
-            throw "${Label} non-machine-readable row: $Line"
-        }
-        $Key = $Match.Groups[1].Value
-        $Raw = $Match.Groups[2].Value
-        if ($Map.Contains($Key)) {
-            throw "${Label} duplicate key: $Key"
-        }
-        $Value = $Raw
+        $Key = $Line.Substring(0, $Equals)
+        $Value = $Line.Substring($Equals + 1)
         if (
-            $Raw.Length -ge 2 -and
-            $Raw[0] -eq [char]34 -and
-            $Raw[$Raw.Length - 1] -eq [char]34
+            $Key.Length -ge 2 -and
+            $Key[0] -eq [char]34 -and
+            $Key[$Key.Length - 1] -eq [char]34
         ) {
-            $Inner = $Raw.Substring(1, $Raw.Length - 2)
-            $Value = $Inner.Replace($EscapedQuote, $Quote).Replace(
+            $Key = $Key.Substring(1, $Key.Length - 2)
+            $Key = $Key.Replace($EscapedQuote, $Quote).Replace(
                 $EscapedBackslash,
                 $Backslash
             )
         }
-        $Map[$Key] = [string]$Value
+        if (
+            $Value.Length -ge 2 -and
+            $Value[0] -eq [char]34 -and
+            $Value[$Value.Length - 1] -eq [char]34
+        ) {
+            $Value = $Value.Substring(1, $Value.Length - 2)
+            $Value = $Value.Replace($EscapedQuote, $Quote).Replace(
+                $EscapedBackslash,
+                $Backslash
+            )
+        }
+        if ([string]::IsNullOrWhiteSpace($Key)) {
+            throw 'machine-readable key normalized to empty text'
+        }
+        if ($Result.ContainsKey($Key)) {
+            throw "duplicate machine-readable key after normalization: $Key"
+        }
+        $Result[$Key] = $Value
     }
-    return $Map
+    return $Result
 }
 
 function Get-RequiredMachineValue {
     param(
-        [Parameter(Mandatory = $true)][System.Collections.IDictionary]$Info,
+        [Parameter(Mandatory = $true)][hashtable]$Info,
         [Parameter(Mandatory = $true)][string]$Key,
         [Parameter(Mandatory = $true)][string]$Label
     )
 
-    if (-not $Info.Contains($Key)) {
-        throw "${Label} missing key: $Key"
+    if (-not $Info.ContainsKey($Key)) {
+        throw "${Label} field missing: $Key"
     }
     return [string]$Info[$Key]
 }
 
 function Assert-MachineValue {
     param(
-        [Parameter(Mandatory = $true)][System.Collections.IDictionary]$Info,
+        [Parameter(Mandatory = $true)][hashtable]$Info,
         [Parameter(Mandatory = $true)][string]$Key,
         [Parameter(Mandatory = $true)][AllowEmptyString()][string]$Expected,
         [Parameter(Mandatory = $true)][string]$Label
     )
 
     $Observed = Get-RequiredMachineValue -Info $Info -Key $Key -Label $Label
-    if ($Observed -cne $Expected) {
-        throw "${Label} mismatch: key=$Key observed=$Observed expected=$Expected"
+    if (-not [string]::Equals(
+        $Observed,
+        $Expected,
+        [System.StringComparison]::OrdinalIgnoreCase
+    )) {
+        throw "${Label} field mismatch: $Key=$Observed expected=$Expected"
     }
 }
 
@@ -242,18 +286,12 @@ function Get-ColonValue {
         [Parameter(Mandatory = $true)][string]$Key
     )
 
-    $Matches = @(
-        foreach ($Line in $Lines) {
-            $Match = [regex]::Match($Line, '^\s*' + [regex]::Escape($Key) + '\s*:\s*(.*?)\s*$')
-            if ($Match.Success) {
-                $Match.Groups[1].Value
-            }
-        }
-    )
-    if ($Matches.Count -ne 1) {
-        throw "colon field cardinality mismatch: key=$Key count=$($Matches.Count)"
+    $Pattern = '^\s*' + [regex]::Escape($Key) + ':\s*(?<value>.+?)\s*$'
+    $Found = @($Lines | Where-Object { $_ -match $Pattern })
+    if ($Found.Count -ne 1) {
+        throw "medium field count mismatch: $Key count=$($Found.Count)"
     }
-    return $Matches[0]
+    return [regex]::Match($Found[0], $Pattern).Groups['value'].Value
 }
 
 $Root = (Resolve-Path -LiteralPath $PreparedRoot -ErrorAction Stop).Path
@@ -335,8 +373,8 @@ try {
             -Label 'isolated target showvminfo'
     )
     $SnapshotLines = @(
-        Invoke-VBoxRead `
-            -Arguments @('snapshot', $ExpectedMachineUuid, 'list', '--machinereadable') `
+        Invoke-VBoxSnapshotInventory `
+            -Uuid $ExpectedMachineUuid `
             -Label 'isolated target snapshot inventory'
     )
     $VdiMediumLines = @(
@@ -357,28 +395,25 @@ if ($Version.Count -ne 1 -or $Version[0] -cne $ExpectedVBoxVersion) {
     throw "isolated VirtualBox version mismatch: $($Version -join '|')"
 }
 
-$RegisteredRows = @($Registered | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
-if ($RegisteredRows.Count -ne 1) {
-    throw "isolated registered VM count mismatch: $($RegisteredRows.Count)"
+$RegisteredRows = @($Registered | Where-Object { $_ -cne '' })
+$RunningRows = @($Running | Where-Object { $_ -cne '' })
+$TargetPattern = (
+    '^"' + [regex]::Escape($ExpectedMachineName) + '" \{' +
+    [regex]::Escape($ExpectedMachineUuid) + '\}$'
+)
+if (
+    $RegisteredRows.Count -ne 1 -or
+    @($RegisteredRows | Where-Object { $_ -match $TargetPattern }).Count -ne 1
+) {
+    throw 'isolated registered VM inventory mismatch'
 }
-$ExpectedRegistered = '"' + $ExpectedMachineName + '" {' + $ExpectedMachineUuid + '}'
-if ($RegisteredRows[0] -cne $ExpectedRegistered) {
-    throw "isolated registered VM row mismatch: $($RegisteredRows[0])"
-}
-
-$RunningRows = @($Running | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
 if ($RunningRows.Count -ne 0) {
     throw "isolated running VM count is not zero: $($RunningRows.Count)"
 }
 
-$Info = Convert-MachineReadable -Lines $ShowLines -Label 'isolated target showvminfo'
+$Info = ConvertFrom-VBoxMachineReadable -Lines $ShowLines
 Assert-MachineValue -Info $Info -Key 'name' -Expected $ExpectedMachineName -Label 'isolated target'
-$ObservedUuid = ConvertTo-NormalizedUuid `
-    -Value (Get-RequiredMachineValue -Info $Info -Key 'UUID' -Label 'isolated target') `
-    -Label 'isolated target UUID'
-if ($ObservedUuid -cne $ExpectedMachineUuid) {
-    throw "isolated target UUID mismatch: $ObservedUuid"
-}
+Assert-MachineValue -Info $Info -Key 'UUID' -Expected $ExpectedMachineUuid -Label 'isolated target'
 Assert-MachineValue -Info $Info -Key 'VMState' -Expected 'poweroff' -Label 'isolated target'
 Assert-MachineValue -Info $Info -Key 'CfgFile' -Expected $CurrentVBox -Label 'isolated target'
 Assert-MachineValue -Info $Info -Key 'IDE-1-0' -Expected $Vdi -Label 'isolated target'
@@ -399,13 +434,30 @@ foreach ($NicKey in $NicKeys) {
     Assert-MachineValue -Info $Info -Key $NicKey -Expected 'none' -Label 'isolated target'
 }
 
-$IsoSlotValue = if ($Info.Contains('IDE-0-1')) {
+$SharedKeys = @(
+    $Info.Keys | Where-Object {
+        $_ -like 'SharedFolderNameMachineMapping*' -or
+        $_ -like 'SharedFolderPathMachineMapping*'
+    }
+)
+if ($SharedKeys.Count -ne 0) {
+    throw "isolated target shared-folder keys are not zero: $($SharedKeys.Count)"
+}
+
+$IsoSlotValue = if ($Info.ContainsKey('IDE-0-1')) {
     [string]$Info['IDE-0-1']
 }
 else {
     '<missing>'
 }
-if ($IsoSlotValue -cne 'none' -and $IsoSlotValue -cne '<missing>') {
+if (
+    -not [string]::Equals(
+        $IsoSlotValue,
+        'none',
+        [System.StringComparison]::OrdinalIgnoreCase
+    ) -and
+    $IsoSlotValue -cne '<missing>'
+) {
     throw "isolated target ISO slot remains attached: $IsoSlotValue"
 }
 
@@ -416,6 +468,13 @@ $SnapshotRows = @(
 )
 if ($SnapshotRows.Count -ne 0) {
     throw "isolated target snapshot rows are not zero: $($SnapshotRows.Count)"
+}
+
+$ObservedUuid = ConvertTo-NormalizedUuid `
+    -Value (Get-RequiredMachineValue -Info $Info -Key 'UUID' -Label 'isolated target') `
+    -Label 'isolated target UUID'
+if ($ObservedUuid -cne $ExpectedMachineUuid) {
+    throw "isolated target UUID mismatch after normalization: $ObservedUuid"
 }
 
 $ObservedVdiUuid = ConvertTo-NormalizedUuid `
@@ -455,6 +514,7 @@ $Lines.Add("boot4`tnone")
 $Lines.Add("network_disabled`tTrue")
 $Lines.Add("clipboard_disabled`tTrue")
 $Lines.Add("drag_and_drop_disabled`tTrue")
+$Lines.Add("shared_folder_keys`t$($SharedKeys.Count)")
 $Lines.Add("graphicscontroller`tvboxvga")
 $Lines.Add("vram_mb`t9")
 $Lines.Add("snapshot_rows`t$($SnapshotRows.Count)")
@@ -496,6 +556,7 @@ Write-Host 'BOOT4:                 none'
 Write-Host 'NETWORK DISABLED:      True'
 Write-Host 'CLIPBOARD DISABLED:    True'
 Write-Host 'DRAGDROP DISABLED:     True'
+Write-Host "SHARED FOLDER KEYS:    $($SharedKeys.Count)"
 Write-Host 'GRAPHICS:              vboxvga / 9 MB'
 Write-Host "SNAPSHOT ROWS:         $($SnapshotRows.Count)"
 Write-Host "REGISTRY SHA BEFORE:   $RegistryHashBefore"
