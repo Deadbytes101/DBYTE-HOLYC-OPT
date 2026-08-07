@@ -1,0 +1,267 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R3 PREPARED READ-ONLY VERIFIER STATIC AUDIT
+
+CLASS
+
+THE R3 PREPARED-COPY VERIFIER WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+THE VERIFIER BINDS THE OBSERVED SUCCESSFUL R14 OUTPUTS AND CHECKS THE PREPARED R3 FILESYSTEM, MANIFEST, CURRENT/PREVIOUS VBOX GENERATIONS, MEDIA FILE OBJECTS, CURRENT VBOX XML AND ISOLATED VIRTUALBOX REGISTRY WITHOUT INVOKING VBOXMANAGE.
+NO VM START OR VIRTUALBOX MUTATION IS AUTHORIZED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/VERIFY-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3-PREPARED.ps1
+
+Final blob:
+  062180e6d224b81dbea6ec667a5da09f40a9c63b
+
+BOUND OBSERVED PREPARATION
+
+Prepared R3 root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3
+
+Preparation report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+Required preparation report SHA256:
+  2A2986A07E04C854E27CCC04198C1F9935208F429969C9FDA33E8818E81CE4EC
+
+Required boot-attempt manifest SHA256:
+  4A6E43CC01A2686DBAD4FD0D64185D7E23FBE691CBEECAD65742A8F1957D4DAF
+
+Verification output:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-prepared-verification.txt
+
+The output must be absent before execution.
+The verifier writes only this external verification report after all verification gates succeed.
+
+BOUND MACHINE AND MEDIA IDENTITIES
+
+Machine name:
+  Temple1.10
+
+Machine UUID:
+  9c98691e-27cd-4487-a306-587969c2c78c
+
+VDI UUID:
+  55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+ISO UUID:
+  ab97b3a5-1331-494d-a917-e85b6e728c45
+
+VirtualBox version recorded by preparation:
+  7.0.12r159484
+
+Pre-registration copied VBOX SHA256:
+  69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+Current post-correction VBOX SHA256:
+  8EADB39D54CABE5E7B791E5D7E05BCF4CBBF32D4AB6B58291BEC0B2FAD607C0C
+
+Previous-generation VBOX SHA256:
+  C93D128227EE80B647DB63FE64277CEF1BDC61C224110472C73CBFFEC63877A7
+
+Pre-registration copied VBOX file ID recorded by preparation:
+  0X000000000000000000010000000609A1
+
+Current post-correction VBOX file ID:
+  0X000000000000000000050000000609A1
+
+Previous-generation VBOX file ID:
+  0X000000000000000000040000000609A7
+
+VDI:
+  bytes 2097152
+  SHA256 90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+  file ID 0X000000000000000000010000000609A2
+
+ISO:
+  bytes 30558208
+  SHA256 DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+  file ID 0X000000000000000000010000000609A3
+
+REPORT AND MANIFEST FIELD GATES
+
+The verifier reasserts the preparation report fields for:
+  manifest SHA256
+  prepared root
+  isolated VBOX_USER_HOME
+  VirtualBox version
+  machine name and UUID
+  machine state poweroff
+  VDI and ISO UUIDs
+  IDE DVD controller
+  detached ISO slot none
+  boot order disk/none/none/none
+  network disabled True
+  clipboard disabled True
+  drag-and-drop disabled True
+  ISO attached False
+  current VBOX SHA256
+  pre/post current VBOX file IDs
+  previous VBOX SHA256 and file ID
+  previous VBOX matches pre-registration hash False
+  VDI/ISO SHA256 and file IDs
+  PREPARED / OBSERVED / NOT-AUTHORIZED terminal classifications
+
+The verifier independently reasserts corresponding manifest fields including:
+  pre-media-policy VBOX SHA256
+  post-media-policy VBOX SHA256
+  post-correction VBOX SHA256
+  generation identity fields
+  media hashes and file IDs
+  terminal classification fields
+
+FILESYSTEM IDENTITY GATES
+
+The verifier requires exact current filesystem objects for:
+  Machine\Temple1.10.vbox
+  Machine\Temple1.10.vbox-prev
+  Machine\Temple1.10.vdi
+  Machine\TempleOSTS.iso
+
+Current and previous VBOX generations must have distinct SHA256 and file IDs.
+The recognized generation inventory must contain exactly:
+  Temple1.10.vbox
+  Temple1.10.vbox-prev
+
+No recognized Temple1.10.vbox-new is allowed.
+
+The prepared incomplete marker must be absent.
+The final manifest must be present and exact.
+No .nvram file may exist anywhere under R3.
+
+IMMUTABLE INVENTORY VERIFICATION
+
+Manifest file rows are parsed as exact four-column TAB rows:
+  file
+  relative path
+  byte count
+  SHA256
+
+Manifest volatile_log rows use the same exact TAB shape.
+Paths must be relative, non-empty and traversal-free.
+
+The declared immutable_inventory_files count must equal the number of file rows.
+The declared volatile_log_files count must equal the number of volatile_log rows.
+
+Every immutable file row is checked against the live R3 object for:
+  existence
+  byte count
+  SHA256
+
+The verifier then enumerates the entire R3 filesystem, excluding only:
+  BOOT-ATTEMPT-MANIFEST.txt
+  BOOT-ATTEMPT-INCOMPLETE.txt
+  bounded VBoxUserHome\VBoxSVC.log generations classified volatile
+
+The resulting immutable relative-path set must exactly equal the manifest immutable path set.
+This prevents unrecorded immutable files from silently entering the prepared candidate.
+
+VBoxSVC.log generations are intentionally treated as volatile and reported rather than used as immutable correctness hashes.
+
+CURRENT VBOX XML GATES
+
+The exact current VBOX bytes are parsed read-only.
+The verifier requires:
+  exactly one Machine node
+  exact target machine UUID
+  exact target VDI media-registry UUID row count 1
+  target VDI relative location Temple1.10.vdi
+  target ISO media-registry UUID row count zero or one
+  every present target ISO row location TempleOSTS.iso
+  attached target ISO UUID count 0
+  attached target VDI UUID count 1
+  boot-order node count 4
+  position 1 HardDisk
+  position 2 None
+  position 3 None
+  position 4 None
+  Snapshot node count 0
+
+The verifier does not invent an XML interpretation for network or clipboard fields beyond what the exact prepared VBOX hash and bound successful R14 report/manifest already establish.
+The R14 preparation itself observed network/clipboard/drag-drop state through post-correction VBoxManage showvminfo gates before success.
+
+ISOLATED REGISTRY GATES
+
+The verifier requires:
+  VBoxUserHome\VirtualBox.xml present
+  exactly one MachineRegistry/MachineEntry row
+  exactly one row with the target machine UUID
+  src path equals the exact current R3 Machine\Temple1.10.vbox path
+
+POWERHELL COLLECTION / PARSER REVIEW
+
+Collections consumed through .Count are materialized explicitly with @(...).
+Report/manifest field helpers accept blank rows.
+Inventory rows split TAB with explicit character 9.
+No conditional collection assignment relies on pipeline scalar/null shape.
+No fuzzy regex is used for report field delimiting.
+
+COMMAND SURFACE
+
+The verifier performs only:
+  path resolution
+  filesystem enumeration
+  SHA256 reads
+  fsutil file queryfileid reads
+  report/manifest text parsing
+  XML parsing
+  one external verification-report write after all gates
+
+It has no VBoxManagePath parameter.
+It does not invoke:
+  VBoxManage
+  registervm
+  unregistervm
+  modifyvm
+  storageattach
+  startvm
+  controlvm
+  snapshot mutation
+  guestcontrol
+  compiler execution
+
+AUTHORIZED ACTION
+
+Run only:
+  tools/VERIFY-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3-PREPARED.ps1
+
+NOT AUTHORIZED
+
+R1 reuse
+R2 reuse
+R3 mutation
+R3 VM start
+sealed rehearsal VM start
+restore boot
+powered-off recovery-point seal
+guest delivery
+compiler build
+optimizer transformation
+PR ready-for-review transition
+PR merge
+
+SUCCESS VERDICT
+
+If every gate succeeds, the verifier may report only:
+  R3 PREPARED COPY VERIFIED
+  VBOXMANAGE NOT-EXECUTED
+  VIRTUALBOX MUTATION NOT-EXECUTED
+  VM START NOT-AUTHORIZED
+
+Preparation verification remains distinct from boot authorization.
+
+RULE
+
+VERIFY THE PREPARED R3 COPY READ-ONLY.
+DO NOT START A VM YET.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
