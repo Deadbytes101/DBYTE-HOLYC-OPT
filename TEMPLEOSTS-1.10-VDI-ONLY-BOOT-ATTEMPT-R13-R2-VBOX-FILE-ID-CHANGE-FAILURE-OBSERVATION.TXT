@@ -1,0 +1,185 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R13 R2 VBOX FILE-ID CHANGE FAILURE OBSERVATION
+
+CLASS
+
+R13 PASSED ITS WRAPPER CORRECTION AND INVOKED THE BOUND R12 OBJECT.
+R12 PASSED ITS EVIDENCE, R1 IDENTITY, RELATIVE-MEDIA AND DIRECT-R2 SOURCE CONTRACTS.
+R2 INVOKED THE BOUND ORIGINAL PREPARER.
+THE ORIGINAL PREPARER CREATED THE NEW R2 BOOT-ATTEMPT ROOT AND ENTERED ITS ISOLATED VIRTUALBOX REGISTRY.
+THE COPIED POWERED-OFF MACHINE WAS REGISTERED AND THE CONFIGURATION-CORRECTION PATH COMPLETED FAR ENOUGH TO PASS ALL EARLIER POST-CORRECTION VIRTUALBOX STATE GATES.
+THE LATER HOST FILE-IDENTITY POSTCONDITION THEN FAILED BECAUSE THE COPIED VBOX NTFS FILE ID NO LONGER EQUALLED THE FILE ID CAPTURED IMMEDIATELY AFTER COPY.
+THE R2 ROOT WAS PRESERVED BY THE INHERITED FAILURE HANDLER AND MUST NEVER BE DELETED OR REUSED.
+THE ACTUAL CURRENT R2 VBOX FILE ID, HASH, XML STATE AND ISOLATED-REGISTRY INVENTORY ARE NOT YET OBSERVED BY A STANDALONE INSPECTOR.
+NO CLAIM IS MADE YET ABOUT THE MECHANISM THAT CHANGED THE VBOX FILE ID.
+
+OBSERVED USER OUTPUT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting pulled head:
+  b77f8b403f93fedabdeb447ca180b82a87cb1430
+
+R13 bound R12 blob:
+  655b1b84c761af190b52765e17b8916875adc980
+
+R13 patched R12 SHA256:
+  6D3924E095817683E7B51483F83384236195BF5337EBF1FC44753B0D61C7DB4E
+
+R12 bound R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R12 bound modifyvm probe report SHA256:
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+R12 bound incomplete-r1 inspection report SHA256:
+  3D48BD2FCE6BA9363E086270D52C76A1AC326947A565F48F917C818435F70912
+
+R12 patched R2 SHA256:
+  3487BF1916B995BA44A5D09709D96A76E12686C2645321CFE1488A1112466B52
+
+R2 patched original-preparer SHA256:
+  61A33D14A9F8AC65DB5961D4844F9ECFB2E14275960C23A892DF53C3CCAE1C76
+
+Original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+Preserved r1 root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+New r2 root created and preserved:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+
+Final preparation report path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+Observed terminal failure:
+  boot-copy VBOX file ID changed during correction
+
+Observed terminal preservation output:
+  INCOMPLETE BOOT ROOT: D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+  INCOMPLETE BOOT ROOT WAS PRESERVED FOR REVIEW.
+
+CONTROL-FLOW BOUNDARY
+
+The bound original-preparer source places the failing VBOX file-ID postcondition after the following operations and gates.
+Reaching the observed failure therefore proves those earlier throwing gates returned successfully in that execution unless a source path explicitly bypassed them.
+
+Before the failure, the execution path had already:
+
+  created r2 and BOOT-ATTEMPT-INCOMPLETE.txt
+  copied the sealed VBOX, VDI and ISO into r2/Machine
+  verified copied VBOX/VDI/ISO content identities before registration
+  verified the copied objects were distinct from the sealed/live bound objects at the pre-registration point
+  preserved the relative media representation instead of performing the false absolute-path rewrite
+  created and selected the isolated r2 VBOX_USER_HOME
+  verified the isolated registry was initially empty
+  executed registervm for the copied powered-off machine
+  observed the copied machine registered and not running before correction
+  executed modifyvm for boot1 disk and boot2-4 none
+  executed modifyvm for NIC1 through NIC8 none
+  executed modifyvm for clipboard disabled using --clipboard-mode
+  executed modifyvm for drag-and-drop disabled using --drag-and-drop
+  proved the copied ISO UUID before detach through the inherited R2 hardening
+  executed storageattach --medium none on the copied DVD slot
+  observed the copied machine registered and not running after correction
+  passed boot-order, clipboard, drag-and-drop, NIC, graphics and VRAM post-state gates from the inherited R2 hardening
+  passed the detached-slot / ISO-path post-state gates
+  observed zero copied-machine snapshot rows
+  passed copied VDI UUID proof
+  passed the R2 post-detach medium proof
+  shut down the isolated VBox service and restored the process VBOX_USER_HOME
+  revalidated the default registry target after preparation
+  revalidated zero default-target snapshot rows
+  revalidated live VBOX/VDI/ISO identities
+  revalidated the sealed rehearsal reports, manifest, VBOX, VDI and ISO identities
+
+The failure then occurred at the host-side check:
+
+  Get-FileId($BootVBox after correction) == $BootVBoxFileId captured immediately after copy
+
+The VDI and ISO post-correction file-ID checks are lexically after the failing VBOX check and therefore were not reached in this execution.
+The final Assert-BootVBoxXml call, NVRAM gate, inventory construction, manifest creation and final preparation report are also after the failing check and were not reached.
+
+R2 PRESERVATION RULE
+
+The following root is now permanent failure evidence:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+
+It must not be:
+
+  deleted
+  modified manually
+  registered again for experimentation
+  started
+  reused by another preparation attempt
+
+R1 remains separately preserved and must also never be reused.
+
+CURRENT INTERPRETATION BOUNDARY
+
+The observed failure proves only that the current VBOX NTFS file ID differs from the pre-registration copied VBOX file ID captured in memory.
+It does not by itself prove whether VirtualBox:
+
+  rewrote the file in place through an API that changes file identity
+  replaced the file atomically with a new NTFS object
+  created or promoted a .vbox-new/.vbox-prev object
+  performed another serialization path
+
+Those mechanisms require direct read-only observation of the preserved r2 filesystem and XML.
+
+ONE DECISION
+
+Do not create R14 yet.
+Do not rerun R13.
+Create and run one standalone read-only inspector for the preserved r2 root.
+The inspector must not accept a VBoxManage path and must not invoke VirtualBox.
+It should observe at least:
+
+  r2 Machine file inventory
+  current VBOX SHA256 and NTFS file ID
+  current VDI/ISO exact identities and file IDs
+  presence and identities of .vbox-prev/.vbox-new files if any
+  current VBOX media-registry relative locations
+  current machine UUID
+  attached ISO UUID count
+  boot-order XML
+  NIC XML state
+  clipboard and drag-and-drop XML state
+  graphics controller and VRAM XML state
+  r2 VBoxUserHome file inventory
+  isolated VirtualBox.xml registered-machine references if present
+  BOOT-ATTEMPT-INCOMPLETE.txt presence
+  final manifest absence
+  final preparation report absence
+
+Only after that observation may the VBOX file-ID postcondition be changed or a new r3 preparation root be authorized.
+
+NOT AUTHORIZED OR CLAIMED
+
+  r1 reuse                              DENIED
+  r2 reuse                              DENIED
+  VM start                              NOT AUTHORIZED
+  restore boot                          NOT OBSERVED
+  powered-off recovery point            NOT SEALED
+  guest delivery                        UNRESOLVED
+  compiler build                        NOT AUTHORIZED
+  optimizer transformation              DENIED
+
+RULE
+
+PRESERVE R1.
+PRESERVE R2.
+DO NOT RERUN R13.
+INSPECT R2 READ-ONLY BEFORE CHANGING THE FILE-ID CONTRACT.
+NO VM START.
+NO RESTORE-BOOT CLAIM.
+NO RECOVERY CLAIM.
+NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
