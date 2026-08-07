@@ -1,0 +1,132 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED REHEARSAL PREPARER STATIC AUDIT
+
+CLASS
+
+THE ISOLATED REHEARSAL PREPARER HAS NOT BEEN EXECUTED.
+ITS CORE ISOLATION AND REGISTRATION ROUTE IS ACCEPTABLE.
+THREE STATIC CONTRACT DEFECTS MUST BE CORRECTED BEFORE EXECUTION.
+NO REHEARSAL ROOT, ISOLATED REGISTRY OR REPORT WAS CREATED BY THIS AUDIT.
+RECOVERY POINT REMAINS NOT SEALED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+REPOSITORY
+
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+BRANCH
+
+  overheaven-foundation
+
+AUDITED FILE
+
+  tools/PREPARE-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL.ps1
+
+AUDITED BLOB
+
+  cec7ca5dc9439c11d0375eebe45f0864a5f7f995
+
+ACCEPTED CORE CONTRACT
+
+The preparer:
+
+  binds bundle verification report SHA256
+    887D93D1869CA321A8A4A11816A7ABA6A74366BBA64D4138E1D7DF223F7A9CEC
+
+  binds restore route report SHA256
+    8AD50F9DB56C228B1D1CF1366D2A34D9F3413DA8B2CD043B6971FB9004ED9AC4
+
+  binds bundle manifest SHA256
+    3E7C4285920A981BF72AFCD179C467B2DEC35AB1828D21EB4767A1DEB3619F45
+
+  requires a new rehearsal root and report path
+  requires process VBOX_USER_HOME to be unset
+  requires default VBoxSVC to exit before registry switching
+  revalidates the default target before disposable preparation
+  copies only from the sealed recovery bundle
+  rewrites only the disposable VBOX ISO location
+  requires an empty isolated VBOX_USER_HOME registry
+  registers only the disposable VBOX in the isolated registry
+  requires one powered-off isolated VM
+  requires zero isolated running rows, snapshots and shared folders
+  verifies disposable VDI and ISO UUIDs
+  waits for isolated VBoxSVC exit before restoring default registry context
+  revalidates the default registry and live artifacts after isolated registration
+  never starts a VM
+  preserves an incomplete rehearsal root on failure
+
+STATIC DEFECT 1
+
+Wait-VBoxServiceExit contains:
+
+  throw "$Label: VBoxSVC did not exit; ..."
+
+PowerShell can interpret a colon immediately after a variable name as part of a
+scoped or drive-qualified variable token.  The label must be delimited as:
+
+  throw "${Label}: VBoxSVC did not exit; ..."
+
+This is a source parsing and interpolation hardening correction only.
+
+STATIC DEFECT 2
+
+The preparer verifies distinct NTFS file IDs for disposable VDI and ISO copies,
+but it does not explicitly bind the disposable VBOX file ID against the sealed
+bundle VBOX file ID before rewriting it.
+
+The disposable VBOX must be proven to be a distinct NTFS file object before any
+XML rewrite or VirtualBox registration occurs.
+
+STATIC DEFECT 3
+
+The preparer revalidates live artifacts after isolated registration, but its
+success path does not rehash the sealed bundle VBOX, VDI and ISO or the sealed
+verification and route reports after the isolated operation.  Its report claims
+that the sealed bundle remained unchanged.
+
+That claim must be backed by post-operation exact hashes.  The disposable VDI
+and ISO must also be rehashed after registration to prove that registration did
+not alter their bytes.
+
+CORRECTION CONTRACT
+
+  preserve the original preparer unchanged
+  bind its tree and local blob exactly
+  delimit the Wait-VBoxServiceExit label with ${Label}
+  add a disposable VBOX NTFS file-ID distinctness gate before rewrite
+  rehash verification report and route report after isolated registration
+  rehash sealed bundle manifest, VBOX, VDI and ISO after isolated registration
+  revalidate sealed bundle VBOX and VDI file IDs after isolated registration
+  rehash disposable VDI and ISO after isolated registration
+  print the disposable VBOX file ID in the terminal result
+  retain every existing isolation, poweroff and no-start gate
+  do not authorize boot or build
+
+MUTATION BOUNDARY
+
+This was a static GitHub source audit only.
+No PowerShell execution, VBoxManage invocation, VBOX_USER_HOME creation, VM
+registration, VM start, snapshot mutation, VBOX rewrite, VDI copy, ISO copy,
+guest delivery or compiler execution occurred.
+
+CURRENT STATUS
+
+  configuration-exact bundle              VERIFIED
+  bundle identity                         SEALED
+  restore route                            ADJUDICATED
+  isolated rehearsal preparer              STATIC HARDENING REQUIRED
+  isolated rehearsal                       NOT PREPARED
+  restore boot                             NOT OBSERVED
+  powered-off recovery point              NOT SEALED
+  compiler build execution                NOT AUTHORIZED
+  optimizer transformation                DENIED
+
+RULE
+
+A DISPOSABLE COPY MUST BE PROVEN DISTINCT BEFORE REWRITE.
+POST-OPERATION IMMUTABILITY CLAIMS REQUIRE POST-OPERATION HASHES.
+DO NOT RUN A TOOL WITH A KNOWN SOURCE INTERPOLATION DEFECT.
+PREPARATION IS NOT BOOT PROOF.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
