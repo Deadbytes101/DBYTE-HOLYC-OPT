@@ -1,0 +1,185 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED BOOT READINESS R2 PARSER FIX STATIC AUDIT
+
+CLASS
+
+THE R2 BOOT-READINESS ADJUDICATOR WRAPPER WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+THE ORIGINAL ADJUDICATOR IS PRESERVED AND BOUND BY TREE AND LOCAL BLOB.
+R2 PATCHES ONLY THE ISO-ATTACHMENT PARSER SEAM IN MEMORY.
+NO VIRTUALBOX MUTATION COMMAND WAS ADDED.
+VM START, RESTORE BOOT AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/ADJUDICATE-TEMPLEOSTS-ISOLATED-BOOT-READINESS-R2.ps1
+
+Blob:
+  63f028578d038937d2fd81acc71c2d825344babb
+
+BOUND ORIGINAL
+
+Path:
+  tools/ADJUDICATE-TEMPLEOSTS-ISOLATED-BOOT-READINESS.ps1
+
+Required tree/local blob:
+  c5cc5684617f019dcbb6c23e0ee5f4905d5a5cac
+
+The wrapper requires:
+
+  the original file exists
+  HEAD:path resolves to exactly the required blob
+  the local worktree file hashes to exactly the required blob
+  the malformed source seam occurs exactly once
+  the corrected source seam is absent before replacement
+  the malformed source seam is absent after replacement
+  the corrected source seam occurs exactly once after replacement
+  the patched text differs from the original text
+
+PARSER CORRECTION
+
+Original malformed expression:
+
+  $IsoAttached = -not [string]::IsNullOrWhiteSpace(
+      Get-RequiredMachineValue ...
+  )
+
+Corrected expression:
+
+  $IsoAttachmentPath = Get-RequiredMachineValue ...
+  $IsoAttached = -not [string]::IsNullOrWhiteSpace(
+      $IsoAttachmentPath
+  )
+
+The correction changes evaluation form only.
+
+The semantic sequence remains:
+
+  require the IDE-0-1 machine-readable field
+  receive its exact string value
+  test whether that value is null, empty or whitespace
+  invert the result to classify ISO attachment
+
+No default value, normalization, path rewrite or attachment mutation is introduced.
+
+DYNAMIC EXECUTION CONTRACT
+
+R2 creates the corrected original adjudicator as a scriptblock only after all source contracts pass.
+
+Before dynamic execution, R2 counts literal $PSScriptRoot references in the original source and requires exactly zero.
+
+This prevents repetition of the earlier nested-wrapper empty-$PSScriptRoot failure class.
+
+The R2 wrapper itself is file-backed and uses its own valid $PSScriptRoot only to locate the repository and original adjudicator.
+
+UNCHANGED READINESS GATES
+
+R2 preserves the original adjudicator gates for:
+
+  exact isolated rehearsal verification-report hash
+  exact rehearsal manifest hash
+  exact resource commit and clean tracked resource tree
+  exact rehearsal root
+  exact disposable VBOX, VDI and ISO hashes
+  exact disposable VBOX, VDI and ISO NTFS file IDs
+  default registry exact target and powered-off state before isolation
+  default zero running rows, snapshots and shared folders
+  exact live VBOX, VDI and ISO identities
+  process-scope VBOX_USER_HOME isolation
+  isolated registry exact target and powered-off state
+  exact local VBOX, VDI and ISO attachment paths
+  isolated zero running rows, snapshots and shared folders
+  boot1 through boot4 extraction
+  NIC and cable-state extraction
+  clipboard and drag-and-drop extraction
+  graphics-controller and VRAM extraction
+  default registry and live artifact revalidation after isolation
+  disposable artifact hash and file-ID revalidation after isolation
+  output report creation only after all gates pass
+
+NEGATIVE COMMAND SURFACE
+
+R2 adds no command that can:
+
+  start, stop or control a VM
+  register or unregister a VM
+  modify VM configuration
+  change boot order
+  attach or detach media
+  create, restore or delete a snapshot
+  create, clone, modify or close a medium
+  write the disposable VBOX, VDI or ISO
+  modify the default or isolated registry
+  deliver guest files
+  execute the TempleOS compiler
+
+WRITE BOUNDARY
+
+Before all gates succeed, R2 and the corrected adjudicator do not write:
+
+  the rehearsal root
+  the isolated registry
+  the disposable VBOX, VDI or ISO
+  the default registry
+  the live VBOX, VDI or ISO
+  the requested boot-readiness report
+
+The only intended explicit write remains the external report selected by OutPath after every readiness gate succeeds.
+
+AUTHORIZED RESULT ON SUCCESS
+
+A successful R2 invocation may adjudicate:
+
+  observed boot order
+  whether VDI is first boot device
+  whether ISO remains attached
+  whether network is disabled
+  whether clipboard is disabled
+  whether drag-and-drop is disabled
+  observed graphics controller and VRAM
+  corrections required for a separate disposable boot-attempt copy
+
+It must still report:
+
+  SEALED REHEARSAL DIRECT START  DENIED
+  BOOT ATTEMPT COPY              REQUIRED / NOT PREPARED
+  VM START                       NOT AUTHORIZED
+  RESTORE BOOT                   NOT OBSERVED
+  POWERED-OFF RECOVERY POINT     NOT SEALED
+  BUILD EXECUTION                NOT AUTHORIZED
+
+ADVERSARIAL JUDGMENT
+
+The first invocation produced no readiness evidence because the parser rejected the script before execution.
+
+R2 does not reinterpret that failed invocation.  It preserves the failed object, binds it exactly and repairs one syntactic seam before a new observed execution.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal environment  SEALED
+  original readiness adjudicator               PARSER DEFECT / PRESERVED
+  R2 parser correction                          STATICALLY AUDITED
+  boot-readiness adjudication                   EXECUTION PENDING
+  boot-attempt copy                             NOT PREPARED
+  VM start                                      NOT AUTHORIZED
+  restore boot                                  NOT OBSERVED
+  powered-off recovery point                    NOT SEALED
+  compiler build execution                      NOT AUTHORIZED
+  optimizer transformation                      DENIED
+
+RULE
+
+ONE PARSER DEFECT, ONE EXACT REPLACEMENT.
+DO NOT EDIT OR REPLACE THE FAILED ORIGINAL OBJECT.
+NO READINESS REPORT, NO BOOT ATTEMPT DESIGN.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
