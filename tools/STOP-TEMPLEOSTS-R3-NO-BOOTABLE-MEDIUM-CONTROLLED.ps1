@@ -243,7 +243,8 @@ try {
     $Running = Invoke-Native -FilePath $VBox -Arguments @('list', 'runningvms') -Label 'pre-stop running inventory'
     Require-NativeSuccess -Result $Running
     $RunningRows = @($Running.Output | Where-Object { $_.Trim().Length -gt 0 })
-    $ExpectedRunningRow = '"' + $ExpectedMachineName + '" {' + $ExpectedMachineUuid + '}'
+    $Quote = [string][char]34
+    $ExpectedRunningRow = $Quote + $ExpectedMachineName + $Quote + ' {' + $ExpectedMachineUuid + '}'
     if ($RunningRows.Count -ne 1 -or $RunningRows[0].Trim() -cne $ExpectedRunningRow) { throw "pre-stop running inventory mismatch: $($RunningRows -join ' | ')" }
 
     $Info = Get-ShowInfo -VBox $VBox
