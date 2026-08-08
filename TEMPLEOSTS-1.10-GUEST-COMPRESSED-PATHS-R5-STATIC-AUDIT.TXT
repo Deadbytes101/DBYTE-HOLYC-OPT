@@ -1,0 +1,46 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / GUEST COMPRESSED PATHS R5 / STATIC AUDIT
+
+script	tools/RESTART-TEMPLEOSTS-FRESH-ISO-R1-AND-PROBE-COMPRESSED-PATHS-R5.ps1
+script_blob	55f69eeec4f2ac4fce4a24b25c705d371eb4c53b
+
+BOUND INPUTS
+r4_report_sha256	D7C511A1F62731A51B39DB4C56E72451245D472666146376E090C39443078F03
+r4_source_png_sha256	CF7A075A0AC2266745DF95769170D723BB8047B87FABF86E68B9097DDA43F53C
+r4_project_png_sha256	CF7A075A0AC2266745DF95769170D723BB8047B87FABF86E68B9097DDA43F53C
+iso_sha256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+CONTROLLED VM TRANSITION
+precondition	exact isolated VM running
+mutation_1	controlvm target poweroff / once
+mutation_2	startvm target --type headless / once
+post-start wait	12 seconds
+
+GUEST INPUT
+command_1	"DBYTE_R5_INPUT_LIVE";
+command_2	Dir("T:/Compiler/ICLCC.CPP.Z");
+command_3	Dir("T:/Compiler/Compiler.PRJ.Z");
+quote transport	Set-1 raw quote scancode already observed working
+
+OBSERVED-VERIFY CONTRACT
+pre screenshot	GUEST-R5-PRE.png
+marker screenshot	GUEST-R5-MARKER.png
+source screenshot	GUEST-R5-SOURCE.png
+project screenshot	GUEST-R5-PROJECT.png
+marker hash must differ from pre	REQUIRED
+source hash must differ from marker	REQUIRED
+project hash must differ from source	REQUIRED
+post VM state running	REQUIRED
+post running row cardinality 1	REQUIRED
+
+DENIED
+install	NONE
+compiler target write	NONE
+compiler build	NONE
+storageattach/modifyvm	NONE
+network enablement	NONE
+extra retry/reset	NONE
+
+STATUS	STATIC-AUDIT-PASS-R5
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
