@@ -90,7 +90,7 @@ try{
     Text 'Dir(' 'Dir prefix';Quote;Text 'T:/Compiler/ICLCC.CPP' 'T path';Quote;Text ');' 'Dir suffix';Enter
     Start-Sleep -Seconds 2
     $T=Shot $TPng 'T path screenshot'
-    if((Native $VBox @('showvminfo',$Uuid,'--machinereadable') 'post T state').Rows -join"`n" -notmatch '(?m)^VMState="?running"?$'){throw 'VM not running after T probe'}
+    $R=Native $VBox @('showvminfo',$Uuid,'--machinereadable') 'post T showvminfo';Ok $R;$AfterT=MR $R.Rows;Need $AfterT 'VMState' 'running'
 
     Write-Host 'R3 ATA BOUNDARY: T-PATH CAPTURED'
     Text 'ATARep(FALSE,TRUE);' 'ATARep';Enter
