@@ -1,0 +1,41 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / GUEST T-PATH + ATA R3 / VISUAL OBSERVATION
+
+branch	overheaven-foundation
+r3_report_sha256	076FEA00B852DA7B2A82B176AAF24511E4704C8C7693BE11AE1B61FEB19B8A21
+t_path_png_sha256	549B086AAC4E3A7E25063798202D5F2CACE449C6EF0B7141C5BC59E259D1981F
+ata_png_sha256	CF7A075A0AC2266745DF95769170D723BB8047B87FABF86E68B9097DDA43F53C
+
+T PATH OBSERVATION
+command	Dir("T:/Compiler/ICLCC.CPP");
+transport	QUOTE-SCANCODE-OBSERVED-WORKING
+visible_result	No Matches
+classification	UNCOMPRESSED-T-PATH-NOT-MATCHED
+compiler_absence_claim	DENIED
+reason	Exact TempleOSTS ISO is predominantly legacy CArc compressed; expanded extraction names are not necessarily guest ISO path names.
+
+ATA OBSERVATION
+command	ATARep(FALSE,TRUE);
+visible_device	ATA Secondary IDE
+Base0	0x0170
+Base1	0x0374
+IRQ	0x0F
+Unit	0
+guest_disk_visibility	PASS
+
+HOST OBSERVATION
+post_vm_state	running
+post_running_rows	1
+target_compiler_file_write	NOT-EXECUTED
+compiler_build	NOT-EXECUTED
+install	NOT-EXECUTED
+vm_start_stop_reset	NOT-EXECUTED-BY-R3
+storage_attach_modify	NOT-EXECUTED
+network_enablement	NOT-EXECUTED
+
+NEXT DECISION
+Probe compressed guest ISO paths ending in .Z before any install or target-file mutation.
+
+STATUS	R3-VISUAL-ADJUDICATED-PASS-WITH-COMPRESSED-PATH-QUESTION
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
