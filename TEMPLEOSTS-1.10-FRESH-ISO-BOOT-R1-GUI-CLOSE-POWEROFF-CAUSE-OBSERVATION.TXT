@@ -1,0 +1,26 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / GUI CLOSE POWEROFF CAUSE
+
+Observed full VBox.log context from the first fresh ISO run:
+
+startup_error	00:00:04.676050 VBOX_E_IPRT_ERROR / VERR_HGCM_SERVICE_NOT_FOUND
+running_transition	00:00:05.339895 POWERING_ON -> RUNNING
+cd_boot	00:00:07.890020 BIOS: Booting from CD-ROM...
+running_to_suspend	00:04:35.989222 RUNNING -> SUSPENDING
+paused	00:04:35.990421 Machine state changed to Paused
+causal_close_action	00:04:37.113117 GUI: Request for close-action to power VM off.
+causal_poweroff_action	00:04:37.113286 GUI: Powering VM off..
+powerdown_request	00:04:37.115880 Console::powerDown(): A request to power off the VM has been issued
+poweroff_transition	00:04:37.116028 SUSPENDED -> POWERING_OFF
+terminated	00:04:37.138958 DESTROYING -> TERMINATED
+powered_off	00:04:37.139908 Machine state changed to PoweredOff
+
+The VBoxGuestPropSvc VERR_HGCM_SERVICE_NOT_FOUND marker occurred during initialization, about 270 seconds before the GUI close action, and the VM reached RUNNING and booted from CD-ROM afterward. It is not observed as the poweroff trigger.
+
+The observed poweroff trigger is the VirtualBox GUI close-action path. The evidence does not identify which external actor caused the GUI close request.
+
+Decision: remove the GUI runtime window from the next visual-capture attempt. One headless start is authorized only after exact state/artifact gates, followed by a bounded wait and screenshotpng. No automatic stop, reset, storage mutation, guest delivery, or compiler build is authorized by this observation.
+
+STATUS	GUI-CLOSE-POWEROFF-CAUSE-OBSERVED
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
