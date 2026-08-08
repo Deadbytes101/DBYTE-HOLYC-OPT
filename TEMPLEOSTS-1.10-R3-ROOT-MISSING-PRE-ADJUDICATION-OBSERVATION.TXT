@@ -1,0 +1,53 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 ROOT MISSING / PRE-ADJUDICATION OBSERVATION
+
+CLASSIFY
+
+A fail-closed transition invocation reached PHASE 0:
+
+  R3 POWEROFF ADJUDICATION
+
+The exact adjudicator object was bound before invocation:
+
+  tools/ADJUDICATE-TEMPLEOSTS-R3-ALREADY-POWEROFF-AFTER-NO-BOOT.ps1
+  blob 6d89e9030e702b5675aa2561192f6188009d9de0
+
+The invocation failed at Resolve-Path for:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3
+
+Observed error:
+
+  Cannot find path 'D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3' because it does not exist.
+
+BOUND PRIOR EVIDENCE
+
+The previously sealed second controlled boot-attempt report remains the causal predecessor:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-second-controlled-boot-attempt.txt
+  SHA256 E6780E727989B974727402F782CA16B1B870FBF05591FACA6D131F6244F71430
+
+That prior attempt established host start acceptance and a visual no-bootable-medium result. This observation does not alter that prior evidence.
+
+MUTATION ADJUDICATION
+
+The current invocation failed before the adjudicator could establish or enter any mutation boundary.
+
+Therefore for this invocation:
+
+  CONTROLVM POWEROFF      NOT-EXECUTED
+  ISO PREPARATION         NOT-EXECUTED
+  ISO START               NOT-EXECUTED
+  STORAGE MUTATION        NOT-EXECUTED
+  SERVICE MUTATION        NOT-EXECUTED
+  COMPILER BUILD          NOT-EXECUTED
+
+The missing path is a host filesystem-location fact only. It does not by itself prove whether the R3 directory was deleted, renamed, moved, or never present at that exact path at the time of invocation.
+
+ONE DECISION
+
+Do not recreate the expected R3 path and do not substitute another candidate by guess.
+
+Perform a bounded read-only locator pass over the known DBYTE-HOLYC-OPT boot/rehearsal/recovery roots to discover extant Temple1.10 VBOX/VDI/ISO artifacts and report their identities before any further transition.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
