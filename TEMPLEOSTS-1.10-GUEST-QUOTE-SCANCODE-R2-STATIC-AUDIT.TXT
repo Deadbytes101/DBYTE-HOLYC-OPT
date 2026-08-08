@@ -1,0 +1,54 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / GUEST QUOTE SCANCODE R2 / STATIC AUDIT
+
+script	tools/RESTART-TEMPLEOSTS-FRESH-ISO-R1-AND-TEST-QUOTE-SCANCODE-R2.ps1
+script_blob	98c66207885dba59ba88c47c16d90f3ea7583a4f
+predecessor_failure_record	TEMPLEOSTS-1.10-GUEST-SHELL-PROBE-R1-QUOTE-TRANSPORT-FAILURE-OBSERVATION.TXT
+
+BOUND R1 EVIDENCE
+r1_probe_png_sha256	04B80A576F5D4FBC161D763247DEE47F6321A4BE46EF680E207E459AFA4B3DD5
+r1_probe_report_sha256	83A2B2A73D4684C4FDA6B89A64ED6809AE72E14884B39CBF98995286657D0BF3
+iso_sha256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+machine_uuid	9c98691e-27cd-4487-a306-587969c2c78c
+
+HOST STATE TRANSITION
+1	require exact target already running
+2	controlvm poweroff once
+3	require exact target reaches poweroff and running inventory becomes empty
+4	startvm exact UUID --type headless once
+5	require exact target reaches running
+6	wait 12 seconds
+7	capture pre-input PNG
+8	send exactly one marker command
+9	capture post-input PNG
+10	require exact target remains running
+
+QUOTE TRANSPORT TEST
+Opening and closing double quotes are not included inside keyboardputstring.
+Each double quote is emitted using Set-1 US keyboard scancodes:
+  2a 28 a8 aa
+which is LSHIFT-down, quote/apostrophe-key down/up, LSHIFT-up.
+keyboardputstring is used only for:
+  DBYTE_QUOTE_SCANCODE_R2
+  ;
+Enter is emitted as:
+  1c 9c
+
+INTENDED GUEST COMMAND
+  "DBYTE_QUOTE_SCANCODE_R2";
+
+The R2 script sends no Dir path probe, G, G2, Fix, Exit, Copy, Move, Del, FileWrite, Cmp, include, format, install, reboot, shutdown, or compiler-build primitive.
+The R2 script performs no storageattach, modifyvm, network enablement, snapshot operation, source delivery, or optimizer transformation.
+The deliberate VM mutations are bounded to one host poweroff and one headless start of the already-isolated fresh-ISO VM.
+The guest interactive command line may use HOME/Temp.TXT.Z internally; R2 therefore does not claim a zero-write guest filesystem. It claims only that no target compiler file mutation is requested by the probe command.
+
+OUTPUTS
+pre_png	D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1\GUEST-QUOTE-SCANCODE-R2-PRE.png
+post_png	D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1\GUEST-QUOTE-SCANCODE-R2-POST.png
+report	D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1\GUEST-QUOTE-SCANCODE-R2.txt
+
+STATUS	STATIC-AUDIT-PASS-BOUNDED-QUOTE-TRANSPORT-TEST
+COMPILER BUILD	NOT-AUTHORIZED
+PR READY/MERGE	NOT-AUTHORIZED
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
