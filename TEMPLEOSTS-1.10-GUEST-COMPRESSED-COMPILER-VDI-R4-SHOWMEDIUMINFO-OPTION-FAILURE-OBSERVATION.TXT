@@ -1,0 +1,25 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / COMPRESSED COMPILER + VDI R4 / SHOWMEDIUMINFO OPTION FAILURE
+
+branch	overheaven-foundation
+execution_head	6d7140bdca7bd4b0dc65755716ad05c49b43f63b
+script_blob	bec241189f801c29f1ca899296d2c5ca972aac0c
+
+OBSERVED FAILURE
+command	VBoxManage showmediuminfo disk <bound VDI> --machinereadable
+exit	2
+error	unknown option: --machinereadable
+usage	VBoxManage showmediuminfo [disk | dvd | floppy] <uuid | filename>
+virtualbox_version	7.0.12
+
+BOUNDARY
+The failure occurred at the host showmediuminfo query before either R4 guest Dir command was issued.
+No R4 source/project screenshot or R4 report was produced by this invocation.
+No install, target compiler file write, compiler build, VM start/stop/reset, storage attachment modification, or network enablement was executed by the R4 script before failure.
+
+DECISION
+Remove only the unsupported --machinereadable argument from showmediuminfo. Preserve the human-readable output as evidence rows. Do not change the guest probe commands or mutation boundary.
+
+STATUS	R4-HOST-QUERY-OPTION-FAILURE-SEALED
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
