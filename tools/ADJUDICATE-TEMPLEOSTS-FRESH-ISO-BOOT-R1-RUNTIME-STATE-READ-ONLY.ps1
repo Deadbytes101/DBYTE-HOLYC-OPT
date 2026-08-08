@@ -106,6 +106,8 @@ if ((Get-TabValue $StartLines 'STATUS') -cne 'FRESH-ISO-START-ACCEPTED-HOST-RUNN
     throw 'START.txt status mismatch'
 }
 
+$VBoxHashBefore = (Get-FileHash -LiteralPath $VboxFile -Algorithm SHA256).Hash
+$RegistryHashBefore = (Get-FileHash -LiteralPath $Registry -Algorithm SHA256).Hash
 $OriginalVBoxHome = [Environment]::GetEnvironmentVariable('VBOX_USER_HOME',[EnvironmentVariableTarget]::Process)
 if (-not [string]::IsNullOrEmpty($OriginalVBoxHome)) { throw "VBOX_USER_HOME must be unset: $OriginalVBoxHome" }
 
@@ -151,6 +153,11 @@ finally {
     [Environment]::SetEnvironmentVariable('VBOX_USER_HOME',$OriginalVBoxHome,[EnvironmentVariableTarget]::Process)
 }
 
+$VBoxHashAfter = (Get-FileHash -LiteralPath $VboxFile -Algorithm SHA256).Hash
+$RegistryHashAfter = (Get-FileHash -LiteralPath $Registry -Algorithm SHA256).Hash
+if ($VBoxHashAfter -cne $VBoxHashBefore) { throw "VBOX drift observed before=$VBoxHashBefore after=$VBoxHashAfter" }
+if ($RegistryHashAfter -cne $RegistryHashBefore) { throw "registry drift observed before=$RegistryHashBefore after=$RegistryHashAfter" }
+
 $Lines = [System.Collections.Generic.List[string]]::new()
 [void]$Lines.Add('DBYTE-HOLYC-OPT')
 [void]$Lines.Add('TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / RUNTIME STATE READ-ONLY')
@@ -162,6 +169,10 @@ $Lines = [System.Collections.Generic.List[string]]::new()
 [void]$Lines.Add("registered_vm_rows`t$($VmRows.Count)")
 [void]$Lines.Add("running_vm_rows`t$($RunningRows.Count)")
 foreach ($Row in $RunningRows) { [void]$Lines.Add("running_vm`t$Row") }
+[void]$Lines.Add("vbox_hash_before`t$VBoxHashBefore")
+[void]$Lines.Add("vbox_hash_after`t$VBoxHashAfter")
+[void]$Lines.Add("registry_hash_before`t$RegistryHashBefore")
+[void]$Lines.Add("registry_hash_after`t$RegistryHashAfter")
 [void]$Lines.Add("vboxsup_query_exit`t$($Service.ExitCode)")
 [void]$Lines.Add("vboxsup_state`t$ServiceState")
 foreach ($Row in $Service.Rows) { [void]$Lines.Add("vboxsup_query`t$Row") }
@@ -188,6 +199,8 @@ Write-Host "STATE CHANGE: $LastStateChange"
 Write-Host "RUNNING ROWS: $($RunningRows.Count)"
 Write-Host "VBOXSUP STATE: $ServiceState"
 Write-Host "VBOX PROCESSES: $($ProcessRows.Count)"
+Write-Host "VBOX HASH: $VBoxHashBefore"
+Write-Host "REGISTRY HASH: $RegistryHashBefore"
 Write-Host "VBOX.LOG: $(Test-Path -LiteralPath $VBoxLog -PathType Leaf)"
 Write-Host "HARDENING LOG: $(Test-Path -LiteralPath $HardeningLog -PathType Leaf)"
 Write-Host "REPORT: $Report"
