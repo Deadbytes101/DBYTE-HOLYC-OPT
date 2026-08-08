@@ -67,6 +67,9 @@ $Lines=[System.Collections.Generic.List[string]]::new()
 
 $SecondAttemptPresent=Test-Path -LiteralPath $ExpectedSecondAttempt -PathType Leaf
 $SecondAttemptHash=if($SecondAttemptPresent){(Get-FileHash -LiteralPath $ExpectedSecondAttempt -Algorithm SHA256).Hash}else{'<missing>'}
+if($SecondAttemptPresent -and $SecondAttemptHash -cne $ExpectedSecondAttemptHash){
+    throw "second attempt report hash mismatch expected=$ExpectedSecondAttemptHash actual=$SecondAttemptHash"
+}
 [void]$Lines.Add("second_attempt_report_present`t$([string]$SecondAttemptPresent)")
 [void]$Lines.Add("second_attempt_report_sha256`t$SecondAttemptHash")
 [void]$Lines.Add('')
