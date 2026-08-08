@@ -75,7 +75,7 @@ if ((Get-FileHash -LiteralPath $Start -Algorithm SHA256).Hash -cne $ExpectedStar
 if ((Get-FileHash -LiteralPath $Driver -Algorithm SHA256).Hash -cne $ExpectedDriverHash) { throw 'VBoxSup.sys hash mismatch' }
 if ((Get-FileHash -LiteralPath $Iso -Algorithm SHA256).Hash -cne $ExpectedIsoHash) { throw 'ISO hash mismatch' }
 
-$Svc = Native $Sc @('query','VBoxSup')
+$Svc = Native -File $Sc -Arguments @('query','VBoxSup')
 Ok $Svc 'sc query VBoxSup'
 if (($Svc.Rows -join "`n") -notmatch '(?im)^\s*STATE\s*:\s*4\b') { throw 'VBoxSup not running' }
 
@@ -84,18 +84,18 @@ if (-not [string]::IsNullOrEmpty($OldHome)) { throw "VBOX_USER_HOME must be unse
 
 [Environment]::SetEnvironmentVariable('VBOX_USER_HOME',$VBoxHome,[EnvironmentVariableTarget]::Process)
 try {
-    $Ver = Native $VBox @('--version')
+    $Ver = Native -File $VBox -Arguments @('--version')
     Ok $Ver 'version'
     if ($Ver.Rows.Count -ne 1 -or $Ver.Rows[0].Trim() -cne $ExpectedVersion) { throw 'VirtualBox version mismatch' }
 
-    $Run = Native $VBox @('list','runningvms')
+    $Run = Native -File $VBox -Arguments @('list','runningvms')
     Ok $Run 'runningvms'
     $Rows = @($Run.Rows | Where-Object { $_.Trim().Length -gt 0 })
     $Q = [string][char]34
     $Expected = $Q + $Name + $Q + ' {' + $Uuid + '}'
     if ($Rows.Count -ne 1 -or $Rows[0].Trim() -cne $Expected) { throw "running inventory mismatch: $($Rows -join ' | ')" }
 
-    $InfoR = Native $VBox @('showvminfo',$Uuid,'--machinereadable')
+    $InfoR = Native -File $VBox -Arguments @('showvminfo',$Uuid,'--machinereadable')
     Ok $InfoR 'showvminfo'
     $Info = MR $InfoR.Rows
     Need $Info 'name' $Name
@@ -113,7 +113,7 @@ try {
         if ($Info.ContainsKey($K)) { Need $Info $K 'none' }
     }
 
-    $Shot = Native $VBox @('controlvm',$Uuid,'screenshotpng',$Png)
+    $Shot = Native -File $VBox -Arguments @('controlvm',$Uuid,'screenshotpng',$Png)
     Ok $Shot 'screenshotpng'
 }
 finally {
