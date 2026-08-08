@@ -1,0 +1,50 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 ROOT LOCATOR R2 / OUTPUT PARENT MISSING OBSERVATION
+
+CLASSIFY
+
+Observed invocation bound and executed:
+
+  tools/LOCATE-TEMPLEOSTS-R3-ROOT-READ-ONLY-R2.ps1
+  blob 7e9e62fbe043b497322eec4ce31e713738e91cb4
+
+The invocation failed with:
+
+  output parent missing: D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE
+
+The failure occurred at the final report-parent gate before WriteAllText.
+
+EVIDENCE BOUNDARY
+
+The R2 locator performs filesystem enumeration and hashing before the final report-parent check, but prints its summary only after report creation. Therefore the console transcript does not expose the in-memory candidate inventory and no locator report was created.
+
+The invocation did not call VBoxManage and did not perform VM start/stop, storage attachment, service mutation, file copy/move/delete, ISO preparation, or compiler build.
+
+ROOT CAUSE
+
+The locator incorrectly assumed the historical evidence directory still existed:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE
+
+The same user transcript also previously established that the historical R3 root path was missing:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3
+
+Therefore the next locator must not depend on either historical root existing merely to emit evidence.
+
+ONE DECISION
+
+Preserve the failed R2 locator and release a new read-only locator with an output path under the known-existing parent D:\TECHNICAL. Broaden observation to include the D:\TECHNICAL tree and the historical live VirtualBox path while preserving the no-VBoxManage/no-VM-mutation contract.
+
+MUTATION ADJUDICATION
+
+  VBOXMANAGE              NOT-EXECUTED
+  VM START/STOP           NOT-EXECUTED
+  STORAGE MUTATION        NOT-EXECUTED
+  SERVICE MUTATION        NOT-EXECUTED
+  FILE COPY/MOVE/DELETE   NOT-EXECUTED
+  ISO PREPARATION         NOT-EXECUTED
+  COMPILER BUILD          NOT-EXECUTED
+  LOCATOR REPORT          NOT-CREATED
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
