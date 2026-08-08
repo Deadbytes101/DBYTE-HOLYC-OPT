@@ -1,0 +1,39 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / HOST START SUCCESS OBSERVATION
+
+observed_head	5a61a50eab8479f2985fd53b379485af122d24a7
+preparer_blob	c4d40aa2353ee683da67b6b4b333afa9b24aae73
+starter_blob	a35e18ee5a3b9182820dedc5ad1595fe421436aa
+locator_report_sha256	D1CE0E7839DD474EEB92247074E30824A51BB7F852A6BEAC75251AE5B098E8EA
+fresh_root	D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1
+source_baseline	D:\TECHNICAL\DBYTE-HOLYC-TOOLS\vm-output\virtualbox\Temple1.10-adopted-baseline\baseline1
+machine_state_before_start	poweroff
+boot_order	dvd / disk / none / none
+iso_attached	True / exact TempleOSTS ISO
+network	disabled
+manifest_sha256	388E2DA3356444FE51A755ABD254E320C5879E202200633F9A4E4604B14B8993
+preparation_sha256	2956BB095102C0BF1BE62ECD7A34ECB1928841B9ADA9E2650C30895D71C12D28
+live_vm_mutation	NOT-EXECUTED-DURING-PREPARATION
+vm_start_during_preparation	NOT-EXECUTED
+
+start_boundary	ALL PRE-START GATES PASSED
+start_source	ADOPTED BASELINE EXACT COPY
+start_boot_route	DVD -> DISK -> NONE -> NONE
+start_iso_attached	TRUE / EXACT TEMPLEOSTS ISO
+vboxsup_state_at_start	4 / RUNNING
+authorized_mutation	startvm TARGET --type gui / ONCE
+automatic_rollback	NONE
+start_exit_code	0
+post_start_vm_state	running
+post_start_running_vm_rows	1
+post_start_vboxsup	4
+start_report	D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1\START.txt
+start_report_sha256	23E802ADF0EF790F51D6D4DECA66EE0D10C755AE6C818CAA1C3934100BE43D76
+guest_visual_boot	NOT-OBSERVED-BY-HOST-SCRIPT
+controlvm	NOT-EXECUTED
+compiler_build	NOT-EXECUTED
+status	FRESH-ISO-START-ACCEPTED-HOST-RUNNING-VISUAL-PROOF-PENDING
+
+The later illustrative PowerShell snippet containing literal placeholder values such as ExpectedHead='...' failed at the HEAD mismatch gate before any project script invocation. It is not an execution failure of the fresh ISO route.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
