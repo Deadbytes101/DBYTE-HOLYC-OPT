@@ -1,0 +1,25 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / GUEST SHELL PROBE R1 / STATIC AUDIT
+
+script	tools/PROBE-TEMPLEOSTS-GUEST-SHELL-READ-ONLY-R1.ps1
+script_blob	77cdd366a1d6859d957b644fa8f60c14088f31bd
+
+BOUND INPUTS
+capture_report_sha256	15AA06C62838EE226284630E5E42BCC9303B5C51433253A15D0E8D4B45E353AF
+visual_png_sha256	B051E8B85D8E1D6B32A8DC4D82BB8F35AC62894AF13F61995A7DA96E3AABD879
+iso_sha256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+machine_uuid	9c98691e-27cd-4487-a306-587969c2c78c
+
+GUEST COMMANDS
+1	"DBYTE_GUEST_SHELL_R1\n";
+2	Dir("C:/Compiler/ICLCC.CPP");
+3	Dir("T:/Compiler/ICLCC.CPP");
+
+The commands contain no Copy, Move, Del, FileWrite, Cmp, include, format, install, reboot, shutdown or compiler-build primitive.
+The host route contains no startvm, poweroff, reset, storageattach, modifyvm, service mutation or network enablement.
+The only controlvm operations are keyboardputstring, keyboardputscancode and screenshotpng.
+Pre/post VM state is required to remain running with one exact registered/running target.
+
+STATUS	STATIC-AUDIT-PASS-READ-ONLY-GUEST-SHELL-PROBE
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
