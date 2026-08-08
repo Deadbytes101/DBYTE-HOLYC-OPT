@@ -1,0 +1,41 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / VISUAL CAPTURE R2 / STATIC AUDIT
+
+failed_capture_blob	aa1fe4a71ffd4b140fc45e7991e3a86184287897
+r2_capture_blob	b3df541593d3645c4f8b2c38e48789d2d1ef5bd8
+start_report_sha256	23E802ADF0EF790F51D6D4DECA66EE0D10C755AE6C818CAA1C3934100BE43D76
+
+Correction:
+Native helper parameter renamed from $Args to $Arguments.
+All native invocations bind -File and -Arguments explicitly.
+
+Pre-capture gates retained:
+exact START.txt hash
+exact VBoxSup.sys hash
+exact ISO hash
+VBoxSup STATE 4
+process VBOX_USER_HOME unset
+VirtualBox version 7.0.12r159484
+exact one running target VM
+exact name/UUID/CfgFile/media paths
+VMState running
+dvd/disk/none/none boot order
+NICs disabled when exposed
+
+Post-start VDI hash is intentionally not required because guest execution may legitimately write the fresh VDI after start.
+
+Authorized mutation surface:
+controlvm 9c98691e-27cd-4487-a306-587969c2c78c screenshotpng <fresh-root>\VISUAL.png
+exactly one intended screenshot operation
+
+VM START/STOP	NONE
+STORAGEATTACH	NONE
+MODIFYVM	NONE
+SERVICE MUTATION	NONE
+COMPILER BUILD	NONE
+AUTOMATIC RETRY	NONE
+AUTOMATIC ROLLBACK	NONE
+
+VERDICT	R2 STATIC SURFACE ACCEPTED FOR VISUAL CAPTURE
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
