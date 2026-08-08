@@ -1,0 +1,61 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / VISUAL CAPTURE STATIC AUDIT
+
+OBJECT
+tools/CAPTURE-TEMPLEOSTS-FRESH-ISO-BOOT-R1-VISUAL.ps1
+blob	aa1fe4a71ffd4b140fc45e7991e3a86184287897
+
+BOUND STATE
+fresh root	D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1
+start report SHA256	23E802ADF0EF790F51D6D4DECA66EE0D10C755AE6C818CAA1C3934100BE43D76
+machine UUID	9c98691e-27cd-4487-a306-587969c2c78c
+ISO SHA256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+VBoxSup.sys SHA256	3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4
+VirtualBox version	7.0.12r159484
+
+PRE-CAPTURE GATES
+START.txt exact hash required
+VBoxSup exact driver hash and STATE 4 required
+exact ISO hash required
+fresh VBOX/VDI/ISO paths required
+isolated VBOX_USER_HOME required
+running inventory must contain exactly Temple1.10 target
+VMState must be running
+CfgFile, VDI path, ISO path and dvd/disk/none/none boot route rechecked
+NICs exposed by showvminfo must remain none
+
+POST-START DISK CONTRACT
+VDI pristine SHA256 is intentionally not required after successful start.
+The sealed START.txt binds the exact pre-start VDI state.
+Guest writes after the start boundary are permitted evidence, not drift failure.
+
+OBSERVATION COMMAND
+VBoxManage controlvm TARGET screenshotpng VISUAL.png
+cardinality	one
+purpose	visual observation only
+
+MUTATION SURFACE
+startvm	0
+poweroff	0
+reset	0
+savestate	0
+pause/resume	0
+storageattach	0
+modifyvm	0
+snapshot mutation	0
+guestcontrol	0
+service mutation	0
+compiler build	0
+controlvm screenshotpng	1
+
+OUTPUT
+D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1\VISUAL.png
+D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1\VISUAL.txt
+
+VERDICT
+STATIC PASS
+VISUAL CONTENT NOT YET ADJUDICATED
+BUILD NOT AUTHORIZED
+PR MUST REMAIN DRAFT
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
