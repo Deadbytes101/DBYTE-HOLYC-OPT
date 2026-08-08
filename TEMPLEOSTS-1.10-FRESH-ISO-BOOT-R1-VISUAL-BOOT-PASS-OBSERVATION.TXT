@@ -1,0 +1,27 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / VISUAL BOOT PASS
+
+Observed user-supplied screenshot after committed headless start/capture R2 success.
+
+execution_head	44f38bc74f204b62682a9b2a37eef7d9e22c0646
+capture_script_blob	dc848009750d8f9b7e7393813655e59bfcd61423
+capture_report_sha256	15AA06C62838EE226284630E5E42BCC9303B5C51433253A15D0E8D4B45E353AF
+visual_png_sha256	B051E8B85D8E1D6B32A8DC4D82BB8F35AC62894AF13F61995A7DA96E3AABD879
+visual_png_bytes	14657
+post_capture_vm_state	running
+post_capture_running_rows	1
+
+VISUAL OBSERVATION
+- TempleOS graphical shell/desktop is visibly rendered.
+- Guest is beyond VirtualBox BIOS/boot-medium failure state.
+- A TempleOS system banner, shell text and prompt are visible on the white TempleOS screen.
+- The screenshot is consistent with a successfully booted TempleOS environment, not an installer error or VirtualBox firmware error screen.
+
+GUEST DELIVERY	NOT-EXECUTED
+GUEST BACKUP	NOT-EXECUTED
+COMPILER BUILD	NOT-EXECUTED
+OPTIMIZER TRANSFORMATION	NONE
+
+STATUS	VISUAL-BOOT-PASS-GUEST-WORK-PENDING
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
