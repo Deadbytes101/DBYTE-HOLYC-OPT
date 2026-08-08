@@ -1,0 +1,85 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 ROOT LOCATOR / READ-ONLY STATIC AUDIT
+
+OBJECT
+
+  tools/LOCATE-TEMPLEOSTS-R3-ROOT-READ-ONLY.ps1
+  blob 5c0a39549c8fe09ec3275349fecf254fa91adc73
+
+INTENT
+
+The expected R3 root was observed missing before poweroff adjudication:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3
+
+The locator must discover extant candidate artifacts without recreating, moving, deleting, registering, starting, stopping, or modifying any VM/root.
+
+READ SURFACE
+
+The script reads only:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY
+
+Within existing search roots it:
+
+  - lists immediate top-level directories
+  - recursively locates files named Temple1.10.vbox
+  - recursively locates files named Temple1.10.vdi
+  - recursively locates files named TempleOSTS.iso
+  - hashes discovered candidate files
+  - reads VBOX text to test presence of the sealed machine/VDI/ISO UUID strings
+  - queries Win32_Process through Get-CimInstance for VirtualBox-related process rows
+
+BOUND EVIDENCE
+
+If present, the script hashes the prior second controlled boot-attempt report and requires:
+
+  SHA256 E6780E727989B974727402F782CA16B1B870FBF05591FACA6D131F6244F71430
+
+MUTATION SURFACE
+
+The script contains no VBoxManage invocation.
+
+It contains no:
+
+  startvm
+  controlvm
+  modifyvm
+  storageattach
+  registervm
+  unregistervm
+  snapshot mutation
+  sc create/start/stop/delete
+  Copy-Item
+  Move-Item
+  Remove-Item
+  New-Item
+
+The only intentional write is the locator report:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-r3-root-locator.txt
+
+The output parent must already exist and the output file must not already exist.
+
+FAIL-CLOSED BEHAVIOR
+
+The locator does not select a replacement R3 root and does not authorize ISO preparation or VM start.
+
+A discovered candidate is evidence only. Any transition to a discovered candidate requires separate identity adjudication first.
+
+STATIC VERDICT
+
+  HOST ARTIFACT MUTATION    NONE
+  VM MUTATION               NONE
+  SERVICE MUTATION          NONE
+  VBOXMANAGE                NONE
+  REPORT WRITE              ONE / EVIDENCE ROOT ONLY
+  ISO PREPARATION           NOT AUTHORIZED
+  VM START                  NOT AUTHORIZED
+  COMPILER BUILD            NOT AUTHORIZED
+
+  VERDICT                   READ-ONLY LOCATOR SAFE TO EXECUTE
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
