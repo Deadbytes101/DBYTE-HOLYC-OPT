@@ -1,0 +1,43 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / GUEST COMPRESSED ISO PATHS R4 / STATIC AUDIT
+
+script	tools/PROBE-TEMPLEOSTS-GUEST-COMPRESSED-PATHS-R4.ps1
+script_blob	fc7d5ac3f628443baa485fbaaf3f11b60cfa701b
+
+BOUND INPUTS
+iso_sha256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+r3_report_sha256	076FEA00B852DA7B2A82B176AAF24511E4704C8C7693BE11AE1B61FEB19B8A21
+r3_t_png_sha256	549B086AAC4E3A7E25063798202D5F2CACE449C6EF0B7141C5BC59E259D1981F
+r3_ata_png_sha256	CF7A075A0AC2266745DF95769170D723BB8047B87FABF86E68B9097DDA43F53C
+machine_uuid	9c98691e-27cd-4487-a306-587969c2c78c
+
+GUEST PAYLOADS
+1	Dir("T:/Compiler/ICLCC.CPP.Z");
+2	Dir("T:/Compiler/Compiler.PRJ.Z");
+3	Dir("T:/Accts/Install/DoItOnce.CPP.Z");
+
+HOST NATIVE OPERATIONS
+VBoxManage --version
+VBoxManage list runningvms
+VBoxManage showvminfo UUID --machinereadable
+VBoxManage controlvm UUID keyboardputstring ...
+VBoxManage controlvm UUID keyboardputscancode ...
+VBoxManage controlvm UUID screenshotpng ...
+
+DENIED/ABSENT EXECUTION
+startvm	ABSENT
+poweroff	ABSENT
+reset	ABSENT
+storageattach	ABSENT
+modifyvm	ABSENT
+network enablement	ABSENT
+guest ExeFile	ABSENT
+guest Copy/Move/Del/FileWrite	ABSENT
+guest Cmp/compiler build	ABSENT
+guest C-drive probe	ABSENT
+
+The script requires exactly one running target, exact isolated VBOX/VDI/ISO attachments, DVD->disk boot order, and disabled NICs before input. Each Dir command is followed by a screenshot and a running-state check. Final running inventory must remain exactly one target.
+
+STATUS	STATIC-AUDIT-PASS-COMPRESSED-PATH-PROBE-R4
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
