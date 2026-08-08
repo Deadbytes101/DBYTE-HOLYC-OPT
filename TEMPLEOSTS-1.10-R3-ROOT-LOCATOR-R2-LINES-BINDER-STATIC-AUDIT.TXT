@@ -1,0 +1,46 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 ROOT LOCATOR R2 / LINES BINDER STATIC AUDIT
+
+TARGET
+
+- failed locator blob: 5c0a39549c8fe09ec3275349fecf254fa91adc73
+- corrected locator: tools/LOCATE-TEMPLEOSTS-R3-ROOT-READ-ONLY-R2.ps1
+- corrected blob: 7e9e62fbe043b497322eec4ce31e713738e91cb4
+
+CORRECTION
+
+The failed locator's Add-Row helper declared Lines as a Mandatory List[string]. Because the list already contained a blank separator row, Windows PowerShell parameter validation rejected the collection before the function body ran.
+
+R2 removes Mandatory collection validation from Lines, accepts the object positionally, then fails closed inside Add-Row unless Lines is non-null and exactly System.Collections.Generic.List[string]. Key remains Mandatory/ValidateNotNullOrEmpty and Value explicitly allows an empty string.
+
+SCOPE REVIEW
+
+- expected output path remains exact
+- expected R3 root remains exact
+- second controlled boot-attempt report hash binding remains exact
+- search roots remain BOOT / REHEARSAL / RECOVERY only
+- candidate VBOX search remains Temple1.10.vbox
+- candidate VDI search remains Temple1.10.vdi
+- candidate ISO search remains TempleOSTS.iso
+- expected machine/VDI/ISO UUID markers remain unchanged
+- expected VDI and ISO hashes remain unchanged
+- VirtualBox process inventory is CIM read-only
+
+MUTATION SURFACE
+
+- VBoxManage: NONE
+- sc.exe/service mutation: NONE
+- VM start/stop: NONE
+- file copy: NONE
+- file move: NONE
+- file delete: NONE
+- directory create/delete: NONE
+- ISO preparation: NONE
+- compiler build: NONE
+- only output mutation: write the exact locator report under DBYTE-HOLYC-OPT-EVIDENCE
+
+VERDICT
+
+R2 CORRECTS ONLY THE LINES PARAMETER-BINDING FAILURE AND RETAINS THE READ-ONLY LOCATOR CONTRACT.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
