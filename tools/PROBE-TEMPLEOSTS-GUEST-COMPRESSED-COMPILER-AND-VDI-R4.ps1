@@ -84,7 +84,7 @@ try{
     Need $Info 'VMState' 'running';Need $Info 'CfgFile' $VboxFile;Need $Info 'IDE-1-0' $Vdi;Need $Info 'IDE-0-1' $Iso
     foreach($I in 1..8){$K="nic$I";if($Info.ContainsKey($K)){Need $Info $K 'none'}}
 
-    $Medium=Native $VBox @('showmediuminfo','disk',$Vdi,'--machinereadable') 'showmediuminfo';Ok $Medium
+    $Medium=Native $VBox @('showmediuminfo','disk',$Vdi) 'showmediuminfo';Ok $Medium
     $MediumRows=@($Medium.Rows|Where-Object{$_.Trim().Length-gt 0})
 
     Write-Host 'R4 COMPRESSED SOURCE BOUNDARY: R3 + RUNNING VM GATES PASSED'
