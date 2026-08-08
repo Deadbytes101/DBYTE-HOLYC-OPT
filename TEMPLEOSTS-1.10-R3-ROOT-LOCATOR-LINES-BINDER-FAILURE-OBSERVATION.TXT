@@ -1,0 +1,28 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 ROOT LOCATOR / LINES PARAMETER BINDER FAILURE OBSERVATION
+
+CLASSIFICATION
+
+- source locator blob: 5c0a39549c8fe09ec3275349fecf254fa91adc73
+- invocation reached locator after exact Git HEAD/blob verification
+- failure: ParameterBindingValidationException
+- message: Cannot bind argument to parameter 'Lines' because it is an empty string.
+- failure location: locator helper Add-Row invocation
+- locator report: NOT CREATED
+- VBoxManage: NOT EXECUTED
+- VM start/stop: NOT EXECUTED
+- file copy/move/delete: NOT EXECUTED
+- ISO preparation: NOT EXECUTED
+- compiler build: NOT EXECUTED
+
+ROOT CAUSE
+
+The locator initializes a System.Collections.Generic.List[string], adds a blank separator row, and then passes that list to Add-Row. Add-Row declares its Lines parameter as Mandatory and strongly typed as List[string]. Windows PowerShell parameter validation rejects the collection because it contains an empty-string element before the function body is entered.
+
+This is a locator helper binding defect. It does not establish any new fact about the missing R3 root beyond the previously observed Resolve-Path failure.
+
+DECISION
+
+Preserve the failed locator object. Do not edit it in place. Release a corrected R2 locator that keeps the read-only search logic unchanged while making Add-Row perform an explicit runtime type/null check instead of Mandatory collection-element validation.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
