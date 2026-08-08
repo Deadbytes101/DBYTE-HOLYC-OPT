@@ -1,0 +1,200 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 R3 HOST DRIVER FAILURE R2 INSPECTOR STATIC AUDIT
+
+CLASS
+
+THE CORRECTED R2 HOST-DRIVER FAILURE INSPECTOR WAS REVIEWED STATICALLY BEFORE USER EXECUTION.
+NO ASSISTANT-SIDE POWERSHELL EXECUTION IS CLAIMED.
+THE INSPECTOR IS READ-ONLY WITH RESPECT TO R3, VIRTUALBOX CONFIGURATION, WINDOWS DRIVER STATE AND VM STATE.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/INSPECT-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3-HOST-DRIVER-FAILURE-R2.ps1
+
+Final blob:
+  88a204b9c14b8006614d047cc8a085bccb0225b5
+
+Superseded unexecuted draft:
+  tools/INSPECT-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3-HOST-DRIVER-FAILURE.ps1
+
+The superseded draft must not be run.
+The R2 path above is the only authorized inspector.
+
+BOUND FAILED START EVIDENCE
+
+R3 root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3
+
+Controlled-start failure report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-single-controlled-boot-attempt.txt
+
+Required failure-report SHA256:
+  AC22D9A63234B8BC16FFFAE21BDAAE78704BDE6635A4072093EECCD070EE80D4
+
+Portable VirtualBox root:
+  D:\Portable-VirtualBox7
+
+Output report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-host-driver-failure-inspection.txt
+
+The output must be absent before execution.
+
+PRE-START R3 IDENTITIES USED FOR COMPARISON
+
+Current VBOX SHA256:
+  8EADB39D54CABE5E7B791E5D7E05BCF4CBBF32D4AB6B58291BEC0B2FAD607C0C
+Current VBOX file ID:
+  0X000000000000000000050000000609A1
+
+Previous VBOX SHA256:
+  C93D128227EE80B647DB63FE64277CEF1BDC61C224110472C73CBFFEC63877A7
+Previous VBOX file ID:
+  0X000000000000000000040000000609A7
+
+VDI SHA256:
+  90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+VDI file ID:
+  0X000000000000000000010000000609A2
+
+ISO SHA256:
+  DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+ISO file ID:
+  0X000000000000000000010000000609A3
+
+Isolated VirtualBox.xml pre-start SHA256:
+  99DB185525D245B1AAFF6937B459518089435882373A55CD2159D03FC82FDCBF
+
+The inspector observes current post-failure values and records match flags.
+It does not fail merely because a post-start-attempt artifact drifted; such drift is evidence to adjudicate.
+
+HARDENING EVIDENCE
+
+Primary log:
+  R3\Machine\Logs\VBoxHardening.log
+
+The inspector records:
+  existence
+  byte count
+  SHA256
+  exact matching lines for bounded failure terms
+  last 120 log lines with original line numbers
+
+Bounded matching terms include:
+  VBoxDrvStub
+  STATUS_OBJECT_NAME_NOT_FOUND
+  VERR_OPEN_FAILED
+  supR3HardenedWinReSpawn
+  NtCreateFile
+  VERR_
+  rc=-101
+
+The log is read only.
+
+WINDOWS DRIVER INVENTORY
+
+The inspector uses Get-CimInstance Win32_SystemDriver and filters only records whose Name, DisplayName or PathName contains VBox or VirtualBox.
+It records:
+  Name
+  DisplayName
+  State
+  StartMode
+  PathName
+
+If the CIM query fails, the error is recorded rather than converted into a driver-state claim.
+
+The inspector also executes these read-only Service Control Manager queries:
+  sc.exe query vboxsup
+  sc.exe query vboxdrv
+  sc.exe query vboxdrvstub
+
+It captures exit code and output for each candidate.
+
+No sc.exe create/start/stop/delete/config operation exists.
+
+PORTABLE VIRTUALBOX INVENTORY
+
+Under:
+  D:\Portable-VirtualBox7
+
+the inspector recursively records VBox*.sys files with:
+  relative path
+  bytes
+  SHA256
+  file version
+
+It also records these executable names when present:
+  VBoxManage.exe
+  VirtualBox.exe
+  VirtualBoxVM.exe
+  Portable-VirtualBox.exe
+
+Relative path trimming uses numeric character constants [char]92 and [char]47 to avoid PowerShell string/backslash overload ambiguity.
+
+PROCESS INVENTORY
+
+The inspector records currently visible processes whose process names begin with VBox or VirtualBox.
+It does not terminate them.
+
+READ-ONLY SURFACE
+
+Allowed host reads:
+  Resolve-Path
+  Get-Item
+  Get-FileHash
+  fsutil file queryfileid
+  File.ReadAllLines
+  Get-CimInstance Win32_SystemDriver
+  sc.exe query
+  Get-ChildItem
+  Get-Process
+
+Only write:
+  one external inspection report after the observations complete
+
+Explicitly absent:
+  VBoxManage
+  startvm
+  controlvm
+  modifyvm
+  storageattach
+  registervm
+  unregistervm
+  snapshot mutation
+  sc.exe start
+  sc.exe stop
+  sc.exe create
+  sc.exe delete
+  sc.exe config
+  driver install
+  driver uninstall
+  pnputil
+  net start
+  net stop
+  guestcontrol
+  compiler build
+
+NEXT RULE
+
+RUN ONLY THE R2 INSPECTOR.
+DO NOT RETRY R3 START.
+DO NOT START OR STOP ANY VIRTUALBOX DRIVER YET.
+DO NOT DELETE OR MODIFY R3 OR VBoxHardening.log.
+
+After the R2 inspector succeeds, adjudicate whether the host has:
+  no VBox support-driver registration
+  registered but stopped VBox support driver
+  mismatched/stale VBox driver registration
+  Portable-VirtualBox driver files present but not loaded/registered
+  or another hardening failure explicitly shown by VBoxHardening.log.
+
+No repair is authorized before that evidence.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

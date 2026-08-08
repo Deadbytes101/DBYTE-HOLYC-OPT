@@ -1,0 +1,151 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED BOOT READINESS PARSER FAILURE OBSERVATION
+
+CLASS
+
+THE FIRST ISOLATED BOOT READINESS ADJUDICATOR INVOCATION FAILED DURING POWERSHELL PARSING.
+THE SCRIPT BODY WAS NOT EXECUTED.
+NO VIRTUALBOX COMMAND WAS INVOKED BY THE ADJUDICATOR.
+NO VBOX_USER_HOME CONTEXT CHANGE OCCURRED.
+NO BOOT-READINESS REPORT WAS WRITTEN.
+NO VM START, CONFIGURATION CHANGE, STORAGE CHANGE, SNAPSHOT CHANGE, GUEST DELIVERY OR COMPILER EXECUTION OCCURRED.
+VM START, RESTORE BOOT AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  c54fe20e11fa416a991b21858def2bbf0fcbcf69
+
+Entrypoint:
+  tools/ADJUDICATE-TEMPLEOSTS-ISOLATED-BOOT-READINESS.ps1
+
+Entrypoint blob:
+  c5cc5684617f019dcbb6c23e0ee5f4905d5a5cac
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  resource root
+    D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+  sealed rehearsal verification report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-isolated-rehearsal-verification.txt
+
+  sealed rehearsal root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1
+
+  requested output report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-isolated-boot-readiness-adjudication.txt
+
+OBSERVED FAILURE
+
+PowerShell parser location:
+  line 675 character 54
+
+Primary diagnostic:
+  Missing ')' in method call.
+
+Affected expression:
+
+  $IsoAttached = -not [string]::IsNullOrWhiteSpace(
+      Get-RequiredMachineValue -Info $IsolatedInfo -Key 'IDE-0-1' -Label 'isolated target'
+  )
+
+Follow-on parser diagnostics reported unexpected tokens, a missing closing brace and a missing finally block.  Those diagnostics are consequences of the first malformed method-call argument expression.
+
+ROOT CAUSE
+
+A PowerShell command invocation cannot be placed directly as an unparenthesized argument expression inside this .NET method call form.
+
+The intended logic was:
+
+  read the required IDE-0-1 machine-readable value
+  test that returned string with [string]::IsNullOrWhiteSpace
+  classify whether an ISO is attached
+
+The syntax must first assign or parenthesize the command result.  The most explicit correction is:
+
+  $IsoAttachmentPath = Get-RequiredMachineValue ...
+  $IsoAttached = -not [string]::IsNullOrWhiteSpace($IsoAttachmentPath)
+
+EXECUTION BOUNDARY
+
+PowerShell parses the complete script before executing its body.  Therefore the observed invocation did not reach:
+
+  parameter-driven path resolution
+  report-hash binding
+  resource-repository checks
+  rehearsal file hash or NTFS file-ID checks
+  default VirtualBox registry queries
+  isolated VBOX_USER_HOME assignment
+  isolated VirtualBox registry queries
+  boot-order inspection
+  host-integration inspection
+  output-directory creation
+  output-report creation
+
+The output report path must remain absent.
+
+MUTATION BOUNDARY
+
+No mutation from this adjudicator invocation is supported by the evidence.
+
+In particular, the invocation did not:
+
+  start or stop a VM
+  modify a VM
+  register or unregister a VM
+  attach or detach media
+  modify boot order
+  modify network, clipboard or drag-and-drop settings
+  create or restore a snapshot
+  write the rehearsal VBOX, VDI or ISO
+  write the default registry
+  write the isolated registry
+  deliver guest files
+  execute the TempleOS compiler
+
+ONE DECISION
+
+Preserve the original adjudicator and create one blob-bound R2 wrapper.
+
+The R2 wrapper must:
+
+  bind the original tree and local blob exactly
+  require the malformed source seam exactly once
+  require the corrected seam absent before replacement
+  replace only the ISO-attachment expression in memory
+  require the original adjudicator to contain no $PSScriptRoot dependency before dynamic execution
+  retain every readiness query, evidence gate, report field and authorization boundary
+  invoke the corrected adjudicator only after all source contracts pass
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal environment  SEALED
+  first boot-readiness adjudication            PARSER FAILURE / NO EXECUTION
+  boot order                                   NOT OBSERVED BY THIS INVOCATION
+  host-integration state                       NOT OBSERVED BY THIS INVOCATION
+  boot-attempt copy                            NOT PREPARED
+  VM start                                     NOT AUTHORIZED
+  restore boot                                 NOT OBSERVED
+  powered-off recovery point                   NOT SEALED
+  guest delivery                               UNRESOLVED
+  compiler build execution                     NOT AUTHORIZED
+  optimizer transformation                     DENIED
+
+RULE
+
+A PARSER FAILURE IS ZERO EXECUTION, NOT A PARTIAL QUERY.
+PRESERVE THE ORIGINAL FAILED OBJECT AND PATCH ONE EXACT SEAM IN MEMORY.
+NO READINESS REPORT, NO BOOT ATTEMPT DESIGN.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

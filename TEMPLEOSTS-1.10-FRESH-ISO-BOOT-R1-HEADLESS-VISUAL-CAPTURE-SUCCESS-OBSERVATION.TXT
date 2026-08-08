@@ -1,0 +1,30 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / HEADLESS VISUAL CAPTURE SUCCESS
+
+Observed user execution of committed R2 headless start/capture route.
+
+execution_head	44f38bc74f204b62682a9b2a37eef7d9e22c0646
+script	tools/RESTART-TEMPLEOSTS-FRESH-ISO-BOOT-R1-HEADLESS-AND-CAPTURE-R2.ps1
+script_blob	dc848009750d8f9b7e7393813655e59bfcd61423
+
+headless_start_boundary	ALL GATES PASSED
+start_exit	0
+capture_exit	0
+visual_png	D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1\VISUAL-HEADLESS-R1.png
+visual_png_sha256	B051E8B85D8E1D6B32A8DC4D82BB8F35AC62894AF13F61995A7DA96E3AABD879
+visual_png_bytes	14657
+post_capture_vm_state	running
+post_capture_running_rows	1
+capture_report	D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1\HEADLESS-CAPTURE-R1.txt
+capture_report_sha256	15AA06C62838EE226284630E5E42BCC9303B5C51433253A15D0E8D4B45E353AF
+
+VM STOP/RESET	NOT-EXECUTED
+STORAGE MUTATION	NOT-EXECUTED
+SERVICE MUTATION	NOT-EXECUTED
+COMPILER BUILD	NOT-EXECUTED
+
+Visual PNG bytes/content have not been provided to the repository-side observer yet. The successful screenshot capture proves a valid PNG was produced while the exact fresh VM remained running; it does not by itself prove the guest-visible screen contents.
+
+STATUS	HEADLESS-VISUAL-CAPTURE-SUCCESS-CONTENT-ADJUDICATION-PENDING
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

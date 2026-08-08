@@ -1,0 +1,154 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 RECOVERY PREFLIGHT MISMATCH OBSERVATION
+
+CLASS
+
+POWERED-OFF RECOVERY POINT NOT SEALED.
+PINNED PREFLIGHT INSPECTOR REJECTED CURRENT VBOX RAW IDENTITY.
+VDI, ISO, TARGET IDENTITY AND POWEROFF STATE REMAIN ACCEPTED.
+BUILD EXECUTION NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  485ee6671336b5e78d64d0c1f4b41b50726fe578
+
+Command:
+  tools/VERIFY-TEMPLEOSTS-POWERED-OFF-RECOVERY-POINT.ps1
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  resource root
+    D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+  sealed target report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-target.txt
+
+  nested inspector report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-adopted-recovery-inspector.txt
+
+  intended final report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-powered-off-recovery-point.txt
+
+OBSERVED RESULT
+
+  phase
+    PREFLIGHT
+
+  classification
+    REGISTERED-ARTIFACT-MISMATCH
+
+  target row count
+    1
+
+  running target count
+    0
+
+  unrelated inaccessible count
+    0
+
+  target VM state
+    poweroff
+
+  VBOX state
+    MISMATCH
+
+  VDI state
+    EXACT
+
+  ISO destination state
+    EXACT
+
+  adopted baseline state
+    EXACT
+
+  nested inspector report SHA256
+    6393BCD2E0B6E0FCFCC01D74D0B4C3F6F035B5D686CF61ECB349B84E853C0594
+
+  tracked diff
+    none
+
+  pinned inspector terminal status
+    inspect-templeos-ts-110-adopted-current-registry: ok
+
+  wrapper stop
+    required line count mismatch: classification REGISTERED-EXACT count=0
+
+ADJUDICATION
+
+The pinned inspector completed its read-only inventory and wrote the nested
+report.  It did not accept the live target as REGISTERED-EXACT in PREFLIGHT
+mode because the current Temple1.10.vbox raw identity did not equal the adopted
+baseline VBOX raw identity.
+
+The same invocation independently retained the exact target row, zero running
+targets, poweroff state, exact VDI identity, exact ISO identity, exact adopted
+baseline state and a clean tracked resource tree.
+
+The wrapper stopped while checking the inspector console contract.  Its final
+powered-off recovery report write path was not reached.  Existence of the final
+report was not independently checked in this observation.
+
+The pinned inspector source defines two different VBOX acceptance contracts:
+
+  PREFLIGHT
+    exact current VBOX bytes and raw SHA256 plus normalized equality
+
+  POST-OBSERVATION
+    normalized equality after replacing only lastStateChange
+
+The observed mismatch does not authorize POST-OBSERVATION mode by itself.
+Current and baseline VBOX files must first be compared directly and proved
+equal after normalizing only lastStateChange.  No other difference may be
+accepted.
+
+MUTATION BOUNDARY
+
+The pinned inspector performed read-only VirtualBox queries and host-file
+hashing.  It wrote only the nested evidence report outside the resource tree.
+No VM start, stop, snapshot operation, attachment change, VDI copy, VDI write,
+ISO write, guest delivery or compiler execution was observed.
+
+CURRENT STATUS
+
+  exact corpus                         SEALED
+  target guest VM                      SEALED
+  target VM state                      POWEROFF / OBSERVED
+  live VDI                             EXACT
+  live ISO                             EXACT
+  adopted baseline                     EXACT
+  current VBOX raw identity            MISMATCH
+  VBOX normalized relationship         NOT YET ADJUDICATED
+  powered-off recovery point           NOT SEALED
+  restore execution                    NOT OBSERVED
+  guest delivery                       UNRESOLVED
+  compiler build execution             NOT AUTHORIZED
+  optimizer transformation             DENIED
+
+NEXT ALLOWED WORK
+
+  preserve nested inspector report SHA256 6393BCD2E0B6E0FCFCC01D74D0B4C3F6F035B5D686CF61ECB349B84E853C0594
+  bind a read-only drift adjudicator to that exact report
+  revalidate resource commit and clean tracked tree
+  revalidate current target identity and poweroff state
+  compare current and baseline VBOX raw identities
+  normalize only lastStateChange using the pinned inspector rule
+  require normalized text equality and distinct raw identities
+  do not seal recovery until that proof is observed
+
+RULE
+
+VBOX RAW MISMATCH IS NOT AUTOMATICALLY VOLATILE DRIFT.
+NORMALIZED EQUALITY MUST BE OBSERVED, NOT ASSUMED.
+TARGET SELECTION IS NOT A RECOVERY POINT.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

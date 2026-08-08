@@ -1,0 +1,310 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R11 MIXED SEPARATOR REPORT PARSER STATIC AUDIT
+
+CLASS
+
+THE R11 DIRECT-R8 BOOT-ATTEMPT PREPARER ENTRYPOINT WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+R11 PRESERVES AND BINDS THE FAILED R8 ENTRYPOINT BY EXACT TREE AND LOCAL BLOB.
+R11 COMBINES THE OBSERVED BLANK-ROW PARAMETER CORRECTION, A MIXED EXACT-SEPARATOR REPORT PARSER, AND THE AST-OFFSET REPOSITORY-ROOT SPLICE.
+THE WHOLE-FILE PROBE REPORT SHA256, MATRIX VALUES, FIXED SWITCHES, R2, ORIGINAL PREPARER AND VM PREPARATION CONTRACTS REMAIN UNCHANGED.
+NO VM START, RESTORE-BOOT CLAIM, RECOVERY-POINT SEAL OR BUILD AUTHORIZATION WAS ADDED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R11.ps1
+
+Blob:
+  8ae109b0323d5631c92693316d800189212a9948
+
+BOUND OBJECTS
+
+R8 path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R8.ps1
+
+Required R8 tree/local blob:
+  8e051b4cff813de4160311c45833174180f11bd9
+
+R8 continues to bind R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R2 continues to bind original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+R8 continues to bind probe-report path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vboxmanage-modifyvm-help-surface-probe.txt
+
+R8 continues to bind probe-report SHA256:
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+OBSERVED FAILURE BOUNDARY
+
+The failed R10 invocation passed:
+
+  blank-row AllowEmptyString correction
+  AST exact RepoRoot assignment classification
+  AST extent validation and root splice
+  final dynamic R8 parsing
+  dynamic R8 invocation
+  exact R2 blob checks inside R8
+  exact probe-report path resolution
+  exact whole-file probe-report SHA256 verification
+  blank-row-safe report line binding
+  initial real-tab report fields
+
+It failed on:
+
+  key=virtualbox_registry_query count=0
+
+The exact probe generator shows why.
+Some report rows are built with double-quoted strings containing `t and therefore contain a real tab.
+Other report rows are built with single-quoted strings containing `t and therefore contain the two literal characters backtick and lowercase t.
+
+The failed row is emitted as:
+
+  'virtualbox_registry_query`tNOT-EXECUTED'
+
+so R8's real-tab-only Get-ReportField cannot match it.
+
+R11 BLANK-ROW CONTRACT
+
+R11 binds the exact R8 blob and replaces exactly three occurrences of:
+
+  [Parameter(Mandatory = $true)][string[]]$Lines,
+
+with:
+
+  [Parameter(Mandatory = $true)][AllowEmptyString()][string[]]$Lines,
+
+The target helper functions remain:
+
+  Get-ReportField
+  Assert-ReportField
+  Assert-Attempt
+
+The replacement requires old count three, new count zero before replacement, old count zero after replacement and new count three after replacement.
+
+MIXED EXACT-SEPARATOR PARSER
+
+After the blank-row signature correction, R11 replaces exactly one complete Get-ReportField function body.
+
+For each exact requested key the new parser constructs:
+
+  real-tab prefix:
+    $Key + "`t"
+
+  literal-backtick-t prefix:
+    $Key + '`t'
+
+The first expression contains an actual tab character at runtime.
+The second expression contains the two literal characters backtick and lowercase t at runtime.
+
+For every report line R11 performs ordinal StartsWith tests against both prefixes.
+A match records:
+
+  exact line
+  exact matched-prefix length
+  representation classification
+
+The parser combines both representations into one match list and requires:
+
+  combined match count exactly 1
+
+Therefore it fails if:
+
+  the key is absent in both representations
+  the key is duplicated with real tabs
+  the key is duplicated with literal backtick-t separators
+  the same key appears once in each representation
+
+Only after exact-one cardinality does it extract the suffix after the exact matched prefix.
+
+The retained Assert-ReportField still compares the extracted value using case-sensitive ordinal equality.
+
+EVIDENCE RETENTION
+
+The mixed separator parser does not normalize, rewrite or regenerate the probe report.
+The immutable report file must still match whole-file SHA256:
+
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+before field parsing begins.
+
+R8 still requires all exact fields covering:
+
+  VBoxManage executable path
+  VBoxManage version 7.0.12r159484
+  version exit code
+  boot-attempt root and absent state
+  preparation-report path and absent state
+  process VBOX_USER_HOME before and after
+  registry-query and mutation classifications
+  VM-start classification
+  all four help/usage argument vectors
+  all four native exit codes
+  stdout/stderr byte counts
+  stdout/stderr SHA256 values
+  usage and option markers
+  final probe classifications and verdict
+
+No fuzzy whitespace, case folding or optional field matching is introduced.
+
+FIXED SWITCH CONTRACT
+
+R11 does not alter R8's report-bound Get-ModifyVmSwitches source replacement.
+After every report assertion passes, R8 still selects exactly:
+
+  --clipboard-mode
+  --drag-and-drop
+
+It does not select:
+
+  --clipboard
+  --draganddrop
+
+No native help invocation is reintroduced during preparation.
+
+AST REPOSITORY-ROOT CONTRACT
+
+R11 parses the patched R8 source after blank-row and parser corrections.
+It requires exactly one AssignmentStatementAst whose complete extent is:
+
+  $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+It also requires exactly one executable PSScriptRoot VariableExpressionAst before injection.
+
+R11 reads the assignment node's StartOffset and EndOffset and requires:
+
+  start >= 0
+  end > start
+  end <= source length
+  exact source substring at the extent equals the expected assignment
+
+Only that AST extent is replaced with the file-backed R11 repository root.
+
+The final source is reparsed and must contain:
+
+  executable PSScriptRoot count 0
+  old RepoRoot assignment count 0
+
+No surrounding declaration or layout adjacency is required.
+
+UNCHANGED R8 AND R2 CONTRACTS
+
+R11 does not alter R8's exact probe hash or any expected report value.
+R11 does not alter R8's fixed switch selection.
+R11 does not alter R2 hardening for:
+
+  default and copied ISO binding
+  pre-detach ISO UUID proof
+  detached slot value-or-missing handling
+  all exposed NICs none
+  clipboard disabled
+  drag-and-drop disabled
+  VBoxVGA retention
+  9 MB VRAM retention
+  copied VDI UUID proof
+  DVD media-registry handling
+  copied ISO detached proof
+  sealed rehearsal revalidation
+  default registry revalidation
+  incomplete-root preservation after post-creation failure
+
+MUTATION SURFACE
+
+R11 itself invokes no VBoxManage command.
+
+The inherited intended VirtualBox mutations remain limited to the new isolated boot-attempt copy:
+
+  registervm
+  modifyvm copied powered-off machine
+  storageattach copied DVD slot --medium none
+
+The inherited chain still contains no:
+
+  startvm
+  controlvm
+  savestate
+  poweroff
+  unregistervm
+  snapshot take
+  snapshot restore
+  snapshot delete
+  guestcontrol
+  compiler execution
+
+WRITE BOUNDARY
+
+Before dynamic R8 and the original preparer are invoked, R11 writes no boot root, registry, manifest or preparation report.
+
+On successful inherited preparation, writes remain restricted to:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+  its copied Machine files
+  its isolated VBoxUserHome
+  its manifest
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+Any failure after root creation must preserve the incomplete root and marker.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  BOOT ATTEMPT COPY                  PREPARED
+  POWERED-OFF CORRECTED CONFIG       OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  VM START                           NOT AUTHORIZED
+  RESTORE BOOT                       NOT OBSERVED
+  TEMPLEOS DESKTOP                   NOT OBSERVED
+  POWERED-OFF RECOVERY POINT         NOT SEALED
+  GUEST DELIVERY                     UNRESOLVED
+  COMPILER BUILD                     NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION           DENIED
+
+ADVERSARIAL JUDGMENT
+
+The observed report itself is not malformed relative to its generator; it contains exactly the representation produced by the audited probe code and bound by its SHA256.
+The defect was the consumer assuming every field used one separator encoding.
+
+R11 accepts only the two exact encodings that the immutable generator produced, requires combined exact-one cardinality, and retains exact whole-file hash plus exact field values.
+It therefore repairs representation interpretation without broadening evidence acceptance.
+
+A successful R11 run may prepare only a corrected powered-off copy.
+It still cannot authorize a VM start or establish restore boot.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal     VERIFIED / SEALED
+  boot readiness                     ADJUDICATED
+  modifyvm help native matrix        OBSERVED
+  fixed switch contract              ADJUDICATED
+  R10 invocation                     FAILED CLOSED / RECORDED
+  probe whole-file hash              PASSED / OBSERVED
+  R11 parser correction              STATICALLY AUDITED
+  boot-attempt copy                  EXECUTION PENDING
+  VM start                           NOT AUTHORIZED
+  restore boot                       NOT OBSERVED
+  powered-off recovery point         NOT SEALED
+  build execution                    NOT AUTHORIZED
+
+RULE
+
+RUN R11 ONLY.
+BIND THE EXACT R8 BLOB AND PROBE REPORT.
+ACCEPT ONLY REAL-TAB OR LITERAL-BACKTICK-T FIELD PREFIXES UNDER THE IMMUTABLE REPORT HASH.
+REQUIRE COMBINED EXACT-ONE CARDINALITY.
+PRESERVE ANY INCOMPLETE BOOT ROOT.
+DO NOT START THE SEALED REHEARSAL OR BOOT COPY.
+PREPARATION IS NOT A BOOT PROOF.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

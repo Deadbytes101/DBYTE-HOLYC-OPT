@@ -1,0 +1,29 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / VISUAL R2 / NOT RUNNING PRE-CAPTURE OBSERVATION
+
+EXECUTION HEAD	e0dc239b2af5ef42ecda5950e87646c393db3d63
+VISUAL R2 BLOB	b3df541593d3645c4f8b2c38e48789d2d1ef5bd8
+BOUND START REPORT SHA256	23E802ADF0EF790F51D6D4DECA66EE0D10C755AE6C818CAA1C3934100BE43D76
+
+OBSERVED
+Git sync and exact object binding passed.
+The R2 native-argument correction passed the prior sc.exe failure point.
+The script reached the isolated VirtualBox running inventory gate.
+The running inventory contained zero non-empty rows.
+The script failed with: running inventory mismatch:
+
+BOUNDARY
+The failure occurred before showvminfo validation in the capture route and before controlvm screenshotpng.
+No screenshot PNG was produced by this invocation.
+No VM start, stop, reset, storage mutation, service mutation, guest delivery, or compiler build was authorized by this invocation.
+
+ADJUDICATION
+Fresh ISO host start had previously been observed and sealed by START.txt.
+At visual R2 pre-capture time, the target was not present in list runningvms.
+The current VM state is not established by this failed capture invocation.
+Do not infer poweroff, aborted, saved, guest boot success, or guest boot failure solely from an empty running inventory.
+
+ONE DECISION
+Perform a separate read-only runtime-state adjudication against the isolated fresh-ISO registry and host log files before any restart or further VM mutation.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

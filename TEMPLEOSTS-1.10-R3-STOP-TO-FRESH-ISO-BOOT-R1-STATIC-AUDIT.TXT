@@ -1,0 +1,146 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 STOP -> FRESH EXACT ISO BOOT R1 / STATIC AUDIT
+
+CLASSIFY
+
+The previous host-hardening blocker is resolved.
+R3 started successfully with VBoxSup running, but the guest visually reached:
+
+No bootable medium found!
+Please insert a bootable medium and reboot.
+
+The correct continuation is not an in-place ISO attachment to R3.
+R3 is preserved as VDI-only no-boot evidence.
+The continuation is a controlled stop followed by creation of a fresh isolated ISO-first copy sourced from the sealed rehearsal.
+
+CONTROLLED STOP OBJECT
+
+script	tools/STOP-TEMPLEOSTS-R3-NO-BOOTABLE-MEDIUM-CONTROLLED.ps1
+blob	06f7270ab7b8d97fc9a3fce06f3e86ed65375398
+bound_second_attempt_sha256	E6780E727989B974727402F782CA16B1B870FBF05591FACA6D131F6244F71430
+
+Stop mutation surface:
+- exactly one `VBoxManage controlvm 9c98691e-27cd-4487-a306-587969c2c78c poweroff`.
+- no startvm.
+- no modifyvm.
+- no storageattach.
+- no snapshot mutation.
+- no service mutation.
+- no guestcontrol/build.
+
+Stop preconditions:
+- exact second-attempt report hash.
+- exact VBoxSup.sys hash.
+- VBoxSup numeric STATE 4.
+- isolated R3 VBOX_USER_HOME.
+- VirtualBox version 7.0.12r159484.
+- exactly one running VM row and it is exact Temple1.10/UUID.
+- VMState running.
+
+Stop postconditions:
+- VMState poweroff.
+- running VM rows zero.
+- VBoxSup remains STATE 4.
+- report records post-stop VBOX/current-prev, VDI, ISO, registry and VBoxSup identities.
+
+FRESH ISO PREPARATION BASE
+
+base_script	tools/PREPARE-TEMPLEOSTS-ISO-BOOT-R1-AFTER-R3-STOP.ps1
+base_blob	bd1ec076b0a34cf32792ffab39c7ced7697f5254
+runner	tools/RUN-PREPARE-TEMPLEOSTS-ISO-BOOT-R1-AFTER-R3-STOP-R2.ps1
+runner_blob	d3b18f915cae143ba1ea89d32c243f55bbec7a44
+
+The base is unexecuted and must be invoked only through the R2 runner.
+
+R2 RUNNER CORRECTIONS
+
+1. snapshot list exit-0 output is filtered to actual SnapshotName/SnapshotUUID/SnapshotNode rows.
+2. after R3 post-stop reads and VBoxSVC exit, all VBoxSVC/VirtualBoxVM/VBoxHeadless/VirtualBox runtime processes must be absent before a new isolated home is used.
+3. ISO-BOOT-R1-INCOMPLETE.txt remains present until the preparation report is written and hashed successfully.
+4. every source patch is exact cardinality 1 -> 1 and the patched source must parse before invocation.
+
+SOURCE AUTHORITY FOR ISO COPY
+
+sealed_rehearsal_root	D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1
+sealed_manifest_sha256	AC2609C9C6EFC87316835BB6A4174AF5C28FEEE8DCEBD37E0E9D3DADB14D383F
+sealed_vbox_sha256	69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+sealed_vbox_file_id	0X0000000000000000000100000006010A
+vdi_sha256	90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+sealed_vdi_file_id	0X0000000000000000000100000006010B
+iso_sha256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+sealed_iso_file_id	0X0000000000000000000100000006010C
+rehearsal_verification_sha256	F16F263F1A9217022F24FC318DC0CB4A9BEAFA295723AFB889C043EF428E51E8
+boot_readiness_sha256	C96EA11818CCEF207D914F165CD6B5822ADFC71B4712E7025371E085D3627461
+
+NEW ROOT
+
+root	D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-iso-boot-r1
+isolated_home	D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-iso-boot-r1\VBoxUserHome
+report	D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-iso-boot-r1-preparation.txt
+
+PREPARATION MUTATION SURFACE
+
+The preparation operates only on the new ISO-boot root and its isolated VirtualBox registry.
+
+- create new root directories.
+- copy exact sealed rehearsal VBOX, VDI and ISO into the new Machine directory.
+- rewrite only the two copied-media paths in the copied VBOX.
+- register the copied VBOX only in the new isolated VBOX_USER_HOME.
+- modify copied VM boot order to dvd / disk / none / none.
+- disable NIC1 through NIC8 on the copied VM.
+- disable clipboard and drag-and-drop on the copied VM.
+- set VBoxVGA / 9 MB on the copied VM.
+
+There is deliberately no storageattach mutation: the sealed rehearsal already contains the exact ISO attached at IDE port 0 device 1, and the copied VBOX path rewrite preserves that attachment in the new copy.
+
+There is no startvm.
+There is no controlvm in the ISO preparer.
+There is no R3 mutation.
+There is no snapshot mutation.
+There is no service mutation.
+There is no guestcontrol or compiler build.
+
+FINAL PREPARATION GATES
+
+- new isolated registry initially empty.
+- exactly one registered Temple1.10 target after registration.
+- zero running VMs.
+- VMState poweroff.
+- CfgFile exact new VBOX.
+- IDE-1-0 exact new VDI and exact VDI UUID.
+- IDE-0-1 exact new ISO and exact ISO UUID.
+- boot order dvd/disk/none/none.
+- clipboard disabled.
+- drag-and-drop disabled.
+- VBoxVGA / 9 MB.
+- all exposed NICs none.
+- zero shared-folder mapping keys.
+- zero snapshot rows.
+- VDI and ISO hashes and NTFS file IDs stable through preparation.
+- sealed rehearsal manifest/VBOX/VDI/ISO revalidated after preparation.
+- VM remains powered off.
+
+FAILURE POLICY
+
+If preparation fails after new-root creation, the root is preserved and ISO-BOOT-R1-INCOMPLETE.txt remains or is rewritten with the failure state.
+The failed root must not be deleted or reused.
+No automatic unregister/cleanup/start/rollback is performed.
+
+ONE DECISION
+
+Run the exact controlled stop object.
+If and only if it reports R3-POWERED-OFF-PRESERVED, immediately run the exact R2 ISO preparation runner.
+Do not click the VirtualBox Mount and Retry Boot dialog.
+Do not attach ISO to R3.
+Do not start ISO-BOOT-R1 until its observed preparation report is reviewed and separately authorized.
+
+STATIC VERDICT
+
+R3 CONTROLLED STOP	STATIC PASS
+FRESH ISO BOOT R1 PREPARATION R2 RUNNER	STATIC PASS
+R3 ISO ATTACH	DENIED
+ISO-BOOT-R1 VM START	NOT YET AUTHORIZED
+COMPILER BUILD	NOT AUTHORIZED
+PR	MUST REMAIN DRAFT
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

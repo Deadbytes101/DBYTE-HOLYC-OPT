@@ -1,0 +1,79 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / PORTABLE VIRTUALBOX7 R3 STORAGE SURFACE PROBE OBSERVATION
+
+CLASSIFY
+
+The prior host-ready verifier failure at required key IDE-1-0 is a machine-readable parser schema defect, not an observed R3 storage attachment loss.
+
+OBSERVED USER EXECUTION
+
+repository_head_before_execution	35d5e7be1e6740c77a8be88d9a4418efc141fa71
+probe_blob	37ada60aad4e81fc4b08c1da73764f2a50f84e22
+probe_report	D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-portable-vbox-r3-storage-surface-probe.txt
+probe_report_sha256	4520FE5ECFA74E21395A84C0BDA0BAA7606C505259043C50BF9A8CD3B5FE34F8
+virtualbox_version	7.0.12r159484
+running_vms	0
+vboxsup_state_before	4
+vboxsup_state_after	4
+registry_sha_before	99DB185525D245B1AAFF6937B459518089435882373A55CD2159D03FC82FDCBF
+registry_sha_after	99DB185525D245B1AAFF6937B459518089435882373A55CD2159D03FC82FDCBF
+vdi_sha256	90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+vdi_file_id	0X000000000000000000010000000609A2
+vdi_uuid	55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+INDEPENDENT STORAGE SURFACES
+
+VBOX XML:
+- storage controller count: 1
+- controller: IDE
+- attached device: HardDisk
+- port/device: 1/0
+- image UUID: {55c1f29d-a681-402e-b90d-bfbb6b09f207}
+
+VBoxManage showvminfo --machinereadable:
+- raw key is quoted: "IDE-1-0"
+- raw attachment value is D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3\Machine\Temple1.10.vdi
+- raw image UUID key is quoted: "IDE-ImageUUID-1-0"
+- image UUID value is 55c1f29d-a681-402e-b90d-bfbb6b09f207
+- IDE-0-0, IDE-0-1, and IDE-1-1 are none
+
+VBoxManage showvminfo human output:
+- controller #0: IDE / PIIX4 / instance 0 / ports 2 / bootable
+- Location points to the exact R3 Temple1.10.vdi path
+
+VBoxManage showmediuminfo:
+- UUID: 55c1f29d-a681-402e-b90d-bfbb6b09f207
+- in use by Temple1.10 UUID 9c98691e-27cd-4487-a306-587969c2c78c
+
+ROOT CAUSE
+
+The base verifier Convert-MachineReadable parser captures the raw key with:
+
+    $Key = $Matches[1]
+
+It strips surrounding quotes from values but does not strip surrounding quotes from keys.
+
+For ordinary keys such as VMState this is harmless because the key is unquoted.
+For storage attachment keys VirtualBox 7.0.12 emits:
+
+    "IDE-1-0"="...Temple1.10.vdi"
+
+Therefore the map contains the literal key "IDE-1-0" including quote characters, while the verifier requires IDE-1-0 without quote characters.
+
+The probe independently normalized surrounding key quotes and recovered IDE-1-0, proving the schema mismatch.
+
+CURRENT DECISION
+
+R3 VDI attachment: PRESENT / MULTI-SURFACE OBSERVED.
+R3 VDI identity: EXACT / UNCHANGED.
+R3 isolated registry: EXACT / UNCHANGED.
+VBoxSup service: STATE 4 BEFORE + AFTER.
+VM start: NOT EXECUTED.
+VM retry: NOT AUTHORIZED YET.
+
+The next verifier correction may normalize surrounding quotes on machine-readable keys and retain the already-proven final NIC-count materialization correction.
+No storage mutation is authorized.
+No service mutation is authorized.
+No VM start is authorized by this observation.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

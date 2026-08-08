@@ -1,0 +1,223 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R3 SINGLE CONTROLLED START STATIC AUDIT
+
+CLASS
+
+THE R3 SINGLE-CONTROLLED-START LAUNCHER WAS REVIEWED STATICALLY BEFORE USER EXECUTION.
+NO ASSISTANT-SIDE POWERSHELL OR VIRTUALBOX EXECUTION IS CLAIMED.
+THIS IS THE FIRST OBJECT IN THE R3 CHAIN AUTHORIZED TO ISSUE A VM START.
+IT DOES NOT CLAIM GUEST BOOT SUCCESS.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Launcher:
+  tools/START-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3-SINGLE-CONTROLLED.ps1
+
+Final launcher blob:
+  80df172f38b623afb770a1039a5ca888d48adce7
+
+BOUND EVIDENCE
+
+Prepared verification report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-prepared-verification.txt
+
+Required SHA256:
+  26DC5258CF4692FD55EC95D81E48E3CFE05B4667BC20CDAC0CFFD58DC8433EF7
+
+Boot-authorization adjudication report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-boot-authorization-adjudication.txt
+
+Required SHA256:
+  F8596A2CDECB75BE1FEC02377E9B6A428F15A3F4FC2C81D33F27A0CD962C3482
+
+Prepared root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3
+
+Boot-attempt report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-single-controlled-boot-attempt.txt
+
+The boot-attempt report must be absent before execution.
+
+PRE-START FILE IDENTITIES
+
+Current VBOX:
+  SHA256 8EADB39D54CABE5E7B791E5D7E05BCF4CBBF32D4AB6B58291BEC0B2FAD607C0C
+  file ID 0X000000000000000000050000000609A1
+
+Previous VBOX:
+  SHA256 C93D128227EE80B647DB63FE64277CEF1BDC61C224110472C73CBFFEC63877A7
+  file ID 0X000000000000000000040000000609A7
+
+VDI:
+  SHA256 90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+  file ID 0X000000000000000000010000000609A2
+
+ISO:
+  SHA256 DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+  file ID 0X000000000000000000010000000609A3
+
+Isolated VirtualBox.xml required pre-start SHA256:
+  99DB185525D245B1AAFF6937B459518089435882373A55CD2159D03FC82FDCBF
+
+The launcher checks all machine/media identities before any VirtualBox start.
+It repeats the current VBOX, previous VBOX, VDI and ISO identity checks at the final start boundary after the read-only preflight.
+It rechecks VirtualBox.xml SHA256 after the pre-start reads and before the start boundary.
+
+PROCESS / REGISTRY ISOLATION
+
+The launcher requires process-scoped VBOX_USER_HOME to be unset.
+It requires no VBoxSVC process to be running before the controlled start.
+It sets process VBOX_USER_HOME only to:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3\VBoxUserHome
+
+The prior process value is restored in finally.
+The spawned VirtualBox service/process retains the isolated environment inherited at launch.
+
+READ-ONLY PRE-START SURFACE
+
+Before start, the launcher may invoke only:
+  VBoxManage --version
+  VBoxManage list vms
+  VBoxManage list runningvms
+  VBoxManage showvminfo <target UUID> --machinereadable
+  VBoxManage snapshot <target UUID> list --machinereadable
+  VBoxManage showmediuminfo disk <R3 VDI>
+
+Snapshot-list handling matches the proven original preparer semantics:
+  exit 0 -> captured rows
+  exact no-snapshots message on nonzero -> empty inventory
+  anything else -> fail
+
+PRE-START RUNTIME GATES
+
+Required VirtualBox version:
+  7.0.12r159484
+
+Required target:
+  name Temple1.10
+  UUID 9c98691e-27cd-4487-a306-587969c2c78c
+
+Required registry state:
+  exactly one registered VM row
+  exact target row
+  zero running VM rows
+
+Required showvminfo state:
+  VMState poweroff
+  CfgFile exact R3 Temple1.10.vbox
+  IDE-1-0 exact R3 Temple1.10.vdi
+  boot1 disk
+  boot2 none
+  boot3 none
+  boot4 none
+  clipboard disabled
+  draganddrop disabled
+  graphicscontroller vboxvga
+  vram 9
+  at least one nic1..nic8 field
+  every exposed nic1..nic8 field none
+  zero shared-folder mapping keys
+  IDE-0-1 none when exposed
+
+Required snapshots:
+  zero SnapshotName/SnapshotUUID/SnapshotNode rows
+
+Required VDI medium UUID:
+  55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+AUTHORIZED MUTATION
+
+Exactly one command form is authorized by the launcher:
+  VBoxManage startvm 9c98691e-27cd-4487-a306-587969c2c78c --type gui
+
+The mutation is contained only in Invoke-SingleStart.
+The target UUID is fixed by the sealed R3 chain.
+The VM type is fixed to gui so that guest visual evidence can be observed by the user.
+
+EXPLICITLY ABSENT MUTATION SURFACE
+
+  registervm
+  unregistervm
+  modifyvm
+  storageattach
+  controlvm
+  poweroff
+  savestate
+  pause
+  resume
+  reset
+  snapshot take
+  snapshot restore
+  snapshot delete
+  guestcontrol
+  compiler/build execution
+
+NO AUTOMATIC ROLLBACK
+
+After startvm is issued, the launcher never attempts a compensating stop or poweroff.
+This is intentional.
+If post-start host observation fails, an automatic controlvm/poweroff would add a second mutation and could destroy boot evidence.
+The actual VM state is preserved for subsequent inspection instead.
+
+POST-START HOST OBSERVATION
+
+After a zero startvm exit, the launcher uses only read-only:
+  showvminfo target --machinereadable
+  list runningvms
+
+Success requires:
+  VMState running
+  exactly one running VM row
+  that row is the exact Temple1.10 UUID
+
+This proves only that the VirtualBox host accepted the start and reports the target running.
+It does NOT prove:
+  BIOS behavior
+  guest kernel boot
+  TempleOS desktop
+  guest filesystem state
+
+RESULT REPORT
+
+On successful host-side start observation, the report records:
+  prepared verification SHA256
+  boot authorization SHA256
+  machine UUID
+  exact start arguments
+  start exit code
+  start output rows
+  post-start VMState
+  post-start running-row count
+  no configuration/storage/snapshot/controlvm/guestcontrol/build mutation claims
+  GUEST VISUAL BOOT NOT-OBSERVED-BY-HOST-SCRIPT
+  BOOT ATTEMPT STATUS START-ACCEPTED-HOST-RUNNING
+
+If startvm was issued and either start exit or post-start observation fails, the launcher attempts to write a failure report before rethrowing.
+It still does not stop the VM.
+
+AUTHORIZED INTERPRETATION
+
+If the launcher succeeds:
+  VirtualBox start request             ACCEPTED
+  host reports R3 target running       OBSERVED
+  guest visual boot                    PENDING USER OBSERVATION
+
+If the user visually observes the TempleOS desktop, that visual evidence must be recorded separately before any guest delivery or compiler build is authorized.
+
+PR / PROJECT RULES
+
+The pull request must remain DRAFT.
+Do not merge or mark ready.
+Do not start R1, R2 or the sealed rehearsal.
+Only R3 is the authorized boot-attempt object.
+No optimizer transformation is authorized.
+No compiler build is authorized by this launcher.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

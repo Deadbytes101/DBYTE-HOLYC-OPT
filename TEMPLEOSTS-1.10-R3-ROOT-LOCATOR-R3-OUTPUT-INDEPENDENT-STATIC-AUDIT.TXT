@@ -1,0 +1,82 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 ROOT LOCATOR R3 / OUTPUT-INDEPENDENT STATIC AUDIT
+
+OBJECT
+
+  tools/LOCATE-TEMPLEOSTS-R3-ROOT-READ-ONLY-R3.ps1
+  blob 5ef753b96994493a59111bf389f1e6f592589e36
+
+PURPOSE
+
+Recover observable filesystem evidence after both historical paths were observed missing:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE
+
+OUTPUT CONTRACT
+
+The locator report is emitted under the known-existing parent that contains the active repository:
+
+  D:\TECHNICAL\templeosts-r3-root-locator-r3.txt
+
+The script does not create the historical evidence root and does not recreate the historical R3 root.
+
+SEARCH SURFACE
+
+Read-only recursive filename inventory is bounded to:
+
+  D:\TECHNICAL
+  D:\VirtualBox VMs
+
+plus the exact known ISO path:
+
+  D:\TempleOSTS.iso
+
+It looks only for:
+
+  Temple1.10.vbox
+  Temple1.10.vdi
+  TempleOSTS.iso
+
+For VBOX candidates it records SHA256 and presence of the sealed machine, VDI, and ISO UUID strings. For VDI/ISO candidates it records bytes, SHA256, and exact expected-hash classification.
+
+It also records top-level directories and a CIM read-only inventory of VBoxSVC / VirtualBoxVM / VBoxHeadless / VirtualBox / VBoxManage processes.
+
+STATIC SAFETY REVIEW
+
+No VBoxManage invocation exists.
+No sc.exe invocation exists.
+No controlvm exists.
+No startvm exists.
+No storageattach exists.
+No registervm/modifyvm exists.
+No Copy-Item exists.
+No Move-Item exists.
+No Remove-Item exists.
+No New-Item / CreateDirectory exists.
+No service mutation exists.
+No guest delivery exists.
+No compiler build exists.
+
+The only write is WriteAllText for the dedicated locator report under D:\TECHNICAL.
+
+The historical second controlled-start report, if still present at its historical path, is accepted only when its SHA256 is exactly:
+
+  E6780E727989B974727402F782CA16B1B870FBF05591FACA6D131F6244F71430
+
+The process-name regex is the intended literal-dot .exe match.
+
+ADVERSARIAL JUDGE
+
+This object does not infer that R3 was deleted, moved, or renamed. It only inventories surviving candidates. A candidate must not be reused merely because of its filename; exact identity evidence must be adjudicated after observation.
+
+STATUS
+
+  STATIC REVIEW     PASS
+  HOST MUTATION     DENIED
+  VBOXMANAGE        ABSENT
+  VM START/STOP     ABSENT
+  ISO PREPARATION   ABSENT
+  COMPILER BUILD    ABSENT
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

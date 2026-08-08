@@ -1,0 +1,150 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 GUEST TARGET OBSERVATION
+
+CLASS
+
+GUEST TARGET SELECTED AND SEALED.
+POWERED-OFF RECOVERY POINT NOT YET ADJUDICATED.
+GUEST DELIVERY UNRESOLVED.
+BUILD EXECUTION NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  b69dd8a73afb5bf1d730dbd83b8fd1a3de39d81a
+
+Command:
+  tools/ADJUDICATE-TEMPLEOSTS-GUEST-TARGET.ps1
+
+Inputs:
+  guard root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-GUARD\templeosts-1.10-no-rewrite
+
+  guard report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-guard.txt
+
+  preflight report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-delivery-preflight.txt
+
+Output:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-guest-target.txt
+
+OBSERVED RESULT
+
+  preflight report SHA256
+    8F851B21087B470126E343ECBD8258F2A439D2AF3FAE8801451F4FBB63610461
+
+  target name
+    Temple1.10
+
+  target UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  VM state
+    poweroff
+
+  VDI path
+    D:\VirtualBox VMs\Temple1.10\Temple1.10.vdi
+
+  VDI bytes
+    2097152
+
+  VDI SHA256
+    90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  ISO path
+    D:\TempleOSTS.iso
+
+  ISO SHA256
+    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+  snapshot UUID rows
+    0
+
+  shared folders
+    0
+
+  target report SHA256
+    0CDEAEF0B877CB4ED4D56860D5160EB28DDF838AE45360133A8CCAE7CF61EC62
+
+  target selection
+    SEALED
+
+  recovery point
+    NOT-PREPARED
+
+  delivery route
+    UNRESOLVED
+
+  build
+    NOT-AUTHORIZED
+
+  verdict
+    GUEST TARGET SELECTION COMPLETE
+
+ADJUDICATION
+
+The exact preflight report, current registered and running VM inventories,
+machine-readable VM configuration, attached VDI and ISO identities, snapshot
+list, and shared-folder surface agreed on one target.
+
+The selected target is not inferred from its name alone.  Its name, machine
+UUID, power state, VDI path, VDI bytes, VDI digest, ISO path, ISO digest, and
+absence of snapshot and shared-folder rows were observed together.
+
+The target VDI digest is identical to the adopted Temple1.10 baseline VDI
+digest pinned by DBYTE-HOLYC-TOOLS.  That equality is a candidate recovery
+relationship only until the baseline files and current live attachments are
+revalidated in one read-only recovery-point gate.
+
+CURRENT STATUS
+
+  exact corpus                         SEALED
+  no-rewrite workspace                 OBSERVED
+  compiler-only build route            SEALED
+  compiler boot and map load routes    SEALED
+  host build guard                     PREPARED / OBSERVED
+  VM preflight aggregate               OBSERVED
+  target guest VM                      SEALED
+  target VM state                      POWEROFF / OBSERVED
+  powered-off recovery point           ADJUDICATION PENDING
+  guest source delivery                UNRESOLVED
+  guest output backup and restore      UNRESOLVED
+  compiler build execution             NOT AUTHORIZED
+  compiler rebuild                     NOT OBSERVED
+  optimizer transformation             DENIED
+
+NEXT ALLOWED WORK
+
+  preserve the target report
+  revalidate the pinned adopted baseline read-only
+  require the exact DBYTE-HOLYC-TOOLS resource commit and clean tracked tree
+  verify baseline VBOX, VBOX-PREV, VDI, ISO, manifest and raw evidence
+  verify the live target remains registered, exact and powered off
+  do not copy, replace, attach, mount or modify a VM artifact
+
+NOT AUTHORIZED
+
+  starting or stopping the VM
+  creating, restoring or deleting a snapshot
+  copying over the live VDI or VBOX
+  attaching or detaching storage
+  mounting or modifying a VDI
+  delivering candidate source into the guest
+  invoking Cmp
+  replacing Compiler.BIN.Z or Compiler.MAP.Z
+
+RULE
+
+TARGET SELECTION IS NOT A RECOVERY POINT.
+A MATCHING DIGEST IS NOT A RESTORE PROCEDURE.
+NO OBSERVED DELIVERY, NO GUEST SOURCE CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

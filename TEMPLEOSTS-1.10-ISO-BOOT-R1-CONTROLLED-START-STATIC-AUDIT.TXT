@@ -1,0 +1,124 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH EXACT ISO BOOT R1 / CONTROLLED START STATIC AUDIT
+
+CLASSIFY
+
+R3 is preserved as VDI-only no-boot evidence.
+The fresh ISO-BOOT-R1 preparation is separately isolated and leaves the copied VM powered off with the exact TempleOSTS ISO attached and DVD first in boot order.
+This start object is the first and only route authorized to start ISO-BOOT-R1.
+
+SCRIPT
+
+path	tools/START-TEMPLEOSTS-ISO-BOOT-R1-CONTROLLED.ps1
+blob	4133358b3e38bee6911fde5e8cf01f408a1d0a85
+
+EXPECTED ROOTS
+
+iso_boot_root	D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-iso-boot-r1
+preparation_report	D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-iso-boot-r1-preparation.txt
+start_report	D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-iso-boot-r1-controlled-start.txt
+
+MEDIA AUTHORITY
+
+vdi_sha256	90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+vdi_uuid	55c1f29d-a681-402e-b90d-bfbb6b09f207
+iso_sha256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+iso_uuid	ab97b3a5-1331-494d-a917-e85b6e728c45
+vboxsup_sha256	3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4
+virtualbox_version	7.0.12r159484
+machine_uuid	9c98691e-27cd-4487-a306-587969c2c78c
+
+PREPARATION BINDING
+
+The script does not accept the preparation report as sufficient proof by itself.
+It requires:
+- no ISO-BOOT-R1-INCOMPLETE.txt.
+- report root exact.
+- report machine_state poweroff.
+- boot order dvd/disk/none/none.
+- iso_attached True.
+- exact VDI/ISO hash fields.
+- STATUS ISO-BOOT-R1-PREPARED.
+- manifest path exists and its SHA256 equals the report's manifest SHA256.
+
+The report-supplied current/previous VBOX hashes/file IDs, VDI/ISO file IDs, and isolated-registry SHA256 are then revalidated against the actual files.
+VDI and ISO bytes are independently rebound to the fixed authoritative hashes above.
+
+PRE-START HOST GATES
+
+- exact VBoxManage path.
+- exact VBoxSup.sys SHA256.
+- VBoxSup numeric STATE 4.
+- process VBOX_USER_HOME unset.
+- no VBoxSVC, VirtualBoxVM, VBoxHeadless or VirtualBox runtime process before isolated binding.
+- isolated VBOX_USER_HOME is ISO-BOOT-R1/VBoxUserHome only.
+- exact VirtualBox version.
+- exactly one registered Temple1.10 target.
+- zero running VMs.
+- target VMState poweroff.
+- exact CfgFile.
+- exact VDI path and VDI UUID at IDE-1-0.
+- exact ISO path and ISO UUID at IDE-0-1.
+- boot order dvd/disk/none/none.
+- clipboard disabled.
+- drag-and-drop disabled.
+- VBoxVGA / 9 MB.
+- all exposed NICs none.
+- zero shared-folder mapping keys.
+- zero actual snapshot rows.
+- current VBOX hash/file ID, VDI hash/file ID, ISO hash/file ID and registry hash rechecked immediately at the start boundary.
+- VBoxSup STATE 4 rechecked at the start boundary.
+
+AUTHORIZED MUTATION SURFACE
+
+Exactly one intended VM start mutation exists:
+
+VBoxManage startvm 9c98691e-27cd-4487-a306-587969c2c78c --type gui
+
+StartIssued is set before crossing the native invocation boundary.
+No automatic retry exists.
+No automatic rollback exists.
+No controlvm exists.
+No storageattach exists.
+No modifyvm exists.
+No snapshot mutation exists.
+No service mutation exists.
+No guestcontrol exists.
+No compiler build exists.
+
+POST-START GATES
+
+On start exit 0:
+- showvminfo VMState must be running.
+- list runningvms must contain exactly Temple1.10/UUID.
+- VBoxSup must remain STATE 4.
+
+The start report binds the runtime-derived preparation-report SHA256 and ISO-boot manifest SHA256.
+VBoxHardening.log capture is best-effort and cannot change the actual start verdict if the log is temporarily locked.
+
+No VDI hash-equality requirement is made after start because the guest may legitimately write to the copied VDI during ISO boot/runtime.
+
+VISUAL PROOF BOUNDARY
+
+Host running is not TempleOSTS guest boot proof.
+After successful start, a visual screenshot is still required to classify whether the exact ISO reached TempleOSTS desktop/installer/boot failure.
+No guest compiler build is authorized merely by host-running state.
+
+FAILURE POLICY
+
+If startvm is issued and fails, or if post-start observation fails:
+- the script attempts a distinct start report.
+- no retry is issued.
+- no poweroff/controlvm rollback is issued.
+- actual runtime state is preserved for observation.
+
+STATIC VERDICT
+
+ISO-BOOT-R1 CONTROLLED START	STATIC PASS
+AUTHORIZED STARTVM COUNT	ONE
+R3 MUTATION	NONE
+AUTOMATIC RETRY/ROLLBACK	NONE
+COMPILER BUILD	NOT AUTHORIZED
+PR	MUST REMAIN DRAFT
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

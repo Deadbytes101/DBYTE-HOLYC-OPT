@@ -1,0 +1,183 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 R3 HOST VBOXSUP ABSENT DRIVER OBJECT OBSERVATION
+
+CLASS
+
+THE SINGLE CONTROLLED R3 START WAS ISSUED ONCE AND FAILED IN THE WINDOWS VIRTUALBOX HARDENING LAYER BEFORE ANY GUEST VISUAL BOOT WAS OBSERVED.
+A SUBSEQUENT READ-ONLY HOST DRIVER INSPECTION COMPLETED SUCCESSFULLY.
+THIS RECORD CAPTURES THE OBSERVED HOST DRIVER STATE WITHOUT AUTHORIZING A DRIVER INSTALL, DRIVER START, VM RETRY, GUEST EXECUTION OR COMPILER BUILD.
+
+BOUND FAILED START REPORT
+
+Path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-single-controlled-boot-attempt.txt
+
+SHA256:
+  AC22D9A63234B8BC16FFFAE21BDAAE78704BDE6635A4072093EECCD070EE80D4
+
+FAILED START OBSERVATION
+
+The controlled start reached the explicit start boundary and issued exactly one:
+  VBoxManage startvm <Temple1.10 UUID> --type gui
+
+The start failed with host-side VirtualBox startup failure.
+The GUI hardening error reported:
+  NtCreateFile(\Device\VBoxDrvStub) failed: 0xc0000034
+  STATUS_OBJECT_NAME_NOT_FOUND
+  VERR_OPEN_FAILED (-101)
+
+The host script did not observe VMState=running.
+Guest visual boot was not observed.
+No controlvm rollback was executed.
+No build was executed.
+
+READ-ONLY HOST DRIVER INSPECTION
+
+Inspector:
+  tools/INSPECT-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3-HOST-DRIVER-FAILURE-R2.ps1
+
+Inspector blob:
+  88a204b9c14b8006614d047cc8a085bccb0225b5
+
+Inspection report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-host-driver-failure-inspection.txt
+
+Inspection report SHA256:
+  510E65B93889271010509F917DEE681E95273DD001B1BF3A9F222663410CD6F8
+
+R3 POST-FAILURE ARTIFACT STATE
+
+Current VBOX:
+  SHA256 8EADB39D54CABE5E7B791E5D7E05BCF4CBBF32D4AB6B58291BEC0B2FAD607C0C
+  file ID 0X000000000000000000050000000609A1
+  hash matches pre-start True
+  file ID matches pre-start True
+
+Previous VBOX:
+  SHA256 C93D128227EE80B647DB63FE64277CEF1BDC61C224110472C73CBFFEC63877A7
+  file ID 0X000000000000000000040000000609A7
+  hash matches pre-start True
+  file ID matches pre-start True
+
+VDI:
+  bytes 2097152
+  SHA256 90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+  file ID 0X000000000000000000010000000609A2
+  hash matches pre-start True
+  file ID matches pre-start True
+
+ISO:
+  bytes 30558208
+  SHA256 DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+  file ID 0X000000000000000000010000000609A3
+  hash matches pre-start True
+  file ID matches pre-start True
+
+Isolated VirtualBox registry:
+  SHA256 99DB185525D245B1AAFF6937B459518089435882373A55CD2159D03FC82FDCBF
+  matches pre-start True
+
+Therefore no R3 machine/media/isolated-registry drift was observed from the failed host start.
+
+VBOX HARDENING LOG
+
+Path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3\Machine\Logs\VBoxHardening.log
+
+Bytes:
+  41088
+
+SHA256:
+  D5C827B45DFE260822E2B27D74225E2E83478F63E0C6EBCC1A4B4E37366DEF96
+
+Relevant observed lines include:
+  Error opening VBoxDrvStub: STATUS_OBJECT_NAME_NOT_FOUND
+  supR3HardenedWinReadErrorInfoDevice: NtCreateFile -> 0xc0000034
+  Error -101 in supR3HardenedWinReSpawn
+  NtCreateFile(\Device\VBoxDrvStub) failed: 0xc0000034 STATUS_OBJECT_NAME_NOT_FOUND
+
+These are host VirtualBox hardening/driver-layer observations.
+They are not evidence of a TempleOS guest boot failure.
+
+WINDOWS DRIVER/SERVICE INVENTORY
+
+CIM VirtualBox-related system-driver count:
+  1
+
+Observed CIM row:
+  Name VBoxNetAdp
+  DisplayName VirtualBox NDIS 6.0 Miniport Service
+  State Stopped
+  StartMode Manual
+  Path C:\WINDOWS\system32\DRIVERS\VBoxNetAdp6.sys
+
+Read-only service queries:
+  sc query vboxsup      -> exit 1060 / service does not exist
+  sc query vboxdrv      -> exit 1060 / service does not exist
+  sc query vboxdrvstub  -> exit 1060 / service does not exist
+
+No support-driver service object was observed under those queried names.
+
+PORTABLE VIRTUALBOX PAYLOAD
+
+Portable root:
+  D:\Portable-VirtualBox7
+
+Portable VBox driver files observed:
+  7
+
+Support-driver payload observed:
+  app64\drivers\vboxsup\VBoxSup.sys
+  bytes 1060600
+  SHA256 3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4
+  file version 7.0.12.159484
+
+Other observed portable driver payloads include network and USB drivers.
+
+Observed portable executables:
+  app64\VBoxManage.exe
+  app64\VirtualBox.exe
+  app64\VirtualBoxVM.exe
+
+All three report file version 7.0.12.159484.
+
+ADJUDICATION
+
+Observed simultaneously:
+  the VirtualBox support-driver binary VBoxSup.sys exists in the portable payload
+  the hardened VM process cannot open \Device\VBoxDrvStub
+  queried support-driver service names do not exist as installed services
+  the only CIM VirtualBox driver row observed is VBoxNetAdp
+  R3 artifacts remain exact after the failed start
+
+Therefore the current blocker is classified as:
+  HOST VIRTUALBOX SUPPORT-DRIVER REGISTRATION/ACTIVATION GAP
+
+This classification does not yet choose an installation or activation method.
+It does not prove which portable wrapper or INF installation route should be used.
+
+NEXT DECISION
+
+Inspect the portable VirtualBox driver-loader surface read-only before performing any host mutation.
+Specifically inspect:
+  VBoxSup INF/service metadata
+  portable launcher/setup files
+  driver package registration evidence
+  Windows service registry entries
+  Authenticode/signature metadata
+
+DENIED UNTIL THAT INSPECTION
+
+  retry startvm
+  sc create
+  sc start
+  net start
+  pnputil add/install/delete
+  driver installation/removal
+  VirtualBox reinstall
+  R3 mutation
+  guest build
+  optimizer transformation
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

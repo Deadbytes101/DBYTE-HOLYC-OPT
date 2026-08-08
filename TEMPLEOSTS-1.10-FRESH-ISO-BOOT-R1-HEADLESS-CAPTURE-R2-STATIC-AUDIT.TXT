@@ -1,0 +1,36 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / HEADLESS CAPTURE R2 STATIC AUDIT
+
+script	tools/RESTART-TEMPLEOSTS-FRESH-ISO-BOOT-R1-HEADLESS-AND-CAPTURE-R2.ps1
+blob	dc848009750d8f9b7e7393813655e59bfcd61423
+
+Binds:
+START.txt	23E802ADF0EF790F51D6D4DECA66EE0D10C755AE6C818CAA1C3934100BE43D76
+RUNTIME-STATE-R1.txt	0C4D594761ED669BBDD096B8B73BECD05685A8D1CE0568DAFC4849235E5EBC8A
+POWEROFF-CAUSE-R1.txt	78420DA53E37ACA5DCA0C000E6DBDD606704BB2FBF80F8DC9264D52757F89ADA
+VBOX	BB6058E7FF513B8261A1FC0B4D51C6A2ACC44DDE9CA0B2E9007B7A90DAC3CC76
+registry	48B39A11E3E6E5FF1F2713143915E15A6F0CAE562357D92575D5DCDF569A968C
+ISO	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+Pre-start requires exact VM identity, poweroff, zero running VM rows, exact media paths, DVD-first boot, NICs none, VBoxSup running, and no VirtualBox runtime process.
+
+Authorized crossing:
+startvm target --type headless	exactly one source occurrence
+controlvm target screenshotpng	exactly one source occurrence
+bounded post-start wait	12 seconds after RUNNING
+
+Denied:
+controlvm poweroff/reset/savestate	absent
+modifyvm	absent
+storageattach	absent
+service mutation	absent
+compiler build	absent
+automatic rollback	absent
+
+Report fields use actual tab escapes in double-quoted strings.
+No $Home or $Args collision-prone variable is present.
+Failure after start is preserved without automatic rollback.
+
+STATUS	STATIC-AUDIT-PASS
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

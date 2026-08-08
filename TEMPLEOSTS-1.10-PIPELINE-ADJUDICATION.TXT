@@ -1,0 +1,150 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 PIPELINE ADJUDICATION
+
+CLASS
+
+MANUAL EXACT-SOURCE ADJUDICATION.
+NO EVIDENCE SOURCE MUTATION.
+PIPELINE OWNER SEALED.
+EXECUTABLE ORDER SEALED.
+EXACT INSERTION SEAM SEALED.
+NO-REWRITE ASSERTION ONLY.
+
+EVIDENCE
+
+  ISO SHA256
+    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+  expanded manifest SHA256
+    6556485E4425386687C53F4F626146A2136AE12F38E075E2646C98147D61CB68
+
+  compiler set SHA256
+    2F840DD07625B71F55256AF29A6F4FCC263E0AA7301714AC4A36101FBDEEF261
+
+  pipeline trace SHA256
+    E32A0F2EF8A68B12ED7C4EC74E08ACCAAC405212A515B25EB32F21470E606924
+
+  pipeline context SHA256
+    D9C7C4DFB1B8F5CE78CEA0EA3C6F2B56E5274387D6CE3CE3914C2057B1760FC5
+
+  pass-boundary context SHA256
+    D0D3EE768491C299B072BF3975BD707BA894349633E477D96670A6538E6F44F9
+
+PIPELINE OWNERSHIP
+
+Compiler/CmpExts.CPP lines 30 through 36 are extern declarations and execute no
+optimizer pass.
+
+Compiler/ICLCC.CPP lines 377 through 444 define LCCCompile.  Exact displayed
+source proves that LCCCompile owns:
+
+  OptPass012
+  OptPass012
+  OptPass3
+  OptPass4
+  OptPass5
+  OptPass6
+  jump-table label forwarding through OptLabelFwd
+  OptPass789 sizing until stable
+  AOT or JIT allocation
+  OptPass789 final emission
+
+Status:
+
+  PIPELINE OWNER SEALED
+  EXECUTABLE PASS ORDER SEALED
+
+PASS CONTRACT RESULT
+
+Manual review of the exact pass-boundary report established:
+
+  LCCHeaderPut optionally emits existing trace output and always assigns the
+  supplied pass value to lx->pass.
+
+  OptPass6 mutates the existing lx->lcc chain in place and finalizes the
+  displayed stack-temporary, register-use, and clobber-mask state delivered to
+  following backend work.
+
+  OptPass789 uses pass 7 for first-time finalization and sizing, pass 8 for
+  repeated sizing until size stops shrinking, and pass 9 for final emission.
+
+  LCCCompile rejects pass-8 code-size growth and stops repeating on stable size.
+
+The detailed contract is recorded in:
+
+  TEMPLEOSTS-1.10-PASS-CONTRACT-ADJUDICATION.TXT
+
+EXACT SEALED SEAM
+
+File:
+  Compiler/ICLCC.CPP
+
+Function:
+  LCCCompile
+
+After:
+  LCCHeaderPut(lx,7,FALSE);
+
+Before:
+  code_size=OptPass789(lx,fun_class,reg_offsets,NULL,NULL);
+
+Original source lines:
+  410 and 411
+
+At this point:
+
+  passes 0 through 6 completed
+  jump-table labels were forwarded
+  lx->pass equals 7
+  OptPass789 first-time finalization has not started
+  sizing has not started
+  output storage has not been allocated
+  final emission has not started
+
+Status:
+
+  POST-LCCHEADERPUT7 / PRE-OPTPASS789 SEAM SEALED
+
+FIRST PATCH AUTHORIZATION
+
+Authorized only:
+
+  if (lx->pass!=7)
+    LexExcept(lx,"ST_OPT_INTERNAL_ERROR");
+
+This assertion reads pass state and performs no valid-path write.  It does not
+rewrite intermediate code or alter labels, masks, sizing, allocation, or
+emission.
+
+No optimizer transformation is authorized.
+
+STATUS
+
+  CmpExts declaration classification      SEALED
+  LCCCompile pipeline ownership           SEALED
+  executable pass order                   SEALED
+  LCCHeaderPut boundary contract          SEALED
+  OptPass6 boundary-relevant output       SEALED
+  OptPass789 entry and convergence        SEALED
+  exact insertion seam                    SEALED
+  no-rewrite assertion                    AUTHORIZED
+  optimizer transformation                DENIED
+  no-rewrite workspace                    NOT OBSERVED
+  compiler rebuild                        NOT OBSERVED
+  guest semantic differential             NOT OBSERVED
+
+NEXT ALLOWED WORK
+
+  create a fresh 1057-file manifest-verified working tree
+  install only the authorized no-rewrite assertion
+  verify exactly one workspace file differs
+  rebuild the rare compiler
+  execute guest semantic differential tests
+
+RULE
+
+SEALED SEAM AUTHORIZES ONLY THE NAMED PATCH.
+NO OBSERVED BUILD, NO COMPILER CLAIM.
+NO GUEST DIFFERENTIAL, NO SEMANTIC CLAIM.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

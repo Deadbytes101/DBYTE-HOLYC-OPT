@@ -1,0 +1,13 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 GUEST R3 OBSERVATION
+
+report_sha256	076FEA00B852DA7B2A82B176AAF24511E4704C8C7693BE11AE1B61FEB19B8A21
+t_path_png_sha256	549B086AAC4E3A7E25063798202D5F2CACE449C6EF0B7141C5BC59E259D1981F
+ata_png_sha256	CF7A075A0AC2266745DF95769170D723BB8047B87FABF86E68B9097DDA43F53C
+
+The screenshot shows Dir("T:/Compiler/ICLCC.CPP"); followed by No matching entries.
+This is an observation about the uncompressed name only; it does not adjudicate ICLCC.CPP.Z.
+The ATA screenshot shows a Secondary IDE ATA device at Base0 0x0170, Base1 0x0374, IRQ 0x0F, Unit 0.
+The VM remained running with one running row.
+
+STATUS	R3-OBSERVED

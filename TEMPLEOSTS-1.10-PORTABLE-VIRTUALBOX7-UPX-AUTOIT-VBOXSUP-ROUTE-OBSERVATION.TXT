@@ -1,0 +1,128 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / PORTABLE VIRTUALBOX7
+UPX + AUTOIT / VBOXSUP ROUTE OBSERVATION
+
+CLASSIFY
+HOST BLOCKER / VIRTUALBOX SUPPORT DRIVER REGISTRATION
+
+OBSERVED LOCAL EVIDENCE
+
+R3 single controlled start failed before guest boot with VirtualBox hardening error:
+
+  NtCreateFile(\Device\VBoxDrvStub) failed
+  STATUS_OBJECT_NAME_NOT_FOUND
+
+Post-failure read-only inspection preserved exact R3 identities:
+
+  current VBOX hash/file ID unchanged
+  previous VBOX hash/file ID unchanged
+  VDI hash/file ID unchanged
+  ISO hash/file ID unchanged
+  isolated VirtualBox registry hash unchanged
+
+Host driver inspection observed:
+
+  VBoxSup service object: absent
+  VBoxDrv service object: absent
+  VBoxDrvStub service object: absent
+  CIM VBox kernel support driver: absent
+  VBoxNetAdp network driver: present only
+
+Portable package inspection observed:
+
+  app64\drivers\vboxsup\VBoxSup.sys
+    SHA256 3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4
+    version 7.0.12.159484
+    Authenticode status Valid
+
+  app64\drivers\vboxsup\VBoxSup.inf
+    SHA256 B34D56477E8273C6C2B177B38A7F5CBE1DD4708A1C2BAF7A2D2170302ECAC7F6
+
+  app64\drivers\vboxsup\VBoxSup.cat
+    SHA256 09DFDCD84B7CE8970B32AF5BB18000738155C04444C6276B5353C98CB1CA6999
+
+Exact package INF declares:
+
+  DriverPackageType=KernelService
+  AddService=VBoxSup,0x00000002,VBoxSup_Service
+  ServiceType=1
+  StartType=1
+  ErrorControl=1
+  ServiceBinary=%12%\VBoxSup.sys
+
+Portable wrapper PE inspection observed:
+
+  PE32
+  sections 3
+  entry point section UPX1
+  UPX1 entropy 7.9290
+  UPX markers present
+  AutoIt v3 marker present
+  plaintext loader-token matches 0 before unpacking
+
+PUBLIC UPSTREAM SOURCE CORROBORATION
+
+Repository:
+  vboxme/Portable-VirtualBox
+
+Source file at observed GitHub revision:
+  source/Portable-VirtualBox.au3
+
+The source is AutoIt and requires administrative rights.
+It conditionally creates support-driver services based on which driver directory exists.
+
+VBoxDrv route:
+
+  only when <arch>\drivers\VBoxDrv exists
+  sc create VBoxDRV ...\drivers\VBoxDrv\VBoxDrv.sys type=kernel start=auto
+  sc start VBoxDRV
+
+VBoxSup route:
+
+  only when <arch>\drivers\vboxsup exists
+  sc create VBoxSUP ...\drivers\VBoxSup\VBoxSup.sys type=kernel start=auto
+  sc start VBoxSUP
+
+The inspected local VirtualBox 7.0.12 payload contains VBoxSup but no VBoxDrv driver payload.
+Therefore the payload-side condition that is actually satisfiable is VBoxSup.
+
+The upstream build documentation also states that Portable-VirtualBox is compiled from
+Portable-VirtualBox.au3 with AutoIt 3.3.8.1.  This independently agrees with the local
+UPX/AutoIt PE evidence and the observed wrapper version surface.
+
+ADJUDICATION
+
+The local failure is not evidence of TempleOSTS guest failure.
+The exact support-driver payload exists and is valid, but its Windows kernel-service object
+was absent when VirtualBox hardened startup tried to open VBoxDrvStub.
+
+A broad Portable-VirtualBox wrapper launch is NOT selected as the next mutation because the
+wrapper source contains additional COM, USB, network, GUI, update, cleanup and launch behavior.
+That would exceed the current surgical host-driver intent.
+
+ONE DECISION
+
+Authorize a separately audited host mutation whose only intended system changes are:
+
+  1. create VBoxSup as a kernel service pointing to the exact portable VBoxSup.sys
+  2. start VBoxSup
+
+The mutation must:
+
+  bind exact prior evidence hashes;
+  bind exact SYS/INF/CAT hashes;
+  require VBoxSup service absent before creation;
+  require administrative elevation;
+  require no VBox processes;
+  verify resulting service registry contract;
+  verify RUNNING state after start;
+  preserve failure state rather than perform automatic delete/rollback;
+  perform no VM start;
+  perform no media/config/snapshot mutation;
+  perform no guest delivery/build.
+
+VM RETRY
+DENIED UNTIL VBOXSUP CREATE/START HAS ITS OWN OBSERVED VERIFICATION.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

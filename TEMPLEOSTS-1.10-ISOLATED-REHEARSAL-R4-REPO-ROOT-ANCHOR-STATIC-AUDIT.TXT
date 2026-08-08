@@ -1,0 +1,151 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED REHEARSAL R4 REPOSITORY ROOT ANCHOR STATIC AUDIT
+
+CLASS
+
+R4 IS A STANDALONE FILE-BACKED WRAPPER.
+R4 BINDS THE UNCHANGED R2 WRAPPER DIRECTLY.
+R4 RETAINS THE R3 OLD-IN-NEW CARDINALITY CORRECTION.
+R4 REPLACES THE SINGLE DYNAMIC PSSCRIPTROOT DEPENDENCY WITH AN EXPLICIT
+FILE-BACKED REPOSITORY ROOT BEFORE CONSTRUCTING THE R2 SCRIPTBLOCK.
+NO REHEARSAL EXECUTION WAS PERFORMED BY THIS STATIC AUDIT.
+
+AUTHORITY
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+R2 wrapper:
+  tools/PREPARE-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL-R2.ps1
+
+Expected R2 blob:
+  5ba96e9792911ba2f254d1bbf87f1e45db925677
+
+Original preparer bound by R2:
+  tools/PREPARE-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL.ps1
+
+Expected original preparer blob:
+  cec7ca5dc9439c11d0375eebe45f0864a5f7f995
+
+R4 wrapper:
+  tools/PREPARE-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL-R4.ps1
+
+R4 blob:
+  017e3cc1e1b4d764253fb24666e9712578ba2e37
+
+OBSERVED R4 CONTRACT
+
+R4 derives its own repository root through its file-backed context:
+
+  $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+R4 requires the R2 source to contain exactly one automatic-root reference and
+exactly one matching anchor:
+
+  $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+R4 converts its observed repository root into a PowerShell single-quoted literal,
+escaping any embedded single quote by doubling it.
+
+R4 replaces the R2 anchor with:
+
+  $RepoRoot = '<exact file-backed R4 repository root>'
+
+Before constructing the R2 ScriptBlock, R4 requires:
+
+  original R2 PSScriptRoot references       0
+  original dynamic root anchors             0
+  injected absolute root anchors            1
+
+R4 does not infer the repository from the process current directory.
+R4 does not depend on R3 dynamic script context.
+
+EXTENSION CARDINALITY CONTRACT
+
+R4 also applies the R3 correction directly to R2:
+
+  old occurrences expected after replacement
+    expected replacement count multiplied by complete old occurrences inside
+    one new replacement string
+
+This retains the original source preconditions:
+
+  old_before  equals expected count
+  new_before  equals zero
+  new_after   equals expected count
+
+Ordinary replacements require old_after zero.
+Extension replacements that preserve the old field inside the new block require
+the exact structurally implied old_after count.
+
+UNCHANGED R2 HARDENING
+
+After R4 injects the repository root, R2 still:
+
+  binds the original preparer tree and local blob exactly
+  patches the VBoxSVC label interpolation seam
+  requires a distinct disposable VBOX file object
+  requires distinct disposable VDI and ISO file objects
+  rehashes sealed reports and bundle artifacts after isolated registration
+  rehashes disposable VDI and ISO after isolated registration
+  records disposable VBOX pre/post file IDs
+  uses an isolated VBOX_USER_HOME
+  requires an empty isolated registry before registration
+  registers only the disposable VBOX
+  requires the disposable VM to remain powered off
+  revalidates the default registry and live artifacts afterward
+  writes manifest and report only after all gates pass
+
+STATIC ADVERSARIAL JUDGMENT
+
+  nested R3 to R2 dynamic context dependency
+    REMOVED
+
+  current-directory repository inference
+    ABSENT
+
+  R2 tree/local blob binding
+    RETAINED
+
+  original preparer tree/local blob binding
+    RETAINED
+
+  replacement source cardinality gates
+    RETAINED
+
+  registration logic
+    UNCHANGED
+
+  VM start command
+    ABSENT
+
+  snapshot mutation
+    ABSENT
+
+  live attachment mutation
+    ABSENT
+
+  build execution
+    ABSENT
+
+CURRENT STATUS
+
+  R4 wrapper source                     STATICALLY AUDITED
+  isolated rehearsal                    NOT PREPARED / EXECUTION PENDING
+  disposable VM registration            NOT OBSERVED
+  restore boot                           NOT OBSERVED
+  powered-off recovery point            NOT SEALED
+  guest delivery                         UNRESOLVED
+  compiler build execution               NOT AUTHORIZED
+  optimizer transformation               DENIED
+
+RULE
+
+DYNAMIC SCRIPT TEXT MUST NOT DEPEND ON FILE-BACKED AUTOMATIC VARIABLES.
+ANCHOR THE REPOSITORY ONCE FROM A REAL SCRIPT FILE AND VERIFY THE INJECTION.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

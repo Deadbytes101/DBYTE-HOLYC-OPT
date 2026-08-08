@@ -1,0 +1,30 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / VISUAL CAPTURE ARGS COLLISION FAILURE
+
+Observed invocation binding:
+head	bf8aa433452c798c21b63640dbbee054ffe96ca6
+capture_blob	aa1fe4a71ffd4b140fc45e7991e3a86184287897
+start_report_sha256	23E802ADF0EF790F51D6D4DECA66EE0D10C755AE6C818CAA1C3934100BE43D76
+
+Observed failure:
+sc query VBoxSup failed exit=1639
+sc.exe emitted usage/help rather than service state.
+
+Adjudication:
+The helper declared its second parameter as $Args and splatted @Args. PowerShell automatic variable names are case-insensitive; $Args collides with automatic $args. The observed native process therefore did not receive the intended query/VBoxSup argument vector.
+
+Boundary:
+The failure occurred at the first VBoxSup read-only query before VBOX_USER_HOME assignment, VBoxManage observation, and controlvm screenshotpng.
+
+CONTROLVM	NOT-EXECUTED
+SCREENSHOTPNG	NOT-EXECUTED
+VM START/STOP	NOT-EXECUTED
+STORAGE MUTATION	NOT-EXECUTED
+SERVICE MUTATION	NOT-EXECUTED
+COMPILER BUILD	NOT-EXECUTED
+VISUAL CONTENT	NOT-OBSERVED
+
+Decision:
+Preserve the failed script object. Correct only the native argument parameter name in a new R2 object and re-run the visual capture gate against the already-running fresh ISO VM.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

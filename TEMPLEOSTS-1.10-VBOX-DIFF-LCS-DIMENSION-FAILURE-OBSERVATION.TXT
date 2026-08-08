@@ -1,0 +1,126 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VBOX DIFF LCS DIMENSION FAILURE OBSERVATION
+
+CLASS
+
+NORMALIZED VBOX MISMATCH REMAINS OBSERVED.
+LINE-DIFF DIAGNOSTIC STOPPED IN LCS TABLE DIMENSION EXPRESSION.
+POWERED-OFF RECOVERY POINT NOT SEALED.
+BUILD EXECUTION NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  db866d37ffd22b5f1577c48a6392f4c1b7019845
+
+Command:
+  tools/DIAGNOSE-TEMPLEOSTS-VBOX-NORMALIZED-DIFF.ps1
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  resource root
+    D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+  sealed failed inspector report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-adopted-recovery-inspector.txt
+
+  intended output
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vbox-normalized-diff.txt
+
+OBSERVED RESULT
+
+  terminal failure
+    Method invocation failed because [System.Object[]] does not contain a
+    method named op_Addition.
+
+  function
+    Get-NormalizedLineDiff
+
+  source expression
+    [int[]]@($CurrentCount + 1, $BaselineCount + 1)
+
+  output report
+    NOT WRITTEN
+
+ROOT CAUSE
+
+In Windows PowerShell, the comma operator in the array expression can bind
+before the intended arithmetic grouping.  One addition therefore receives an
+Object[] operand instead of two independent integer dimension lengths.
+
+The intended dimensions are:
+
+  current line count + 1
+  baseline line count + 1
+
+Each arithmetic expression must be parenthesized independently before being
+placed in the Int32 dimension array.
+
+OBSERVED BOUNDARY
+
+Before entering the LCS line-diff helper, the diagnostic had already:
+
+  bound inspector report SHA256
+    6393BCD2E0B6E0FCFCC01D74D0B4C3F6F035B5D686CF61ECB349B84E853C0594
+
+  revalidated the pinned resource commit and clean tracked tree
+  revalidated the adopted baseline VBOX, VDI and ISO identities
+  revalidated the registered target name and UUID
+  revalidated zero running target rows and poweroff state
+  revalidated CfgFile, IDE-1-0 and IDE-0-1 attachments
+  revalidated current raw VBOX identity against the inspector report
+  revalidated exact live VDI and ISO identities
+  reproduced both normalized VBOX hashes from the inspector report
+  confirmed that the normalized hashes remain different
+  found a normalized character difference
+  computed newline profiles
+
+It stopped while constructing the LCS table, before producing line-diff rows
+or writing the final diagnostic report.
+
+MUTATION BOUNDARY
+
+No VM start, stop, snapshot operation, attachment change, VBOX write, VDI
+write, ISO write, guest delivery or compiler execution occurred.  No normalized
+diff output report was created by this invocation.
+
+CORRECTION CONTRACT
+
+  preserve all report, target, resource and artifact identity gates
+  preserve quoted machine-key normalization
+  preserve lastStateChange-only normalization
+  preserve the requirement that normalized hashes remain different
+  parenthesize each LCS dimension arithmetic expression independently
+  do not add another normalized field
+  do not classify the displayed difference as harmless
+  do not seal recovery in the diagnostic step
+
+CURRENT STATUS
+
+  exact corpus                         SEALED
+  target guest VM                      SEALED
+  target VM state                      POWEROFF / OBSERVED
+  live VDI and ISO                     EXACT / OBSERVED
+  normalized VBOX relationship         MISMATCH / OBSERVED
+  normalized line difference           NOT YET DISPLAYED
+  powered-off recovery point           NOT SEALED
+  restore execution                    NOT OBSERVED
+  guest delivery                       UNRESOLVED
+  compiler build execution             NOT AUTHORIZED
+  optimizer transformation             DENIED
+
+RULE
+
+A DIAGNOSTIC HELPER FAILURE DOES NOT ERASE EARLIER EVIDENCE.
+NO DISPLAYED DIFFERENCE, NO DIFFERENCE CLASSIFICATION.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

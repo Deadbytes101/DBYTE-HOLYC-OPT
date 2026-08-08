@@ -1,0 +1,318 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R12 RELATIVE MEDIA R2 STATIC AUDIT
+
+CLASS
+
+THE R12 DIRECT-R2 PREPARER WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+R12 BINDS THE OBSERVED MODIFYVM HELP REPORT AND THE OBSERVED INCOMPLETE-R1 INSPECTION REPORT.
+R12 PRESERVES R1 AS FAILURE EVIDENCE AND REQUIRES A NEW R2 ROOT.
+R12 REPLACES THE FALSE ABSOLUTE-MEDIA-REWRITE ASSUMPTION WITH AN INSPECTION-BOUND RELATIVE-BASENAME POLICY.
+R12 BINDS R2 AND THREE FILE-BACKED SOURCE FRAGMENTS BY EXACT TREE AND LOCAL BLOB.
+NO VM START, RESTORE-BOOT CLAIM, RECOVERY-POINT SEAL OR BUILD AUTHORIZATION WAS ADDED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R12.ps1
+
+Final blob:
+  655b1b84c761af190b52765e17b8916875adc980
+
+A pre-release draft of R12 embedded a large policy payload as one base64 source line and was detected during static review as truncated before its execution tail.
+No run command was released for that draft.
+The same R12 path was replaced before user execution with the final file-backed-fragment implementation above.
+
+BOUND R2 AND SOURCE FRAGMENTS
+
+R2:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R2.ps1
+  blob 796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+Old R2 modifyvm block:
+  tools/r12/R2-OLD-MODIFYVM-BLOCK.txt
+  blob 7464fbe67b9456cc7eb679255c98b3ecbc6cdecc
+
+Fixed R2 modifyvm block:
+  tools/r12/R2-NEW-MODIFYVM-BLOCK.txt
+  blob 36b5df298e4d657d54c1603e98104a8fe8f0ce0e
+
+Original-source policy injection:
+  tools/r12/R2-POLICY-INJECTION.ps1.txt
+  blob 528175dabdcefa025bbf719f02b7f8c9bb2dd8f2
+
+R12 requires both the Git tree blob and local worktree blob of every bound source object to equal its exact expected blob before reading the source.
+
+BOUND EVIDENCE
+
+Modifyvm help-surface report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vboxmanage-modifyvm-help-surface-probe.txt
+
+Required SHA256:
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+R1 incomplete inspection report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r1-incomplete-inspection.txt
+
+Required SHA256:
+  3D48BD2FCE6BA9363E086270D52C76A1AC326947A565F48F917C818435F70912
+
+R12 reasserts salient report fields after whole-file hash binding.
+
+The modifyvm report must still identify:
+  VBoxManage version 7.0.12r159484
+  exact caller VBoxManage path
+  modifyvm usage marker True for attempts 1 through 4
+  --clipboard-mode marker True for attempts 1 through 4
+  --drag-and-drop marker True for attempts 1 through 4
+  compact --draganddrop marker False for attempts 1 through 4
+
+The inspection report must still identify:
+  preserved r1 root exact
+  final preparation report absent True
+  copied VBOX exact sealed pre-rewrite SHA256
+  copied VBOX, VDI and ISO exact observed file IDs
+  target VDI location Temple1.10.vdi
+  target ISO location TempleOSTS.iso
+  sealed VDI absolute occurrences 0
+  copied VDI absolute occurrences 0
+  VDI basename occurrences 1
+  sealed ISO absolute occurrences 0
+  copied ISO absolute occurrences 0
+  ISO basename occurrences 1
+  VBoxUserHome file count 0
+  VBoxUserHome directory count 0
+  VBoxManage inspection invocation NOT-EXECUTED
+  VirtualBox inspection mutation NOT-EXECUTED
+  inspection COMPLETE
+  incomplete root PRESERVED
+
+R1 PRESERVATION CONTRACT
+
+Permanent evidence root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+R12 requires the root still exists.
+It rechecks:
+  copied VBOX SHA256 69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+  copied VBOX file ID 0X0000000000000000000100000006034F
+  copied VDI file ID  0X00000000000000000001000000060350
+  copied ISO file ID  0X00000000000000000001000000060351
+
+R12 performs no write inside r1.
+R1 is never passed to R2 or the original preparer.
+
+NEW ROOT CONTRACT
+
+The only accepted new boot-attempt root is:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+
+It must not exist before execution.
+
+The final preparation report remains:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+It must also be absent before execution.
+
+FIXED MODIFYVM CONTRACT
+
+R12 replaces the exact R2 $NewModifyHelp source fragment with the file-backed fixed source fragment.
+The generated original preparer therefore returns only:
+
+  Clipboard = --clipboard-mode
+  DragDrop  = --drag-and-drop
+
+No native help command is executed during preparation.
+The selected switch values remain bound to the exact observed help report.
+
+RELATIVE MEDIA POLICY
+
+After all existing R2 hardening transformations, the injected policy applies exact replacements to the generated original-preparer source.
+
+1. Boot root
+
+The original fixed root:
+  ...\templeosts-1.10-vdi-only-r1
+
+is replaced with:
+  ...\templeosts-1.10-vdi-only-r2
+
+2. Pre-registration copied VBOX media policy
+
+The original absolute-path rewrite block is removed.
+No Write-Utf8Text call is performed at this stage.
+
+The replacement block parses the unchanged copied VBOX as XML and requires exactly one target HardDisk UUID row and one target DVD Image UUID row.
+It requires exact location values:
+  Temple1.10.vdi
+  TempleOSTS.iso
+
+It also rechecks from the new copied VBOX text:
+  sealed VDI absolute count 0
+  copied VDI absolute count 0
+  VDI basename count 1
+  sealed ISO absolute count 0
+  copied ISO absolute count 0
+  ISO basename count 1
+
+Only after those gates pass does preparation proceed to isolated registration.
+
+The mutation-step classification becomes:
+  PRESERVE-COPIED-VBOX-RELATIVE-MEDIA-LOCATIONS
+
+The post-media-policy VBOX hash is set equal to the exact pre-policy copied-VBOX hash because the policy performs no XML write.
+
+3. Final XML postcondition
+
+The final Assert-BootVBoxXml call is changed from host absolute BootVdi and BootIso paths to:
+  Temple1.10.vdi
+  TempleOSTS.iso
+
+The existing R2 hardening still permits the detached ISO registry row to be zero or one and requires any remaining row to match the expected relative ISO location.
+
+4. Manifest terminology
+
+The original manifest labels:
+  boot_vbox_pre_rewrite_sha256
+  boot_vbox_post_rewrite_sha256
+
+become:
+  boot_vbox_pre_media_policy_sha256
+  boot_vbox_post_media_policy_sha256
+
+This avoids claiming a rewrite that no longer occurs.
+
+UNCHANGED R2 HARDENING
+
+R12 preserves R2 hardening for:
+  optional exact ISO target binding
+  default registry ISO binding before and after preparation
+  copied ISO attachment proof before correction
+  pre-detach ISO UUID proof
+  detached slot value-or-missing handling
+  all exposed NICs none
+  clipboard disabled
+  drag-and-drop disabled
+  VBoxVGA retained
+  9 MB VRAM retained
+  copied VDI UUID proof
+  zero-or-one machine-local detached ISO registry row
+  copied VBOX attached-ISO UUID absence
+  default registry and sealed rehearsal revalidation
+  incomplete-root preservation on failure after root creation
+
+R2 still binds the original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+R2 REPOSITORY-ROOT CONTRACT
+
+R12 parses the final patched R2 source with the PowerShell AST.
+Before root injection it requires exactly:
+  one AssignmentStatementAst with text $RepoRoot = Split-Path -Parent $PSScriptRoot
+  one executable PSScriptRoot variable expression
+
+R12 range-checks the AST StartOffset and EndOffset and rechecks the exact extent text before splicing only that assignment.
+The repository path is emitted as a single-quoted PowerShell literal.
+
+The final patched R2 source is parsed again and must contain zero executable PSScriptRoot variable expressions before scriptblock creation.
+
+MUTATION SURFACE
+
+R12 itself performs no VirtualBox mutation.
+Before invoking dynamic R2 it performs only:
+  Git blob reads
+  report/hash reads
+  r1 hash/file-ID reads
+  source fragment reads
+  in-memory source transformation and AST validation
+
+The inherited original-preparer mutation surface remains limited to the new r2 isolated copy:
+  registervm
+  modifyvm copied powered-off machine
+  storageattach copied DVD slot --medium none
+
+The copied machine is intended to receive:
+  boot1 disk
+  boot2 none
+  boot3 none
+  boot4 none
+  all exposed NICs none
+  clipboard disabled
+  drag-and-drop disabled
+  copied ISO detached
+  VBoxVGA retained
+  9 MB VRAM retained
+  machine state poweroff
+
+NEGATIVE COMMAND SURFACE
+
+Neither R12 nor its policy fragments add:
+  startvm
+  controlvm
+  savestate
+  poweroff
+  unregistervm
+  snapshot take
+  snapshot restore
+  snapshot delete
+  guestcontrol
+  compiler execution
+
+R1 is not registered or mutated.
+
+FAILURE RULE
+
+If R12 fails before r2 root creation, r2 remains absent and may be investigated from the exact failure boundary.
+
+If R12 fails after r2 root creation, the inherited original-preparer failure handler must preserve r2 and BOOT-ATTEMPT-INCOMPLETE.txt.
+Such an r2 root must then become permanent evidence and must not be deleted or reused.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  R2 BOOT ATTEMPT COPY                 PREPARED
+  POWERED-OFF CORRECTED CONFIGURATION  OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  R1 REUSE                              DENIED
+  VM START                              NOT AUTHORIZED
+  RESTORE BOOT                          NOT OBSERVED
+  TEMPLEOS DESKTOP                      NOT OBSERVED
+  POWERED-OFF RECOVERY POINT            NOT SEALED
+  GUEST DELIVERY                        UNRESOLVED
+  COMPILER BUILD                        NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION              DENIED
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal        VERIFIED / SEALED
+  boot readiness                        ADJUDICATED
+  modifyvm switch contract              ADJUDICATED
+  r1 incomplete root                    PRESERVED / INSPECTED
+  relative media representation         OBSERVED
+  r12 direct-R2 preparer                STATICALLY AUDITED
+  r2 boot-attempt copy                  EXECUTION PENDING
+  VM start                              NOT AUTHORIZED
+  restore boot                          NOT OBSERVED
+  powered-off recovery point            NOT SEALED
+  build execution                       NOT AUTHORIZED
+
+RULE
+
+RUN R12 ONLY WITH NEW ROOT R2.
+PRESERVE R1 PERMANENTLY.
+DO NOT REWRITE RELATIVE MEDIA LOCATIONS TO HOST ABSOLUTE PATHS.
+PRESERVE ANY NEW INCOMPLETE R2 ROOT ON FAILURE.
+DO NOT START R1, R2 OR THE SEALED REHEARSAL.
+PREPARATION IS NOT A BOOT PROOF.
+NO RESTORE-BOOT CLAIM.
+NO RECOVERY CLAIM.
+NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

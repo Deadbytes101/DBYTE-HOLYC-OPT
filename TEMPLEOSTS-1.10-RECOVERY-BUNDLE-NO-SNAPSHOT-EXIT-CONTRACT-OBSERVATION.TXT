@@ -1,0 +1,184 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 RECOVERY BUNDLE NO-SNAPSHOT EXIT CONTRACT OBSERVATION
+
+CLASS
+
+CONFIGURATION-EXACT RECOVERY BUNDLE PREPARATION DID NOT START.
+THE TARGET REMAINED POWERED OFF WITH ZERO OBSERVED SNAPSHOTS.
+VBOXMANAGE REPORTED THE ZERO-SNAPSHOT STATE THROUGH A NONZERO EXIT CODE.
+THE GENERIC READ-ONLY INVOKER MISCLASSIFIED THAT SENTINEL AS A FAILURE.
+NO STAGING ROOT, RECOVERY ROOT, MANIFEST OR PREPARATION REPORT WAS CREATED.
+POWERED-OFF RECOVERY POINT REMAINS NOT SEALED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  d13b6693be492d3c936cee5d77fdfcc32ee953ea
+
+Command:
+  tools/PREPARE-TEMPLEOSTS-CONFIG-EXACT-RECOVERY-BUNDLE-R3.ps1
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  resource root
+    D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+  sealed normalized difference report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vbox-normalized-diff.txt
+
+  requested recovery root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2
+
+  requested preparation report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-config-exact-recovery-preparation.txt
+
+OBSERVED WRAPPER BINDING
+
+  original preparer blob
+    33957db6d124f20025be638eb41d74e7e4190bcc
+
+  empty running-inventory guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  root-disjoint guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  final zero-snapshot guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  patched source SHA256
+    3D74E692A33D6D70228F229988A2CDB9CEBD54C25411099692CAD643BC9C754B
+
+OBSERVED RESULT
+
+  failing operation
+    VBoxManage snapshot 9c98691e-27cd-4487-a306-587969c2c78c list --machinereadable
+
+  terminal output
+    This machine does not have any snapshots
+
+  generic helper classification
+    FAILURE DUE TO NONZERO EXIT CODE
+
+  domain classification
+    ZERO SNAPSHOTS
+
+  staging root
+    NOT CONSTRUCTED
+
+  recovery root
+    NOT CREATED
+
+  manifest
+    NOT WRITTEN
+
+  preparation report
+    NOT WRITTEN
+
+ROOT CAUSE
+
+The preparer routes every VBoxManage read through one generic helper that throws
+on any nonzero exit code.  In this VirtualBox build, the snapshot-list command
+represents the valid no-snapshot state by returning a nonzero exit code together
+with the exact sentinel text:
+
+  This machine does not have any snapshots
+
+The existing code therefore rejects the expected zero-snapshot state before it
+can convert the inventory to zero SnapshotName, SnapshotUUID or SnapshotNode
+rows.
+
+This is an exit-contract mismatch.  It is not evidence that a snapshot exists,
+that the target started, or that the powered-off state changed.
+
+OBSERVED EXECUTION BOUNDARY
+
+Before the failure, the R3 wrapper:
+
+  bound the original preparer tree and local blob
+  added AllowEmptyCollection only to Assert-LiveTarget Running
+  retained bidirectional root-disjoint hardening
+  retained final zero-snapshot revalidation
+  created the patched scriptblock
+
+The original preparer then:
+
+  resolved and validated all input and output paths
+  confirmed that recovery root and report path did not exist
+  bound the sealed normalized-difference report
+  revalidated pinned resource commit and clean tracked tree
+  revalidated adopted baseline VDI and ISO
+  queried registered, running and machine-readable target inventory read-only
+  accepted the empty running inventory
+  revalidated target name, UUID, poweroff state and exact attachments
+  revalidated zero shared-folder mappings
+
+It stopped at the initial snapshot inventory query.  It had not yet:
+
+  hashed the live current VBOX
+  hashed the live VDI or ISO
+  queried NTFS file IDs
+  constructed a staging-root name
+  created any directory
+  copied any file
+  written inventory evidence
+  generated a manifest
+  moved staging into the final recovery root
+  written the preparation report
+
+MUTATION BOUNDARY
+
+No VM start, stop, snapshot operation, attachment change, live VBOX write, live
+VDI write, live ISO write, guest delivery or compiler execution occurred.
+No staging directory, final recovery directory, bundle file, manifest or report
+was created by this invocation.
+
+CORRECTION CONTRACT
+
+  preserve the original preparer and all failed wrappers
+  bind the original preparer tree and local blob exactly
+  retain the empty running-inventory parameter correction
+  retain bidirectional root-disjoint validation
+  retain final zero-snapshot revalidation
+  add a snapshot-specific read-only invoker
+  accept only the exact observed no-snapshot sentinel as an empty inventory
+  continue throwing for every other nonzero snapshot command result
+  use the snapshot-specific invoker at both initial and final snapshot gates
+  retain the requirement that parsed snapshot rows equal zero
+  do not create or delete a VirtualBox snapshot
+  do not seal recovery during preparation
+  do not authorize build execution
+
+CURRENT STATUS
+
+  exact TempleOSTS corpus                 SEALED
+  target guest VM                         SEALED
+  target VM state                         POWEROFF / OBSERVED
+  running target rows                     ZERO / OBSERVED
+  shared-folder mappings                  ZERO / OBSERVED
+  snapshot inventory                      ZERO SENTINEL / OBSERVED
+  adopted baseline VDI                    DISK-EXACT / DISTINCT FILE
+  adopted baseline VBOX                   CONFIGURATION-NONEXACT
+  replacement recovery bundle             NOT PREPARED
+  restore execution                       NOT OBSERVED
+  guest delivery                          UNRESOLVED
+  compiler build execution                NOT AUTHORIZED
+  optimizer transformation                DENIED
+
+RULE
+
+A DOMAIN-SPECIFIC ZERO-RESULT SENTINEL IS NOT A GENERIC COMMAND FAILURE.
+ACCEPT ONLY THE OBSERVED SENTINEL; DO NOT MASK OTHER VBOXMANAGE ERRORS.
+PREPARATION IS NOT RESTORE PROOF.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

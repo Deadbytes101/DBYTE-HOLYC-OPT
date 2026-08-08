@@ -1,0 +1,91 @@
+DBYTE-HOLYC-OPT
+PORTABLE VIRTUALBOX7 / VBOXSUP HOST-READY R3 VERIFIER NETWORK-COUNT HOTFIX STATIC AUDIT
+
+BASE VERIFIER
+
+tools/VERIFY-PORTABLE-VIRTUALBOX7-VBOXSUP-HOST-READY-R3.ps1
+blob	9d2cce9702aed0b955a779a07d3b61f78097933b
+
+HOTFIX RUNNER
+
+tools/RUN-PORTABLE-VIRTUALBOX7-VBOXSUP-HOST-READY-R3-VERIFIER-NETWORK-COUNT-HOTFIX.ps1
+blob	104cb6362ef23c8439a3d7ee398f40a4282a03b4
+
+DEFECT
+
+The base verifier's final console-only NETWORK DISABLED rendering evaluated:
+
+(($NicKeys | Where-Object { ... }).Count -eq 0)
+
+PowerShell pipeline output may unwrap a one-element result to a scalar object. Direct .Count use on that expression is therefore not accepted as a stable console rendering contract.
+
+The defect is after the substantive NIC verification gates. Earlier verifier logic already materializes $NicKeys with @(), requires at least one NIC key, and individually rejects every NIC whose value is not 'none'. The defect does not weaken the actual network-disabled verification result; it can only destabilize the final console line after all verification work.
+
+HOTFIX
+
+The runner binds the exact base verifier blob in both Git tree and local worktree, replaces exactly one final console expression with:
+
+$EnabledNicKeysForConsole = @(
+    $NicKeys | Where-Object { [string]$Map[$_] -cne 'none' }
+)
+$NetworkDisabledForConsole = ($EnabledNicKeysForConsole.Count -eq 0)
+Write-Host "NETWORK DISABLED:       $NetworkDisabledForConsole"
+
+It requires replacement source cardinality 1 -> 1 and reparses the patched source through the PowerShell parser before invocation.
+
+UNCHANGED CORE CONTRACT
+
+- exact mutation report SHA256 bound
+- exact failed boot report SHA256 bound
+- exact prepared R3 verification SHA256 bound
+- exact boot-authorization SHA256 bound
+- exact VBoxSup SYS/INF/CAT hashes and Valid signature required
+- exact VBoxSup service registry definition required
+- sc query numeric STATE 4 before and after VirtualBox reads
+- exactly one running Win32_SystemDriver VBoxSup row required
+- exact R3 current/previous VBOX, VDI, ISO hashes and NTFS file IDs required
+- exact isolated VirtualBox.xml hash required before/after reads
+- isolated VBOX_USER_HOME required
+- VirtualBox 7.0.12r159484 required
+- exactly one registered Temple1.10 target required
+- running VMs zero
+- VMState poweroff
+- exact R3 CfgFile and VDI attachment
+- ISO detached
+- boot disk/none/none/none
+- all NICs none
+- clipboard/drag-and-drop disabled
+- VBoxVGA / 9 MB
+- snapshots zero
+- exact VDI UUID
+- post-read payload/R3/registry drift denied
+
+COMMAND SURFACE
+
+READS:
+- git rev-parse / hash-object for exact base-verifier binding
+- fsutil file queryfileid
+- sc query / qc
+- CIM Win32_SystemDriver
+- VBoxManage --version
+- VBoxManage list vms
+- VBoxManage list runningvms
+- VBoxManage showvminfo --machinereadable
+- VBoxManage snapshot list --machinereadable
+- VBoxManage showmediuminfo disk
+
+MUTATIONS:
+NONE to service, driver, VM, machine configuration, media, snapshots, guest, or optimizer.
+The only write is the external verification report after all gates pass.
+
+STATIC VERDICT
+
+BASE VERIFIER DIRECT EXECUTION	SUPERSEDED BY HOTFIX RUNNER
+HOTFIX RUNNER	ACCEPTED
+SC MUTATION	NOT AUTHORIZED
+DRIVER INSTALL/START	NOT AUTHORIZED
+VM START	NOT AUTHORIZED
+VM RETRY	NOT AUTHORIZED UNTIL HOTFIXED VERIFIER PASSES
+GUEST BUILD	NOT AUTHORIZED
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

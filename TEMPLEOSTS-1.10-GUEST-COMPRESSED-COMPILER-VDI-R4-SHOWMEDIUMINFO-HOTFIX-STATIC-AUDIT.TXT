@@ -1,0 +1,28 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / COMPRESSED COMPILER + VDI R4 / SHOWMEDIUMINFO HOTFIX STATIC AUDIT
+
+branch	overheaven-foundation
+script	tools/PROBE-TEMPLEOSTS-GUEST-COMPRESSED-COMPILER-AND-VDI-R4.ps1
+script_blob	b55d90d7c21bd384ce245712c6745e15ab99c50f
+hotfix_commit	4b5dfd5618f9af94cbb8af667161d0329c49f827
+
+OBSERVED FAILURE BINDING
+previous_script_blob	bec241189f801c29f1ca899296d2c5ca972aac0c
+failure	VBoxManage 7.0.12 showmediuminfo rejects --machinereadable
+exit	2
+
+SURGICAL DIFF
+old	$Medium=Native $VBox @('showmediuminfo','disk',$Vdi,'--machinereadable') 'showmediuminfo';Ok $Medium
+new	$Medium=Native $VBox @('showmediuminfo','disk',$Vdi) 'showmediuminfo';Ok $Medium
+changed_lines	1
+
+UNCHANGED CONTRACT
+Guest commands remain Dir("T:/Compiler/ICLCC.CPP.Z"); and Dir("T:/Compiler/Compiler.PRJ.Z");.
+VDI medium output remains captured as non-empty evidence rows.
+VM identity, running-state, storage-attachment, ISO hash, R3 evidence and disabled-network gates remain unchanged.
+No install command, target compiler file write, compiler invocation, startvm, poweroff, reset, storageattach, modifyvm or network enablement was added.
+The only controlvm operations remain keyboard input and screenshotpng.
+
+STATUS	STATIC-AUDIT-PASS-R4-SHOWMEDIUMINFO-HOTFIX
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

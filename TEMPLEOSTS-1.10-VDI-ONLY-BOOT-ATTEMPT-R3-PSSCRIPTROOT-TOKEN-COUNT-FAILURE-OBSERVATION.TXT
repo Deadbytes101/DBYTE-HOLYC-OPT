@@ -1,0 +1,168 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R3 PSSCRIPTROOT TOKEN-COUNT FAILURE OBSERVATION
+
+CLASS
+
+THE R3 BOOT-ATTEMPT PREPARER ENTRYPOINT FAILED CLOSED BEFORE DYNAMIC R2 EXECUTION.
+THE FAILURE WAS IN R3 SOURCE CLASSIFICATION, NOT IN THE BOOT-ATTEMPT PREPARER.
+R3 COUNTED TEXTUAL PREFIX MATCHES FOR $PSScriptRoot INSTEAD OF EXACT POWERSHELL VARIABLE TOKENS.
+THE R2 WRAPPER AND ORIGINAL PREPARER WERE NOT INVOKED.
+NO BOOT-ATTEMPT ROOT, ISOLATED REGISTRY OR EXTERNAL REPORT WAS CREATED BY THIS INVOCATION.
+NO VIRTUALBOX QUERY OR MUTATION COMMAND FROM R2 OR THE ORIGINAL PREPARER WAS EXECUTED.
+VM START, RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  86cbbc2cfb02b2a6df8bfc53e072977fc0033b6b
+
+Entrypoint:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3.ps1
+
+Entrypoint blob:
+  462a54f375439f60d9aefc37a62b9b3dd41e681e
+
+Bound R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+Requested boot-attempt root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Requested external report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+OBSERVED FAILURE
+
+Terminal error:
+
+  R2 repository-root source cardinality mismatch: psscriptroot=5 anchor=1
+
+Failure location:
+
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3.ps1
+  line 180
+
+The user-provided terminal output is the observed execution evidence.
+GitHub and the assistant environment did not execute the local PowerShell command.
+
+EXECUTION BOUNDARY
+
+R3 completed these wrapper-local operations before failure:
+
+  resolved its file-backed repository root
+  resolved the R2 path
+  verified R2 tree blob
+  verified R2 local blob
+  read R2 source text
+  replaced the nested help-attempt array block in memory
+  counted textual occurrences of $PSScriptRoot
+  counted the exact executable repository-root anchor
+
+R3 failed before:
+
+  replacing the R2 repository-root anchor
+  creating the patched R2 scriptblock
+  printing the R3 execution headers
+  invoking R2
+  R2 binding the original preparer
+  original preparer preflight checks
+  boot-attempt root creation
+  file copying
+  isolated VBOX_USER_HOME creation
+  VM registration
+  modifyvm execution
+  storageattach execution
+  manifest creation
+  external report creation
+
+ROOT CAUSE
+
+R3 used a raw substring count:
+
+  [regex]::Escape('$PSScriptRoot')
+
+The R2 source contains one executable exact variable token:
+
+  $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+It also contains textual strings whose prefixes include the same characters:
+
+  $PSScriptRootReferences
+  [regex]::Escape('$PSScriptRoot')
+
+The variable name $PSScriptRootReferences begins with the substring $PSScriptRoot.
+Therefore the raw textual count returned five even though the exact executable
+PSScriptRoot variable token occurred only once.
+
+The exact repository-root anchor count remained one:
+
+  anchor=1
+
+This proves the failure was caused by over-broad textual token classification, not
+by multiple executable repository-root anchors.
+
+ADJUDICATION
+
+The repository-root contract must classify PowerShell syntax, not arbitrary text.
+
+A corrected entrypoint must:
+
+  preserve R3 and bind its exact tree and local blob
+  parse the source with System.Management.Automation.Language.Parser
+  count only VariableExpressionAst nodes whose VariablePath.UserPath equals PSScriptRoot
+  require exactly one exact PSScriptRoot variable token before repository-root injection
+  require exactly one executable repository-root anchor before injection
+  inject the file-backed repository root into the dynamic R3 source
+  require zero exact PSScriptRoot variable tokens after injection
+  preserve R3 help-array correction and all R2/original-preparer blob contracts
+  execute the corrected R3 only after every source contract passes
+
+Text inside variable names, string literals or diagnostic labels must not be treated
+as executable PSScriptRoot dependencies.
+
+ONE DECISION
+
+Preserve R3 and create one file-backed R4 wrapper that applies an exact AST-token
+classification correction and injects the R4 repository root before dynamic execution.
+
+R4 must not change:
+
+  the R2 help-array correction
+  the R2 hardening replacements
+  the original preparer mutation sequence
+  the boot-attempt root
+  VirtualBox configuration
+  VM state
+  authorization state
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal             VERIFIED / SEALED
+  boot readiness                             ADJUDICATED
+  original boot-attempt preparer             PRESERVED
+  R2 hardening wrapper                       PRESERVED
+  R3 entrypoint                              TOKEN-COUNT DEFECT / PRESERVED
+  boot-attempt root                          NOT CREATED BY THIS INVOCATION
+  boot-attempt copy                          NOT PREPARED
+  VM start                                   NOT AUTHORIZED
+  restore boot                               NOT OBSERVED
+  powered-off recovery point                 NOT SEALED
+  compiler build execution                   NOT AUTHORIZED
+  optimizer transformation                   DENIED
+
+RULE
+
+COUNT POWERSHELL VARIABLES AS SYNTAX, NOT SUBSTRINGS.
+ONE TOKEN-CLASSIFICATION DEFECT, ONE SURGICAL WRAPPER CORRECTION.
+DO NOT EDIT OR REPLACE THE FAILED R3 OBJECT.
+NO PREPARED BOOT COPY, NO VM START.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

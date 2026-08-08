@@ -1,0 +1,194 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VBOX CONFIGURATION DRIFT ADJUDICATION OBSERVATION
+
+CLASS
+
+LIVE VDI AND ISO REMAIN EXACT.
+LIVE VBOX IS NOT CONFIGURATION-EXACT TO THE ADOPTED BASELINE.
+THE ADOPTED BASELINE IS A DISK-EXACT ASSET, NOT A SEALED FULL-VM RECOVERY POINT.
+A NEW CONFIGURATION-EXACT POWERED-OFF RECOVERY BUNDLE IS REQUIRED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  715309f3d37d0db56ae6a5d5d1150253d0bb8bd9
+
+Command:
+  tools/SHOW-TEMPLEOSTS-VBOX-NORMALIZED-DIFF-R2.ps1
+
+Input report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vbox-normalized-diff.txt
+
+Input report SHA256:
+  C7253681589771FF0E36A56DDFA7627C6FCA48398A1AEE1465645470DC8B3A11
+
+TARGET IDENTITY
+
+  name
+    Temple1.10
+
+  UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  state
+    poweroff
+
+  live VBOX SHA256
+    E537469A1B1A88DE13D18704B5D6299F3AF202DA518FB266F045485A8FC4F1E6
+
+  adopted baseline VBOX SHA256
+    E7A884AD2590BAD05AF4465A22FD857A75F64AB9F91042E4638256E8B21AEB46
+
+  live normalized VBOX SHA256
+    CCB9C85945B1A432B35E1021D8C174E932E932FE1E2988D4655072FA68211859
+
+  baseline normalized VBOX SHA256
+    1E3FB6296E757B388F89A17AC05F02A0525C42D609CE67A8212032FE9E791866
+
+  first normalized character difference
+    971
+
+  normalized line-diff rows
+    9
+
+  current-only rows
+    5
+
+  baseline-only rows
+    4
+
+OBSERVED DIFFERENCES
+
+1. HOST GUI WINDOW POSITION
+
+  current
+    <ExtraDataItem name="GUI/LastNormalWindowPosition" value="24,69,640,520"/>
+
+  baseline
+    <ExtraDataItem name="GUI/LastNormalWindowPosition" value="1123,309,640,520"/>
+
+  classification
+    HOST GUI PRESENTATION STATE.
+    NOT GUEST-DISK CONTENT.
+
+2. NAT LOCALHOST REACHABILITY
+
+  current
+    <NAT localhost-reachable="true"/>
+
+  baseline
+    <NAT/>
+
+  classification
+    HOST NETWORK CONFIGURATION DRIFT.
+    THIS CAN CHANGE NETWORK BEHAVIOUR AND IS NOT PRESENTATION-ONLY.
+
+3. SHARED CLIPBOARD MODE
+
+  current
+    <Clipboard mode="Bidirectional"/>
+
+  baseline
+    <Clipboard/>
+
+  classification
+    HOST-GUEST INTEGRATION CONFIGURATION DRIFT.
+    THIS CHANGES A DATA-TRANSFER CHANNEL AND IS NOT VOLATILE TIMESTAMP DATA.
+
+4. DRAG-AND-DROP MODE
+
+  current
+    <DragAndDrop mode="Bidirectional"/>
+
+  baseline
+    no corresponding element in the displayed normalized line diff
+
+  classification
+    HOST-GUEST INTEGRATION CONFIGURATION DRIFT.
+    THIS CHANGES A DATA-TRANSFER CHANNEL AND IS NOT VOLATILE TIMESTAMP DATA.
+
+5. HOST LANGUAGE GUEST-PROPERTY TIMESTAMP
+
+  current
+    <GuestProperty name="/VirtualBox/HostInfo/GUI/LanguageID" value="C" timestamp="1785170313724322200" flags="RDONLYGUEST"/>
+
+  baseline
+    <GuestProperty name="/VirtualBox/HostInfo/GUI/LanguageID" value="C" timestamp="1785109033697033400" flags="RDONLYGUEST"/>
+
+  classification
+    THE PROPERTY NAME, VALUE AND FLAGS ARE EQUAL.
+    ONLY THE HOST-PROVIDED TIMESTAMP DIFFERS.
+
+ADJUDICATION
+
+The normalized mismatch is not one uniform volatile field class.
+
+The GUI position and guest-property timestamp are host metadata.  The NAT,
+Clipboard and DragAndDrop differences are configuration changes with observable
+host or guest integration behaviour.  They must not be normalized away merely
+to make the adopted baseline pass.
+
+The original powered-off recovery verifier requires REGISTERED-EXACT and VBOX
+state EXACT against the adopted baseline.  That contract was correctly rejected
+by the observed PREFLIGHT inspector result and remains rejected.
+
+The existing adopted baseline VDI remains valuable because its bytes and SHA256
+are exact to the live VDI and its NTFS file ID is distinct.  It is therefore a
+disk-exact recovery asset.  Its VBOX file is not an exact copy of the current
+registered VM configuration.
+
+ONE DECISION
+
+Preserve the adopted baseline unchanged.
+Do not expand the pinned inspector normalization contract.
+Do not rewrite the existing recovery verifier to accept these differences.
+Prepare a new powered-off recovery bundle containing:
+
+  an exact copy of the current live VBOX
+  a distinct exact copy sourced from the adopted baseline VDI
+  an exact TempleOSTS ISO copy
+  current read-only VirtualBox inventory evidence
+  a deterministic manifest and preparation report
+
+Preparation does not seal restore correctness.  A separate observed verifier
+and restore-route proof remain required.
+
+MUTATION BOUNDARY
+
+The observed display command read one sealed report and wrote nothing.
+No VM start, stop, snapshot operation, attachment change, VBOX write, VDI write,
+ISO write, guest delivery or compiler execution occurred.
+
+CURRENT STATUS
+
+  exact TempleOSTS corpus                SEALED
+  target guest VM                        SEALED
+  target VM state                        POWEROFF / OBSERVED
+  live VDI                               EXACT / OBSERVED
+  live ISO                               EXACT / OBSERVED
+  adopted baseline VDI                   DISK-EXACT / DISTINCT FILE
+  adopted baseline VBOX                  CONFIGURATION-NONEXACT
+  normalized difference payload          DISPLAYED / OBSERVED
+  difference classification              HOST-CONFIGURATION-DRIFT
+  original full-VM recovery point         REJECTED BY EXISTING CONTRACT
+  replacement recovery bundle             NOT YET PREPARED
+  restore execution                       NOT OBSERVED
+  guest delivery                          UNRESOLVED
+  compiler build execution                NOT AUTHORIZED
+  optimizer transformation                DENIED
+
+RULE
+
+DISK EQUALITY DOES NOT IMPLY VM-CONFIGURATION EQUALITY.
+DO NOT NORMALIZE BEHAVIOURAL CONFIGURATION DRIFT INTO A PASS.
+PREPARATION IS NOT RESTORE PROOF.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

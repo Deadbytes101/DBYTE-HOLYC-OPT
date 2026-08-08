@@ -1,0 +1,78 @@
+DBYTE HOLYC OBSERVATION 1
+
+ENCODING
+
+UTF-8 JSON
+ONE OBJECT PER TEST CASE
+HASHES ARE UPPERCASE SHA256 HEX
+
+REQUIRED FIELDS
+
+schema
+  dbyte-holyc-observation-1
+
+role
+  baseline
+  candidate
+
+case_id
+  stable test name
+
+source_sha256
+  exact source input identity
+
+compiler_sha256
+  exact compiler binary identity
+
+exit_kind
+  return
+  exception
+  timeout
+
+return_i64
+  signed decimal string or null
+
+exception
+  stable exception class or null
+
+stdout_sha256
+  digest of exact captured output bytes
+
+memory_sha256
+  digest of the case-defined observed memory region
+
+code_sha256
+  digest of generated machine-code bytes
+
+code_bytes
+  generated machine-code byte count
+
+compile_ticks
+  raw monotonic compile measurement
+
+run_ticks
+  raw monotonic execution measurement
+
+transforms
+  ordered transformation IDs; empty for baseline
+
+SEMANTIC VERDICT FIELDS
+
+  exit_kind
+  return_i64
+  exception
+  stdout_sha256
+  memory_sha256
+
+MEASUREMENT FIELDS
+
+  code_sha256
+  code_bytes
+  compile_ticks
+  run_ticks
+  transforms
+
+A measurement difference is allowed.
+A semantic difference is a failure.
+A timeout is an observation, not an automatic optimizer failure, when both
+sides reach the same bounded timeout under the same harness conditions.

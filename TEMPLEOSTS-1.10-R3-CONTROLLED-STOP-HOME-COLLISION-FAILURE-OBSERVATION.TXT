@@ -1,0 +1,68 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 CONTROLLED STOP / POWERSHELL HOME COLLISION FAILURE OBSERVATION
+
+CLASSIFY
+
+Observed invocation attempted the released controlled-stop object:
+
+  tools/STOP-TEMPLEOSTS-R3-NO-BOOTABLE-MEDIUM-CONTROLLED.ps1
+  blob 06f7270ab7b8d97fc9a3fce06f3e86ed65375398
+
+The invocation failed with:
+
+  Cannot overwrite variable HOME because it is read-only or constant.
+
+The caller then observed:
+
+  R3 STOP REPORT NOT CREATED
+
+BOUND PRECONDITION
+
+The previously sealed second controlled boot-attempt report remains:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-second-controlled-boot-attempt.txt
+  SHA256 E6780E727989B974727402F782CA16B1B870FBF05591FACA6D131F6244F71430
+
+ROOT CAUSE
+
+PowerShell variable names are case-insensitive. The stop source assigns to the variable name Home in both the report helper and the main execution scope. This collides with the built-in HOME variable, which is read-only/constant in the observed host session.
+
+The released source contains four variable references named Home:
+
+  report helper assignment
+  report helper registry path use
+  main isolated-home assignment
+  process VBOX_USER_HOME assignment use
+
+The correct surgical repair is to rename only those Home variable references to an unambiguous local name while leaving the stop boundary, machine identity, VBoxSup checks, and controlvm poweroff command unchanged.
+
+MUTATION ADJUDICATION
+
+The failure occurred before the script printed:
+
+  STOP BOUNDARY:          R3 RUNNING / NO-BOOT EVIDENCE SEALED
+  AUTHORIZED MUTATION:    controlvm TARGET poweroff / ONCE
+
+No stop report was created.
+
+Therefore this invocation does not establish that controlvm poweroff was issued. Under the fail-closed contract it is classified as:
+
+  CONTROLVM POWEROFF      NOT-OBSERVED / NOT-REACHED-BY-SCRIPT
+  ISO PREPARATION         NOT-EXECUTED
+  ISO START               NOT-EXECUTED
+  COMPILER BUILD          NOT-EXECUTED
+
+ONE DECISION
+
+Preserve the released base stop object and execute a bounded in-memory hotfix runner that:
+
+  - binds the exact base blob
+  - renames only variable Home to IsolatedVBoxHome
+  - requires exact variable cardinality before and after
+  - reparses the patched PowerShell AST
+  - proves the single controlvm poweroff command remains unchanged
+  - invokes the patched stop object only after all patch gates pass
+
+No optimizer transformation or compiler build is authorized by this observation.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

@@ -1,0 +1,47 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / GUEST SHELL PROBE R1 / QUOTE TRANSPORT FAILURE OBSERVATION
+
+executed_head	efc0fb0d77624d99b712947a8ce77de76581becd
+script	tools/PROBE-TEMPLEOSTS-GUEST-SHELL-READ-ONLY-R1.ps1
+script_blob	77cdd366a1d6859d957b644fa8f60c14088f31bd
+
+HOST RESULT
+probe_png_sha256	04B80A576F5D4FBC161D763247DEE47F6321A4BE46EF680E207E459AFA4B3DD5
+probe_png_bytes	17470
+probe_report_sha256	83A2B2A73D4684C4FDA6B89A64ED6809AE72E14884B39CBF98995286657D0BF3
+host_verdict	GUEST SHELL PROBE CAPTURED / VISUAL ADJUDICATION PENDING
+
+VISUAL ADJUDICATION
+classification	FAIL-QUOTE-TRANSPORT-NOT-GUEST-PATH-RESULT
+
+The uploaded visual is byte-identical to the host-captured probe PNG by SHA256.
+The first intended command was:
+  "DBYTE_GUEST_SHELL_R1\n";
+The guest display instead shows an unquoted command beginning:
+  DBYTE_GUEST_SHELL_R1\n;
+and reports an undefined identifier at "n" from HOME/Temp.TXT.Z.
+
+The intended Dir commands contained quoted paths.
+The guest display instead shows an unquoted Dir expression beginning:
+  Dir(C:/Compiler/...
+and reports invalid lval at "C" from HOME/Temp.TXT.Z.
+
+Therefore VBoxManage keyboardputstring as used by R1 did not preserve the embedded double-quote characters as guest keystrokes. The R1 visual does not establish existence or absence of C:/Compiler/ICLCC.CPP or T:/Compiler/ICLCC.CPP.
+
+GUEST STATE
+TempleOS entered its debugger after the malformed interactive expressions. The exact TempleOSTS debugger help identifies G; as Resume execution, Fix; as Edit Last Err Src Code, and Exit; as Exit (kill) task. No debugger recovery command is authorized by this observation.
+
+TEMP FILE CORRECTION
+The exact TempleOSTS corpus defines sys_temp_filename as HOME/Temp.TXT.Z. The visual faults are explicitly attributed to HOME/Temp.TXT.Z. Accordingly, the prior static-audit description "READ-ONLY-GUEST-SHELL-PROBE" is too broad if interpreted as zero guest filesystem writes: the interactive command path itself uses the guest temp command file. What remains true is that R1 contained no explicit Copy, Move, Del, FileWrite, Cmp, format, install, reboot, shutdown, or compiler-build primitive, and no explicit target compiler file mutation was requested.
+
+DECISION
+Do not interpret R1 as a path probe result.
+Do not continue issuing queued shell commands in the current debugger state.
+Recover by a separately gated clean host restart of this isolated fresh-ISO VM, then test one harmless quoted string using keyboard scancodes for the quote key before any path probe.
+
+TARGET COMPILER FILE WRITE	NOT-EXECUTED
+COMPILER BUILD	NOT-EXECUTED
+OPTIMIZER TRANSFORMATION	NOT-EXECUTED
+PR READY/MERGE	NOT-AUTHORIZED
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

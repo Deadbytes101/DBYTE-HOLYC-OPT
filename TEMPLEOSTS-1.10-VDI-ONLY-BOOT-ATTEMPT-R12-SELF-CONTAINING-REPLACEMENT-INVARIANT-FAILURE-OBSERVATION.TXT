@@ -1,0 +1,172 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R12 SELF-CONTAINING REPLACEMENT INVARIANT FAILURE OBSERVATION
+
+CLASS
+
+R12 FAILED CLOSED BEFORE DYNAMIC R2 EXECUTION.
+THE FAILURE WAS IN R12'S GENERIC Invoke-ExactReplacement POSTCONDITION.
+THE R12 ORIGINAL-SOURCE POLICY INJECTION INTENTIONALLY REPLACES ONE ANCHOR WITH A LARGER PAYLOAD THAT ENDS BY RETAINING THE SAME ANCHOR.
+THE REPLACEMENT THEREFORE CORRECTLY LEAVES ONE OLD-ANCHOR OCCURRENCE INSIDE THE NEW REPLACEMENT TEXT.
+R12'S HELPER INCORRECTLY REQUIRED old_after=0 FOR EVERY REPLACEMENT.
+
+OBSERVED FAILURE
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+R12 final blob executed:
+  655b1b84c761af190b52765e17b8916875adc980
+
+Error:
+  R12 original-source policy injection replacement mismatch: old_after=1 new_after=1
+
+Failure location:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R12.ps1
+  Invoke-ExactReplacement postcondition
+
+The policy anchor is:
+  if ($PatchedSource -ceq $Source) {
+
+The injected replacement intentionally consists of:
+  file-backed relative-media policy payload
+  blank line
+  the same policy anchor
+
+Therefore the observed post-replacement cardinality:
+  old_after  1
+  new_after  1
+
+is structurally consistent with an exact one-for-one self-containing replacement.
+
+BOUND OBJECTS REACHED BEFORE FAILURE
+
+R12 had already validated its exact R2 and fragment blobs and had bound:
+  R2 blob
+    796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+  modifyvm probe report SHA256
+    57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+  incomplete-r1 inspection report SHA256
+    3D48BD2FCE6BA9363E086270D52C76A1AC326947A565F48F917C818435F70912
+
+  old modifyvm fragment blob
+    7464fbe67b9456cc7eb679255c98b3ecbc6cdecc
+
+  fixed modifyvm fragment blob
+    36b5df298e4d657d54c1603e98104a8fe8f0ce0e
+
+  relative-media policy fragment blob
+    528175dabdcefa025bbf719f02b7f8c9bb2dd8f2
+
+R1 PRESERVATION
+
+Permanent incomplete evidence root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+R12 rechecked the preserved R1 VBOX hash and copied VBOX/VDI/ISO file IDs before source transformation.
+No write to R1 exists in R12 before or at this failure boundary.
+R1 remains permanent evidence and must never be modified or reused.
+
+R2 ROOT BOUNDARY
+
+Authorized new root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+
+The user prechecked that R2 did not exist before invocation.
+The failure occurred before R12 created the final patched R2 scriptblock and before R12 invoked R2.
+R12 itself contains no boot-root creation step.
+Therefore this invocation did not create or mutate the R2 boot-attempt root.
+The same R2 root remains the next authorized root provided it is still absent when retried.
+
+EXECUTION BOUNDARY
+
+Reached:
+  Git tree/local blob reads
+  evidence report hash/field reads
+  R1 hash/file-ID reads
+  source fragment reads
+  in-memory R2 text replacements up through fixed-switch output classification
+  in-memory policy anchor replacement
+
+Not reached:
+  final patched-R2 AST repository-root injection
+  final patched-R2 scriptblock creation
+  dynamic R2 invocation
+  original preparer invocation
+  VBoxManage invocation
+  isolated VBOX_USER_HOME creation/use
+  R2 root creation
+  copied VM registration
+  modifyvm
+  storageattach
+  VM start
+  compiler execution
+
+ROOT CAUSE
+
+R12's generic replacement helper verifies:
+  old count before equals ExpectedOldCount
+  new count before equals zero
+  old count after equals zero
+  new count after equals ExpectedOldCount
+
+The third condition is valid only when New does not itself contain Old.
+The policy injection is deliberately self-containing: New contains Old exactly once.
+
+The correct generic invariant is:
+  old_occurrences_per_new = exact ordinal count of Old inside New
+  expected_old_after = ExpectedOldCount * old_occurrences_per_new
+  observed old_after must equal expected_old_after
+  observed new_after must equal ExpectedOldCount
+
+For ordinary replacements where New does not contain Old:
+  old_occurrences_per_new = 0
+  expected_old_after = 0
+
+For this policy anchor replacement:
+  ExpectedOldCount = 1
+  old_occurrences_per_new = 1
+  expected_old_after = 1
+
+ONE DECISION
+
+Do not change the relative-media policy, evidence bindings, root selection, VirtualBox mutation surface or authorization state.
+Create one R13 execution wrapper that:
+  binds the exact failed R12 blob 655b1b84c761af190b52765e17b8916875adc980
+  replaces only R12's Invoke-ExactReplacement function with the self-containing-aware invariant
+  uses PowerShell AST exact-function selection and extent splicing
+  injects the file-backed repository root into dynamic R12 through the exact RepoRoot assignment AST
+  parses the final dynamic R12 source before execution
+  requires zero executable PSScriptRoot references after repository-root injection
+  then invokes R12 with the user's unchanged arguments
+
+No policy or VirtualBox command surface is to be added by R13.
+
+CURRENT STATUS
+
+  R1 incomplete root                 PRESERVED / INSPECTED
+  relative media policy             OBSERVED / AUTHORIZED
+  R12 execution                     FAILED CLOSED / RECORDED
+  R2 root                           NOT CREATED BY R12 INVOCATION
+  copied VM registration            NOT EXECUTED
+  VirtualBox mutation               NOT EXECUTED
+  VM start                          NOT AUTHORIZED
+  restore boot                      NOT OBSERVED
+  powered-off recovery point        NOT SEALED
+  build execution                   NOT AUTHORIZED
+
+RULE
+
+PRESERVE R1.
+KEEP R2 ABSENT UNTIL THE CORRECTED WRAPPER EXECUTES.
+DO NOT CHANGE THE RELATIVE-MEDIA POLICY.
+DO NOT START ANY VM.
+NO RESTORE-BOOT CLAIM.
+NO RECOVERY CLAIM.
+NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

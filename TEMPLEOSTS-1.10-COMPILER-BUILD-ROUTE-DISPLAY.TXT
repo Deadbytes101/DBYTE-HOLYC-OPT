@@ -1,0 +1,106 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 COMPILER BUILD ROUTE DISPLAY
+
+CLASS
+
+OBSERVED HOST EXECUTION.
+EXACT CORPUS AND WORKSPACE REVERIFIED.
+RAW DISPLAY ONLY.
+NO BUILD EXECUTED.
+NO BUILD ROUTE ADJUDICATED.
+
+TARGET
+
+  artifact  TempleOSTS.iso
+  role      TempleOS 1.10 T.S. internal distro
+  SHA256    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+INPUT EVIDENCE
+
+  expanded manifest SHA256
+    6556485E4425386687C53F4F626146A2136AE12F38E075E2646C98147D61CB68
+
+  no-rewrite install report SHA256
+    59B0BB29AA5C088114E38FE27FCF5CB5E2D3F59120CD6FD2678DF9D566C75E32
+
+  patched Compiler/ICLCC.CPP SHA256
+    DB1C75A5EE71B07ADAEC32E984146602E73D9A0D606E2B76B8CCCC624E0CDCB8
+
+OBSERVED HOST INVOCATION
+
+Date:
+  2026-08-06
+
+Tool:
+  tools/DISPLAY-TEMPLEOSTS-COMPILER-BUILD-ROUTE.ps1
+
+Output:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-route.txt
+
+Observed console result:
+
+  MANIFEST FILES       1057/1057
+  WORKSPACE FILES      1057/1057
+  CHANGED FILES        1
+  PATCHED ICLCC        DB1C75A5EE71B07ADAEC32E984146602E73D9A0D606E2B76B8CCCC624E0CDCB8
+  BUILD REFERENCES     20
+  REPORT SHA256        ED5108F73DE8363E948D559F7625F8752C15B6AD0AED941C40EDD01D0A8488A6
+  WORKSPACE            EXACT-COPY-PLUS-ONE-ASSERTION
+  BUILD ROUTE          RAW-DISPLAY-ONLY
+  BUILD                NOT-OBSERVED
+  VERDICT              BUILD ROUTE CONTEXT COMPLETE
+
+ADJUDICATION BOUNDARY
+
+The execution proves:
+
+  exact manifest identity was accepted
+  all 1057 evidence files were reverified
+  all 1057 workspace files were reverified
+  the workspace contains exactly one changed manifest path
+  the changed source has the observed patched ICLCC hash
+  the deterministic build-route context report was produced
+  twenty raw exact build-name occurrences were recorded
+
+The execution does not prove:
+
+  which raw occurrence is an executable build command
+  the exact project loader entry
+  the required guest working directory or drive mapping
+  whether Compiler.PRJ is consumed directly or through another wrapper
+  the temporary output path
+  the Compiler.BIN replacement sequence
+  the Compiler.MAP replacement sequence
+  rollback behavior
+  compiler rebuild success
+  guest semantic equivalence
+
+The value BUILD REFERENCES 20 is an occurrence count.  It is not a count of
+unique build routes and grants no execution authorization.
+
+CURRENT STATUS
+
+  workspace identity              SEALED
+  no-rewrite assertion            INSTALLED AND OBSERVED
+  build-route context report      OBSERVED
+  exact build route               UNRESOLVED
+  build command authorization     DENIED
+  compiler rebuild                NOT OBSERVED
+  guest semantic differential     NOT OBSERVED
+
+NEXT EVIDENCE
+
+Manually adjudicate the complete report:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-compiler-build-route.txt
+
+No new parser, search tool, build command, compiler invocation, binary
+replacement, or guest execution is authorized before that review.
+
+RULE
+
+RAW REFERENCES ARE NAVIGATION, NOT EXECUTION PROOF.
+NO EXACT BUILD ROUTE, NO BUILD COMMAND.
+NO OBSERVED BUILD, NO COMPILER CLAIM.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

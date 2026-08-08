@@ -1,0 +1,171 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED REHEARSAL R2 EXTENSION REPLACEMENT CONTRACT FAILURE OBSERVATION
+
+CLASS
+
+ISOLATED REHEARSAL PREPARATION DID NOT START.
+THE R2 WRAPPER STOPPED INSIDE ITS IN-MEMORY REPLACEMENT VERIFIER.
+NO REHEARSAL ROOT, ISOLATED VBOX_USER_HOME, DISPOSABLE COPY OR REPORT WAS CREATED.
+NO VIRTUALBOX COMMAND FROM THE ORIGINAL PREPARER WAS INVOKED.
+POWERED-OFF RECOVERY POINT REMAINS NOT SEALED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  ea5a718cadd7e229ba2f7794cecb4d57e4953862
+
+Command:
+  tools/PREPARE-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL-R2.ps1
+
+Requested rehearsal root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1
+
+Requested report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-isolated-rehearsal-preparation.txt
+
+OBSERVED RESULT
+
+  terminal failure
+    manifest disposable VBOX file IDs replacement contract mismatch:
+    old_after=1 new_after=1 expected=1
+
+  failing wrapper function
+    Invoke-ExactReplacement
+
+  failing replacement
+    manifest disposable VBOX file IDs
+
+  original preparer invocation
+    NOT REACHED
+
+  rehearsal root
+    NOT CREATED
+
+  isolated VBOX_USER_HOME
+    NOT CREATED
+
+  disposable VBOX, VDI and ISO
+    NOT COPIED
+
+  VirtualBox registration
+    NOT ATTEMPTED
+
+  preparation manifest
+    NOT WRITTEN
+
+  preparation report
+    NOT WRITTEN
+
+ROOT CAUSE
+
+The R2 replacement verifier assumes that every successful replacement must
+remove every occurrence of the old text:
+
+  old_after == 0
+
+That assumption is valid for replacements where the new text does not contain
+the old text.  It is invalid for an extension replacement where the old line is
+intentionally retained as the first line of a larger new block.
+
+The manifest-field replacement is exactly that form:
+
+  old
+    disposable_vbox_post_registration_sha256
+
+  new
+    disposable_vbox_post_registration_sha256
+    disposable_vbox_pre_rewrite_file_id
+    disposable_vbox_post_registration_file_id
+
+After a correct replacement, the complete new block occurs once and the old
+line also occurs once inside that new block.  Therefore:
+
+  old_after = 1
+  new_after = 1
+
+is the expected successful result for this replacement.  The same structural
+condition exists for the corresponding report-field extension.
+
+This is a wrapper verification-contract defect.  It is not a failure of the
+original preparer, VirtualBox isolation, file copying, XML rewriting or VM
+registration.
+
+OBSERVED EXECUTION BOUNDARY
+
+Before the failure, R2:
+
+  loaded its own script
+  had not printed its preparer-binding header
+  had not invoked the original preparer scriptblock
+  performed only in-memory string replacement work
+
+The failure occurred while constructing PatchedSource.  Execution had not
+reached:
+
+  original preparer tree/local blob verification at runtime
+  input report and bundle verification
+  default VirtualBox registry reads
+  rehearsal directory creation
+  sealed bundle copying
+  disposable VBOX rewrite
+  VBOX_USER_HOME assignment
+  isolated VirtualBox registration
+  default-registry post-checks
+  rehearsal manifest or report creation
+
+MUTATION BOUNDARY
+
+No rehearsal root or output report existed before the command and none was
+created by this invocation.
+
+No VM start, stop, registration, unregistration, snapshot operation, storage
+attachment change, live VBOX write, live VDI write, live ISO write, sealed
+bundle write, guest delivery or compiler execution occurred.
+
+CORRECTION CONTRACT
+
+  preserve the original preparer
+  preserve the failed R2 wrapper
+  bind the exact R2 tree and local blob
+  alter only the replacement helper postcondition
+  calculate how many complete old-text occurrences are intentionally contained
+    inside one new-text replacement
+  require:
+    new_after == expected replacement count
+    old_after == expected count multiplied by old occurrences per new block
+  retain all source cardinality preconditions
+  retain all six R2 replacement seams unchanged
+  retain original preparer blob binding unchanged
+  fail before original preparer invocation on any mismatch
+  do not authorize VM start or build execution
+
+CURRENT STATUS
+
+  exact TempleOSTS corpus                 SEALED
+  configuration-exact recovery bundle     VERIFIED
+  bundle identity                         SEALED
+  restore route                           ADJUDICATED
+  isolated rehearsal preparer             STATICALLY REVIEWED
+  isolated rehearsal preparation          NOT STARTED
+  disposable VM registration              NOT OBSERVED
+  restore boot                             NOT OBSERVED
+  powered-off recovery point               NOT SEALED
+  guest delivery route                     UNRESOLVED
+  compiler build execution                 NOT AUTHORIZED
+  optimizer transformation                 DENIED
+
+RULE
+
+AN EXTENSION REPLACEMENT MAY LEGITIMATELY RETAIN THE OLD TEXT INSIDE THE NEW BLOCK.
+VERIFY INTENDED CARDINALITY; DO NOT REQUIRE IMPOSSIBLE ABSENCE.
+NO OBSERVED REHEARSAL, NO REHEARSAL CLAIM.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

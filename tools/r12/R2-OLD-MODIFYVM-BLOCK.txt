@@ -1,0 +1,44 @@
+$NewModifyHelp = @'
+function Get-ModifyVmSwitches {
+    $Attempts = @(
+        @('modifyvm', '--help'),
+        @('--help', 'modifyvm')
+    )
+    $Successful = [System.Collections.Generic.List[string]]::new()
+    foreach ($Arguments in $Attempts) {
+        $Captured = @(
+            & $script:VBox @Arguments 2>&1 |
+                ForEach-Object { [string]$_ }
+        )
+        if ($LASTEXITCODE -eq 0) {
+            $Successful.Add(($Captured -join "`n"))
+        }
+    }
+    if ($Successful.Count -le 0) {
+        throw 'no successful modifyvm help invocation'
+    }
+    $Text = $Successful -join "`n"
+    $ClipboardSwitch = if ($Text -match '(?m)--clipboard-mode(?:\s|=)') {
+        '--clipboard-mode'
+    }
+    elseif ($Text -match '(?m)--clipboard(?:\s|=)') {
+        '--clipboard'
+    }
+    else {
+        throw 'no supported clipboard modifyvm switch found'
+    }
+    $DragDropSwitch = if ($Text -match '(?m)--drag-and-drop(?:\s|=)') {
+        '--drag-and-drop'
+    }
+    elseif ($Text -match '(?m)--draganddrop(?:\s|=)') {
+        '--draganddrop'
+    }
+    else {
+        throw 'no supported drag-and-drop modifyvm switch found'
+    }
+    return [pscustomobject]@{
+        Clipboard = $ClipboardSwitch
+        DragDrop = $DragDropSwitch
+    }
+}
+'@

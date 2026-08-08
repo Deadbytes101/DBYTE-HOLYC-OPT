@@ -1,0 +1,56 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / PORTABLE VIRTUALBOX7 VBOXSUP SURGICAL INSTALL+START OBSERVATION
+
+CLASSIFY
+
+Host VirtualBox support-driver registration/activation gap was corrected by the already-audited surgical VBoxSup route.
+This is host-side evidence only. It is not guest boot evidence and does not authorize a VM retry by itself.
+
+OBSERVED USER EXECUTION
+
+repository_head_before_execution	e0b96ce2b37f74e987da67cb8f57f88ca7ed7a83
+mutation_script_blob	3318e33079efe68306f1c62f7bad8daefc4d83f8
+portable_root	D:\Portable-VirtualBox7
+
+bound_loader_report_sha256	7C9ABBAE87AA926F11D73A16B17C24AC287EEBB7AB620A63C9A6EBA58866AA2C
+bound_pe_report_sha256	7B830675C981216B58497F9080ADA5025F7FB2EFE1521CE506F5CFA56BC7E512
+vboxsup_sys_sha256	3344E2909580A9965E38B26AB9E9958842315DDEA1B0D0E274DA314DDCAB97F4
+vboxsup_sys_signature	Valid
+
+sc_create	EXECUTED-ONCE / EXIT 0
+sc_start	EXECUTED-ONCE / EXIT 0
+service_state	4 / RUNNING
+service_cleanup	NOT-EXECUTED
+vboxmanage	NOT-EXECUTED
+vm_start	NOT-AUTHORIZED
+vm_retry	NOT-AUTHORIZED / VERIFY FIRST
+
+mutation_report	D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-portable-vbox-vboxsup-surgical-install-start.txt
+mutation_report_sha256	3C24420D77868E8D15F58A6412AF53635EEAFFF00337CCEB01E17C31183666F3
+
+EVIDENCE CHAIN
+
+Earlier failed start evidence established:
+- VirtualBox startup terminated before observed guest execution.
+- VBoxHardening.log reported NtCreateFile(\Device\VBoxDrvStub) -> STATUS_OBJECT_NAME_NOT_FOUND / 0xc0000034.
+- host service queries found no VBoxSup/VBoxDrv/VBoxDrvStub service object.
+- exact Portable-VirtualBox7 payload contained signed app64\drivers\vboxsup\VBoxSup.sys version 7.0.12.159484.
+- VBoxSup.inf declared a KernelService with AddService=VBoxSup and ServiceBinary=%12%\VBoxSup.sys.
+
+Subsequent wrapper evidence established:
+- Portable-VirtualBox7.exe is PE32.
+- entry point is in UPX1.
+- UPX and AutoIt markers are present.
+- BUILDING.md in the upstream project documents AutoIt 3.3.8.1 as the recommended build compiler.
+- upstream Portable-VirtualBox.au3 conditionally creates/starts VBoxSUP when drivers\vboxsup exists, while VBoxDRV is conditional on a separate drivers\VBoxDrv payload.
+- this local VirtualBox 7.0.12 package has the VBoxSup payload and no observed VBoxDrv payload.
+
+CURRENT DECISION
+
+VBoxSup create/start result is OBSERVED.
+A separate read-only post-mutation verification is required before any second VM start attempt.
+No cleanup is authorized yet.
+No VM start is authorized yet.
+No guest build is authorized.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

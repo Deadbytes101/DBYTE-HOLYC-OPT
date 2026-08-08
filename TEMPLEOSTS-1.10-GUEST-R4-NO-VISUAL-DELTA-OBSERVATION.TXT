@@ -1,0 +1,42 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / GUEST R4 / NO VISUAL DELTA OBSERVATION
+
+branch	overheaven-foundation
+r4_report_sha256	D7C511A1F62731A51B39DB4C56E72451245D472666146376E090C39443078F03
+r4_source_png_sha256	CF7A075A0AC2266745DF95769170D723BB8047B87FABF86E68B9097DDA43F53C
+r4_project_png_sha256	CF7A075A0AC2266745DF95769170D723BB8047B87FABF86E68B9097DDA43F53C
+r3_ata_png_sha256	CF7A075A0AC2266745DF95769170D723BB8047B87FABF86E68B9097DDA43F53C
+
+HOST OBSERVATION
+showmediuminfo	PASS
+vdi_uuid	55c1f29d-a681-402e-b90d-bfbb6b09f207
+vdi_state	locked write
+vdi_type	normal (base)
+vdi_location	D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1\Machine\Temple1.10.vdi
+vdi_capacity	2048 MBytes
+post_vm_state	running
+post_running_rows	1
+
+GUEST VISUAL OBSERVATION
+source_screenshot_visual_delta	NONE
+project_screenshot_visual_delta	NONE
+source_equals_project	TRUE
+source_equals_r3_ata	TRUE
+project_equals_r3_ata	TRUE
+compressed_source_presence_claim	DENIED
+compressed_project_presence_claim	DENIED
+guest_input_effect	UNOBSERVED
+
+MUTATION BOUNDARY
+compiler_target_write	NOT-OBSERVED
+compiler_build	NOT-EXECUTED
+install	NOT-EXECUTED
+storage_attach_modify	NOT-EXECUTED
+network_enablement	NOT-EXECUTED
+
+NEXT DECISION
+Restart only the isolated fresh-ISO VM, prove guest input liveness with a visible marker, then probe compressed compiler paths with screenshot-delta gates.
+
+STATUS	R4-HOST-PASS-GUEST-VISUAL-EFFECT-NOT-OBSERVED
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

@@ -1,0 +1,240 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT INCOMPLETE R1 READ-ONLY INSPECTOR STATIC AUDIT
+
+CLASS
+
+THE R11 INCOMPLETE-ROOT MEDIA-LOCATION INSPECTOR WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+THE INSPECTOR READS ONLY THE PRESERVED INCOMPLETE R1 FILESYSTEM OBJECT AND WRITES ONE EXTERNAL EVIDENCE REPORT.
+IT DOES NOT ACCEPT A VBOXMANAGE PATH AND CONTAINS NO VBOXMANAGE INVOCATION.
+IT DOES NOT SET VBOX_USER_HOME, REGISTER A VM, MODIFY A VM, ATTACH OR DETACH MEDIA, START A VM OR EXECUTE THE COMPILER.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/INSPECT-TEMPLEOSTS-VDI-ONLY-BOOT-INCOMPLETE-R1.ps1
+
+Final blob:
+  437ae52bfd990c40048c0855892aa6da466856ac
+
+The initial repository draft of this inspector used single-quoted report rows containing `t in a few classification fields.
+That representation issue was detected during static review before any run command was released.
+The same file was updated before user execution so every structured report key uses a real TAB delimiter.
+
+BOUND PATHS
+
+Required incomplete root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Required absent preparation report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+Required new inspection report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r1-incomplete-inspection.txt
+
+The inspector rejects:
+  another incomplete-root path
+  an existing final preparation report
+  an existing inspection report
+  a missing inspection-report parent directory
+  a nonempty process VBOX_USER_HOME
+
+PRESERVED ROOT CONTRACT
+
+The inspector requires:
+  incomplete root directory exists
+  Machine directory exists
+  VBoxUserHome directory exists
+  BOOT-ATTEMPT-INCOMPLETE.txt exists
+  BOOT-ATTEMPT-MANIFEST.txt is absent
+
+It verifies the copied VBOX is still the exact sealed pre-rewrite object by requiring SHA256:
+  69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+It verifies the copied VDI:
+  bytes   2097152
+  SHA256  90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+It verifies the copied ISO:
+  bytes   30558208
+  SHA256  DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+This prevents inspection of an already rewritten or otherwise altered machine copy under the same path.
+
+NTFS FILE-ID CONTRACT
+
+The inspector uses the read-only command:
+  fsutil file queryfileid
+
+for the copied VBOX, VDI and ISO.
+
+It requires:
+  copied VBOX file ID differs from sealed VBOX file ID
+  copied VDI file ID differs from sealed VDI file ID
+  copied VDI file ID differs from the live VDI file ID bound by the original preparer
+  copied ISO file ID differs from sealed ISO file ID
+
+The inspector records all three observed copied file IDs in the external report.
+
+EMPTY ISOLATED-HOME CONTRACT
+
+The original R11 failure happened before process VBOX_USER_HOME was set to the incomplete root.
+The inspector therefore requires the existing incomplete VBoxUserHome directory to contain:
+  files 0
+  subdirectories 0
+
+Any content causes fail-closed inspection instead of silently treating the root as pre-registration state.
+
+XML MEDIA-LOCATION CONTRACT
+
+The inspector reads Temple1.10.vbox as text and parses the same bytes as XML.
+It does not serialize or write the XML.
+
+It enumerates every MediaRegistry HardDisk row and records:
+  uuid
+  location
+  format
+  type
+
+It enumerates every MediaRegistry DVDImages Image row and records:
+  uuid
+  location
+
+The target VDI row is selected only by normalized UUID:
+  55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+The target ISO row is selected only by normalized UUID:
+  ab97b3a5-1331-494d-a917-e85b6e728c45
+
+Each target row must occur exactly once and have a nonempty location attribute.
+The inspector records the exact decoded target location strings without changing them.
+
+RAW-TEXT OCCURRENCE CONTRACT
+
+The inspector independently counts case-insensitive ordinal occurrences in the unchanged copied VBOX text for:
+  sealed VDI absolute path
+  copied VDI absolute path
+  Temple1.10.vdi basename
+  sealed ISO absolute path
+  copied ISO absolute path
+  TempleOSTS.iso basename
+
+These counts are evidence only.
+The inspector does not infer or select a rewrite policy from them.
+
+INVENTORY CONTRACT
+
+The inspector records every directory under the incomplete root.
+It records every file under the incomplete root with:
+  relative path
+  byte count
+  SHA256
+
+It also records:
+  incomplete marker byte count and SHA256
+  final manifest absent True
+  VBoxUserHome file and directory counts
+
+STATE-PRESERVATION CONTRACT
+
+Before and after inspection the process VBOX_USER_HOME value must remain exactly unchanged and unset.
+The inspector rechecks:
+  preparation report still absent
+  final boot-attempt manifest still absent
+
+It performs no delete, move, rename, copy, registration or VirtualBox configuration action.
+
+NEGATIVE COMMAND SURFACE
+
+The inspector accepts no VBoxManagePath parameter.
+It contains no invocation of:
+  VBoxManage
+  registervm
+  unregistervm
+  modifyvm
+  storageattach
+  startvm
+  controlvm
+  savestate
+  poweroff
+  snapshot
+  guestcontrol
+  compiler execution
+
+Its only native command is:
+  fsutil file queryfileid
+
+which is used solely to read NTFS file identifiers.
+
+WRITE BOUNDARY
+
+The incomplete root is read-only.
+The only intended write is:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r1-incomplete-inspection.txt
+
+The report is written only after all filesystem, hash, file-ID, empty-home, XML, UUID and state-preservation gates pass.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  INCOMPLETE R1 FILESYSTEM STATE      OBSERVED
+  COPIED VBOX MEDIA LOCATIONS         OBSERVED
+  COPIED NTFS FILE IDS                OBSERVED
+  READ-ONLY INSPECTION REPORT         WRITTEN
+
+NOT AUTHORIZED OR CLAIMED
+
+  COPIED VBOX REWRITE POLICY          NOT YET ADJUDICATED
+  NEW BOOT-ATTEMPT ROOT               NOT YET SELECTED
+  COPIED VM REGISTRATION              NOT AUTHORIZED
+  COPIED VM CONFIGURATION MUTATION    NOT AUTHORIZED
+  VM START                            NOT AUTHORIZED
+  RESTORE BOOT                        NOT OBSERVED
+  POWERED-OFF RECOVERY POINT          NOT SEALED
+  GUEST DELIVERY                      UNRESOLVED
+  COMPILER BUILD                      NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION            DENIED
+
+ADVERSARIAL JUDGMENT
+
+The R11 failure established only that the sealed absolute VDI path was not present exactly once in the copied VBOX text.
+It did not establish the actual location representation.
+
+The preserved incomplete root contains the exact copied VBOX object that failed the rewrite gate.
+Reading its XML media-registry attributes and raw occurrence counts is the shortest evidence path and avoids another speculative preparer wrapper.
+
+No later preparation may reuse the incomplete R1 root.
+A new root may be selected only after this inspection is observed and the rewrite policy is adjudicated from the actual VBOX representation.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal      VERIFIED / SEALED
+  boot readiness                      ADJUDICATED
+  modifyvm switch contract            ADJUDICATED
+  R11 incomplete root                 CREATED / PRESERVE
+  copied VBOX rewrite                 FAILED CLOSED / RECORDED
+  incomplete-root inspector           STATICALLY AUDITED
+  media-location representation       INSPECTION PENDING
+  copied VM registration              NOT AUTHORIZED
+  VM start                            NOT AUTHORIZED
+  restore boot                        NOT OBSERVED
+  powered-off recovery point          NOT SEALED
+  build execution                     NOT AUTHORIZED
+
+RULE
+
+RUN THE READ-ONLY INCOMPLETE-R1 INSPECTOR ONLY.
+DO NOT RUN R11 AGAIN.
+DO NOT DELETE, MODIFY, REGISTER, START OR REUSE THE INCOMPLETE R1 ROOT.
+DO NOT SELECT A REWRITE POLICY BEFORE THE TARGET LOCATION ATTRIBUTES ARE OBSERVED.
+NO VM START.
+NO RESTORE-BOOT CLAIM.
+NO RECOVERY CLAIM.
+NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

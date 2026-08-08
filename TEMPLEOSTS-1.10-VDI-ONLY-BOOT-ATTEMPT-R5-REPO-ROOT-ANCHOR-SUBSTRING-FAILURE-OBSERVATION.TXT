@@ -1,0 +1,174 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R5 REPO-ROOT ANCHOR SUBSTRING FAILURE OBSERVATION
+
+CLASS
+
+THE R5 BOOT-ATTEMPT PREPARER ENTRYPOINT FAILED CLOSED BEFORE DYNAMIC R4 EXECUTION.
+THE FAILURE WAS IN R5 REPOSITORY-ROOT SOURCE CLASSIFICATION.
+THE EXACT PSSCRIPTROOT VARIABLE TOKEN COUNT WAS CORRECT.
+THE REPOSITORY-ROOT ANCHOR COUNT USED RAW TEXT AND OVER-COUNTED PATCH DATA.
+R4, R3, R2 AND THE ORIGINAL PREPARER WERE NOT INVOKED BY THIS ATTEMPT.
+NO VBOXMANAGE COMMAND WAS EXECUTED BY THE PREPARER CHAIN.
+NO BOOT-ATTEMPT ROOT, ISOLATED REGISTRY OR EXTERNAL REPORT WAS CREATED.
+VM START, RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  c3606fdf009a5dd0da8fca6deb54ab6b1e0897c2
+
+Entrypoint:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R5.ps1
+
+Entrypoint blob:
+  8ffc92184d5ba46c387fc3d7f6ef9e2e09709259
+
+Bound R4 blob:
+  fcdec4c784f2d0610d8227aeb95ac138fa7e77d4
+
+Requested boot-attempt root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Requested external report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+OBSERVED FAILURE
+
+Terminal error:
+
+  R4 repository-root syntax cardinality mismatch: exact_variable=1 anchor=4
+
+Failure location:
+
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R5.ps1
+  line 246
+
+The user-provided terminal output is the observed execution evidence.
+GitHub and the assistant environment did not execute the local PowerShell command.
+
+EXECUTION BOUNDARY
+
+R5 completed these wrapper-local operations before failure:
+
+  resolved its file-backed repository root
+  resolved the R4 path
+  verified the exact R4 tree blob
+  verified the exact R4 local blob
+  read R4 source text
+  decoded the exact native-help old and new source seams
+  inserted the native-stderr correction into R4 source in memory
+  parsed the patched R4 source for exact PSScriptRoot variable tokens
+  observed exactly one executable PSScriptRoot variable token
+  counted raw textual occurrences of the repository-root anchor text
+
+R5 failed before:
+
+  replacing R4's executable repository-root assignment
+  creating the patched R4 scriptblock
+  printing R5 execution headers
+  invoking R4
+  invoking R3
+  invoking R2
+  invoking the original boot-attempt preparer
+  executing either VBoxManage help probe
+  querying the default VirtualBox registry
+  creating the boot-attempt root
+  creating an isolated VBOX_USER_HOME
+  copying VBOX, VDI or ISO artifacts
+  registering a copied VM
+  executing modifyvm
+  executing storageattach
+  writing a boot-attempt manifest
+  writing the external preparation report
+
+ROOT CAUSE
+
+R5 correctly used the PowerShell AST for the PSScriptRoot variable-token contract:
+
+  exact_variable=1
+
+R5 still counted the repository-root anchor using raw text:
+
+  [regex]::Escape('$RepoRoot = Split-Path -Parent $PSScriptRoot')
+
+The patched R4 source contains one executable assignment:
+
+  $RepoRoot = Split-Path -Parent $PSScriptRoot
+
+It also contains the same character sequence inside its own source-patching data and
+diagnostic contracts.  Those non-executable appearances caused the raw count to
+return four.
+
+The result does not prove four executable repository-root assignments.
+It proves that a textual substring count is unsuitable for a syntax contract.
+
+ADJUDICATION
+
+The repository-root anchor contract must classify executable PowerShell assignment
+syntax rather than arbitrary characters inside strings, here-strings or patch data.
+
+A corrected entrypoint must:
+
+  preserve R5 and bind its exact tree and local blob
+  parse R5 dynamic source with the PowerShell parser
+  preserve the native-stderr correction injection
+  preserve every lower blob and replacement contract
+  add a syntax-aware repository-root assignment classifier to R5 dynamic source
+  count only AssignmentStatementAst nodes representing the exact executable assignment
+  require one executable RepoRoot assignment before R4 root injection
+  require zero exact PSScriptRoot variable tokens after injection
+  inject the file-backed repository root before dynamically invoking R5
+  require zero exact PSScriptRoot variable tokens in final dynamic R5 source
+
+The corrected classifier must not weaken the existing exact executable seam
+replacement.  The full R4 relative-path, RepoRoot assignment and R4 path-construction
+seam must still occur exactly once before replacement.
+
+ONE DECISION
+
+Preserve R5 and create one file-backed R6 wrapper that replaces only the raw R4
+repository-root anchor count with an AST assignment count and injects the R6
+file-backed repository root before dynamic R5 execution.
+
+R6 must not alter:
+
+  the R5 native-stderr correction
+  the R4 AST PSScriptRoot correction
+  the R3 typed help argument arrays
+  the R2 hardening replacements
+  the original preparer mutation sequence
+  the requested boot-attempt root
+  VirtualBox configuration
+  VM state
+  authorization state
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal             VERIFIED / SEALED
+  boot readiness                             ADJUDICATED
+  R5 invocation                              FAILED CLOSED / RECORDED
+  R5 native-stderr correction                NOT EXECUTED BY THIS INVOCATION
+  boot-attempt root                          NOT CREATED BY THIS INVOCATION
+  boot-attempt copy                          NOT PREPARED
+  VM start                                   NOT AUTHORIZED
+  restore boot                               NOT OBSERVED
+  powered-off recovery point                 NOT SEALED
+  compiler build execution                   NOT AUTHORIZED
+  optimizer transformation                   DENIED
+
+RULE
+
+COUNT EXECUTABLE REPOSITORY-ROOT ASSIGNMENTS AS POWERSHELL SYNTAX, NOT SUBSTRINGS.
+ONE CLASSIFICATION DEFECT, ONE SURGICAL WRAPPER CORRECTION.
+DO NOT EDIT OR REPLACE THE FAILED R5 OBJECT.
+NO PREPARED BOOT COPY, NO VM START.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

@@ -1,0 +1,75 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / START HOME COLLISION HOTFIX STATIC AUDIT
+
+SUBJECT
+
+  tools/RUN-START-TEMPLEOSTS-ISO-BOOT-R1-HOME-COLLISION-HOTFIX.ps1
+  blob 9b73fc374347575de5ffac443d2cfa56da9f0d67
+
+BOUND BASE
+
+  tools/START-TEMPLEOSTS-ISO-BOOT-R1-CONTROLLED.ps1
+  blob 4133358b3e38bee6911fde5e8cf01f408a1d0a85
+
+PREEMPTED DEFECT
+
+Static review of the base ISO start object found three references to the PowerShell variable name Home:
+
+  isolated VBoxUserHome assignment
+  isolated VirtualBox.xml path construction
+  process VBOX_USER_HOME assignment
+
+PowerShell variable names are case-insensitive. The host session already demonstrated that assigning to Home collides with the read-only/constant HOME variable. Executing the base ISO start object directly would therefore risk failing before its start boundary for the same reason observed in the R3 stop object.
+
+SURGICAL CHANGE
+
+The hotfix runner preserves the committed base source and applies only this in-memory rename:
+
+  $Home
+    ->
+  $IsolatedVBoxHome
+
+Required text and AST cardinality:
+
+  before:
+    Home               3
+    IsolatedVBoxHome   0
+
+  after:
+    Home               0
+    IsolatedVBoxHome   3
+
+The patched source is reparsed by the PowerShell parser before invocation.
+
+MUTATION-SURFACE JUDGE
+
+Before and after the rename, the runner requires:
+
+  exact startvm argument-array occurrence   1
+  controlvm token occurrences               0
+  storageattach token occurrences           0
+
+The underlying controlled-start authorization therefore remains one command:
+
+  VBoxManage startvm 9c98691e-27cd-4487-a306-587969c2c78c --type gui
+
+No automatic rollback is introduced.
+
+OUTCOME BOUNDARY
+
+If base binding, variable cardinality, mutation-surface counts, or AST parse fail, the base start logic is not invoked.
+
+The hotfix does not alter ISO identity, VDI identity, boot order, snapshot gates, network gates, VBoxSup gates, or post-start observation logic.
+
+VERDICT
+
+  BASE ISO START OBJECT            PRESERVED
+  HOME COLLISION                   PREEMPTIVELY REMOVED
+  HOTFIX SCOPE                     SURGICAL VARIABLE RENAME ONLY
+  STARTVM SURFACE                  EXACTLY ONE / UNCHANGED
+  CONTROLVM                        NONE
+  STORAGEATTACH                    NONE
+  COMPILER BUILD                   NOT AUTHORIZED
+  EXECUTION                        READY AFTER ISO PREPARATION PASSES
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

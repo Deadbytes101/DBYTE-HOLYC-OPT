@@ -1,0 +1,172 @@
+$OldBootRootConstant = @'
+$ExpectedBootRoot =
+    'D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1'
+'@
+$NewBootRootConstant = @'
+$ExpectedBootRoot =
+    'D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2'
+'@
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old $OldBootRootConstant `
+    -New $NewBootRootConstant `
+    -Label 'R12 new boot-attempt root'
+
+$OldMediaRewriteBlock = @'
+    $VBoxText = [System.IO.File]::ReadAllText($BootVBox)
+    $VBoxText = Invoke-ExactTextReplacement `
+        -Source $VBoxText `
+        -Old $SealedVdi.Path `
+        -New $BootVdi `
+        -Label 'boot-copy VDI path rewrite'
+    $VBoxText = Invoke-ExactTextReplacement `
+        -Source $VBoxText `
+        -Old $SealedIso.Path `
+        -New $BootIso `
+        -Label 'boot-copy ISO path rewrite'
+    Write-Utf8Text -Path $BootVBox -Text $VBoxText
+    $MutationSteps.Add('REWRITE-COPIED-VBOX-MEDIA-PATHS')
+    $BootVBoxAfterRewriteHash = (
+        Get-FileHash -LiteralPath $BootVBox -Algorithm SHA256
+    ).Hash
+    $DvdController = Get-DvdControllerName -VBoxPath $BootVBox
+'@
+$NewMediaRewriteBlock = @'
+    $VBoxText = [System.IO.File]::ReadAllText($BootVBox)
+    [xml]$PreRegistrationVBox = $VBoxText
+    $PreHardDisks = @(
+        $PreRegistrationVBox.SelectNodes(
+            "//*[local-name()='MediaRegistry']/*[local-name()='HardDisks']/*[local-name()='HardDisk']"
+        )
+    )
+    $PreDvdImages = @(
+        $PreRegistrationVBox.SelectNodes(
+            "//*[local-name()='MediaRegistry']/*[local-name()='DVDImages']/*[local-name()='Image']"
+        )
+    )
+    $PreTargetVdi = @(
+        $PreHardDisks | Where-Object {
+            (ConvertTo-NormalizedUuid `
+                -Value $_.GetAttribute('uuid') `
+                -Label 'pre-registration HardDisk UUID') -ceq $ExpectedVdiUuid
+        }
+    )
+    $PreTargetIso = @(
+        $PreDvdImages | Where-Object {
+            (ConvertTo-NormalizedUuid `
+                -Value $_.GetAttribute('uuid') `
+                -Label 'pre-registration DVD Image UUID') -ceq $ExpectedIsoUuid
+        }
+    )
+    if ($PreTargetVdi.Count -ne 1) {
+        throw "pre-registration target VDI row count mismatch: $($PreTargetVdi.Count)"
+    }
+    if ($PreTargetIso.Count -ne 1) {
+        throw "pre-registration target ISO row count mismatch: $($PreTargetIso.Count)"
+    }
+    if ($PreTargetVdi[0].GetAttribute('location') -cne 'Temple1.10.vdi') {
+        throw (
+            'pre-registration target VDI location mismatch: ' +
+            $PreTargetVdi[0].GetAttribute('location')
+        )
+    }
+    if ($PreTargetIso[0].GetAttribute('location') -cne 'TempleOSTS.iso') {
+        throw (
+            'pre-registration target ISO location mismatch: ' +
+            $PreTargetIso[0].GetAttribute('location')
+        )
+    }
+
+    $SealedVdiAbsoluteCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape($SealedVdi.Path),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    $CopiedVdiAbsoluteCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape($BootVdi),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    $VdiBasenameCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape('Temple1.10.vdi'),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    $SealedIsoAbsoluteCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape($SealedIso.Path),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    $CopiedIsoAbsoluteCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape($BootIso),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    $IsoBasenameCount = [regex]::Matches(
+        $VBoxText,
+        [regex]::Escape('TempleOSTS.iso'),
+        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor
+        [System.Text.RegularExpressions.RegexOptions]::CultureInvariant
+    ).Count
+    if (
+        $SealedVdiAbsoluteCount -ne 0 -or
+        $CopiedVdiAbsoluteCount -ne 0 -or
+        $VdiBasenameCount -ne 1 -or
+        $SealedIsoAbsoluteCount -ne 0 -or
+        $CopiedIsoAbsoluteCount -ne 0 -or
+        $IsoBasenameCount -ne 1
+    ) {
+        throw (
+            'pre-registration relative media representation mismatch: ' +
+            "sealed_vdi_abs=$SealedVdiAbsoluteCount " +
+            "copied_vdi_abs=$CopiedVdiAbsoluteCount " +
+            "vdi_basename=$VdiBasenameCount " +
+            "sealed_iso_abs=$SealedIsoAbsoluteCount " +
+            "copied_iso_abs=$CopiedIsoAbsoluteCount " +
+            "iso_basename=$IsoBasenameCount"
+        )
+    }
+
+    $MutationSteps.Add('PRESERVE-COPIED-VBOX-RELATIVE-MEDIA-LOCATIONS')
+    $BootVBoxAfterRewriteHash = $BootVBoxBeforeRewrite.SHA256
+    $DvdController = Get-DvdControllerName -VBoxPath $BootVBox
+'@
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old $OldMediaRewriteBlock `
+    -New $NewMediaRewriteBlock `
+    -Label 'inspection-bound relative media policy'
+
+$OldXmlPostconditionCall = @'
+    Assert-BootVBoxXml `
+        -VBoxPath $BootVBox `
+        -ExpectedVdiPath $BootVdi `
+        -ExpectedIsoRegistryPath $BootIso
+'@
+$NewXmlPostconditionCall = @'
+    Assert-BootVBoxXml `
+        -VBoxPath $BootVBox `
+        -ExpectedVdiPath 'Temple1.10.vdi' `
+        -ExpectedIsoRegistryPath 'TempleOSTS.iso'
+'@
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old $OldXmlPostconditionCall `
+    -New $NewXmlPostconditionCall `
+    -Label 'relative media XML postcondition'
+
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old '$Manifest.Add("boot_vbox_pre_rewrite_sha256`t$($BootVBoxBeforeRewrite.SHA256)")' `
+    -New '$Manifest.Add("boot_vbox_pre_media_policy_sha256`t$($BootVBoxBeforeRewrite.SHA256)")' `
+    -Label 'manifest pre-media-policy label'
+$PatchedSource = Invoke-ExactReplacement `
+    -Source $PatchedSource `
+    -Old '$Manifest.Add("boot_vbox_post_rewrite_sha256`t$BootVBoxAfterRewriteHash")' `
+    -New '$Manifest.Add("boot_vbox_post_media_policy_sha256`t$BootVBoxAfterRewriteHash")' `
+    -Label 'manifest post-media-policy label'

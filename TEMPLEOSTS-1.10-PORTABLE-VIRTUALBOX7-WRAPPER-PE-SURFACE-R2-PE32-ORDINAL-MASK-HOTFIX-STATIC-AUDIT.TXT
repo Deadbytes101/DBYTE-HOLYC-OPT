@@ -1,0 +1,83 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10
+PORTABLE VIRTUALBOX7 WRAPPER PE SURFACE R2
+PE32 ORDINAL-MASK HOTFIX STATIC AUDIT
+
+CLASSIFICATION
+
+STATIC AUDIT ONLY.
+NO LOCAL POWERSHELL EXECUTION CLAIM.
+NO WRAPPER EXECUTION.
+NO HOST DRIVER MUTATION.
+NO VBOXMANAGE.
+NO VM START.
+
+BOUND FAILED INSPECTOR
+
+tools/INSPECT-PORTABLE-VIRTUALBOX7-WRAPPER-PE-SURFACE-R2.ps1
+blob f1c28ad864ad6cbf9c4465ac1e15613745f6d000
+
+OBSERVED DEFECT
+
+PE32 branch:
+
+  $OrdinalMask = [uint64]0x80000000
+
+Windows PowerShell evaluates hexadecimal literal 0x80000000 as signed Int32 -2147483648 before conversion. Converting that negative Int32 to UInt64 throws InvalidCastIConvertible.
+
+The adjacent PE32+ branch already uses UInt64.Parse with NumberStyles.HexNumber and InvariantCulture.
+
+HOTFIX RUNNER
+
+tools/RUN-PORTABLE-VIRTUALBOX7-WRAPPER-PE-SURFACE-R2-PE32-ORDINAL-MASK-HOTFIX.ps1
+blob 29c4cf1b582446baadeca4991bc91fdfe864110e
+
+SURGICAL CORRECTION
+
+The runner binds both Git tree and local working-tree source to exact failed blob f1c28ad864ad6cbf9c4465ac1e15613745f6d000.
+
+It requires exactly one occurrence of:
+
+  $OrdinalMask = [uint64]0x80000000
+
+and zero pre-existing occurrences of the replacement.
+
+It replaces only that statement with:
+
+  $OrdinalMask = [uint64]::Parse(
+      '80000000',
+      [System.Globalization.NumberStyles]::HexNumber,
+      [System.Globalization.CultureInfo]::InvariantCulture
+  )
+
+It then requires old count 0 and new count 1.
+
+The patched source is reparsed with System.Management.Automation.Language.Parser before invocation. Any parse error fails closed.
+
+EXECUTION SURFACE
+
+The runner itself executes only Git read operations needed to bind the source blob:
+
+- git rev-parse HEAD:<source path>
+- git hash-object -- <source path>
+
+It does not execute Portable-VirtualBox7.exe.
+It does not execute VirtualBox.exe or VirtualBoxVM.exe.
+It does not execute VBoxManage.
+It does not execute pnputil, devcon, sc, net, rundll32, driver installers, or service-control mutation.
+It does not start or stop a VM.
+
+After the in-memory correction it invokes the same R2 inspector logic with the same user-supplied PortableVirtualBoxRoot, WrapperBinaryInspectionReportPath, and OutPath.
+
+The underlying R2 inspector remains read-only with respect to the inspected wrapper and host state; its only intended write is the external evidence report after all parser gates complete.
+
+ADVERSARIAL JUDGMENT
+
+The correction addresses the exact observed signed-literal conversion failure without changing PE parsing policy, import interpretation, section analysis, marker analysis, resource/security/overlay analysis, host driver state, VM state, or prior evidence.
+
+If another parser defect is observed, this hotfix result must not be promoted to a loader-route claim until that defect is separately adjudicated.
+
+VM RETRY REMAINS NOT AUTHORIZED.
+DRIVER MUTATION REMAINS NOT AUTHORIZED.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

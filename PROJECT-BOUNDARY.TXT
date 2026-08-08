@@ -1,0 +1,258 @@
+DBYTE-HOLYC-OPT
+PROJECT BOUNDARY
+
+CLASS
+
+NATIVE HOLYC OPTIMIZER EXTENSION.
+NOT A PORT.
+NOT A TRANSPILER.
+NOT A REPLACEMENT COMPILER.
+
+AUTHORITY
+
+Terry A. Davis-authored source and matching historical packages are the
+semantic authority.
+
+FIRST TARGET
+
+  artifact  TempleOSTS.iso
+  role      TempleOS 1.10 T.S. internal distro
+  bytes     30558208
+  SHA256    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+SOURCE LAYERS
+
+  raw       original archive containers and identity evidence
+  expanded  exact historical file contents and patch authority
+  holy      normalized navigation only
+
+The evidence tree is immutable.  Authorized changes exist only in a separate
+manifest-verified workspace.
+
+REJECTED TARGETS
+
+  common public TempleOS source mirrors
+  DBYTE-HOLYC-TOOLS common source tree
+  TempleOSCD public standard distro
+  later forks and community ports
+  reconstructed or reformatted source
+  LLVM or transpiler paths
+
+SEALED OPTIMIZER BOUNDARY
+
+  pipeline owner
+    Compiler/ICLCC.CPP::LCCCompile
+
+  insertion seam
+    after  LCCHeaderPut(lx,7,FALSE);
+    before code_size=OptPass789(lx,fun_class,reg_offsets,NULL,NULL);
+
+  installed patch
+    if (lx->pass!=7)
+      LexExcept(lx,"ST_OPT_INTERNAL_ERROR");
+
+The patch reads pass state and performs no valid-path write.  No optimizer
+transformation is installed or authorized.
+
+OBSERVED WORKSPACE
+
+  root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-WORK\templeosts-1.10-no-rewrite
+
+  files                 1057/1057
+  changed files         1
+  changed path          Compiler/ICLCC.CPP
+  candidate bytes       10527
+  candidate SHA256
+    DB1C75A5EE71B07ADAEC32E984146602E73D9A0D606E2B76B8CCCC624E0CDCB8
+
+SEALED COMPILER BUILD ROUTE
+
+Exact guest working directory:
+  /Compiler
+
+Exact compiler-only invocation:
+
+  Cd("/Compiler");
+  if (Cmp("Compiler","Compiler",,':'))
+    throw;
+
+Resolved files:
+
+  input     /Compiler/Compiler.PRJ.Z
+  map       /Compiler/Compiler.MAP.Z
+  binary    /Compiler/Compiler.BIN.Z
+
+MakeAll builds the compiler and then the kernel.  MakeOSPrtBootInstall calls
+MakeAll and then performs boot installation.  Neither broader route is
+authorized for the first no-rewrite compiler proof.
+
+SEALED WRITE BOUNDARY
+
+Observed Cmp caller sequence:
+
+  compile and link project
+  write Compiler.MAP.Z
+  construct binary and checksum
+  write Compiler.BIN.Z
+  return error count
+
+The displayed route contains no temporary output name, backup copy,
+rename-based commit, or explicit rollback.  Underlying filesystem atomicity is
+not inferred.
+
+SEALED LOAD BOUNDARY
+
+Kernel boot loads:
+
+  Cd("/Compiler");
+  Load("Compiler",LDF_SILENT);
+
+Load resolves Compiler.BIN.Z, checks module alignment and TEMPLEOS_XSUM, and
+executes both loader passes.
+
+Adam package initialization later loads the map through:
+
+  MapFileLoad("::/Compiler/Compiler");
+
+Compiler.MAP.Z is mapping data and is not the boot compiler module.
+
+OBSERVED HOST BUILD GUARD
+
+  root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-GUARD\templeosts-1.10-no-rewrite
+
+  files                   11
+  manifest SHA256
+    792ED470CF151582C81B20C95C588067B2CD41ED74893AB926079DC5D2C76FCA
+
+  observation report SHA256
+    53FC38AC8F84C16AA4657A9EF4CB7BBA94B958217B8C489D481ADEF4137AA297
+
+The guard contains original raw recovery containers, matching expanded
+baselines, the candidate source, a non-executable contract, and a hash manifest.
+It does not prove a guest recovery point.
+
+OBSERVED VM PREFLIGHT AGGREGATE
+
+  report SHA256
+    8F851B21087B470126E343ECBD8258F2A439D2AF3FAE8801451F4FBB63610461
+
+  registered VMs             1
+  known candidates           1
+  powered-off candidates     1
+  candidates with VDI        1
+  candidates with hashed VDI 1
+  exact ISO attached         1
+  snapshot chains            0
+  shared folders             0
+
+The aggregate authorized exact target adjudication only.
+
+OBSERVED GUEST TARGET
+
+  report SHA256
+    0CDEAEF0B877CB4ED4D56860D5160EB28DDF838AE45360133A8CCAE7CF61EC62
+
+  name
+    Temple1.10
+
+  machine UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  state
+    poweroff
+
+  VDI path
+    D:\VirtualBox VMs\Temple1.10\Temple1.10.vdi
+
+  VDI bytes
+    2097152
+
+  VDI SHA256
+    90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  ISO path
+    D:\TempleOSTS.iso
+
+  ISO SHA256
+    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+  snapshot UUID rows
+    0
+
+  shared-folder rows
+    0
+
+The target was selected from the sealed preflight report and a fresh read-only
+VirtualBox inventory.  It was not selected from its name alone.
+
+CURRENT STATUS
+
+  exact ISO identity                  SEALED
+  expanded manifest                   SEALED
+  exact Compiler/ set                 SEALED
+  optimizer pipeline                  SEALED
+  insertion seam                      SEALED
+  no-rewrite assertion                INSTALLED / OBSERVED
+  compiler-only build route           SEALED
+  compiler boot load route            SEALED
+  compiler map load route             SEALED
+  host build guard                    PREPARED / OBSERVED
+  VM preflight aggregate              OBSERVED
+  target guest VM                     SEALED
+  target VM state                     POWEROFF / OBSERVED
+  powered-off recovery point          VERIFICATION PENDING
+  restore execution                   NOT OBSERVED
+  guest delivery route                UNRESOLVED
+  guest backup and restore            UNRESOLVED
+  compiler build execution            NOT AUTHORIZED
+  compiler rebuild                    NOT OBSERVED
+  guest semantic differential         NOT OBSERVED
+  optimizer transformation            DENIED
+
+ALLOWED NEXT WORK
+
+  preserve the target report
+  require DBYTE-HOLYC-TOOLS commit 37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
+  require a clean tracked resource tree and exact inspector blob
+  verify the adopted baseline manifest, VBOX, VBOX-PREV, VDI and ISO
+  verify four non-empty baseline inventory evidence files
+  prove the baseline and live VDI have distinct NTFS file IDs
+  run the pinned adopted inspector in PREFLIGHT mode
+  require REGISTERED-EXACT, poweroff, exact VBOX, VDI and ISO
+  write reports outside the read-only resource root
+
+NOT AUTHORIZED
+
+  starting or stopping a VM
+  creating, restoring or deleting a snapshot
+  copying over the live VDI or VBOX
+  mounting or modifying a VDI
+  attaching or detaching storage
+  delivering candidate source into a guest
+  MakeAll
+  MakeOSPrtBootInstall
+  guest Cmp execution
+  replacing guest Compiler.BIN.Z
+  replacing guest Compiler.MAP.Z
+  booting from candidate output
+  changing another workspace source file
+  any intermediate-code transformation
+  pass-number or jump-table changes
+  OptPass789 convergence changes
+  JIT or AOT backend changes
+
+RULE
+
+TARGET SELECTION IS NOT A RECOVERY POINT.
+MATCHING BYTES AT ONE PATH ARE NOT AN INDEPENDENT RECOVERY COPY.
+NO VERIFIED INDEPENDENT BASELINE VDI, NO RECOVERY POINT.
+NO OBSERVED RESTORE, NO RESTORE CLAIM.
+NO OBSERVED DELIVERY, NO GUEST SOURCE CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+NO OBSERVED BUILD, NO COMPILER CLAIM.
+NO GUEST DIFFERENTIAL, NO SEMANTIC CLAIM.
+UNKNOWN MEANS DO NOT TRANSFORM.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

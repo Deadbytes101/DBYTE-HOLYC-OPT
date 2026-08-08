@@ -1,0 +1,154 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VBOX DIFF TEXT RENDERING OBSERVATION
+
+CLASS
+
+SEALED NORMALIZED DIFF REPORT VALIDATED.
+NINE LINE-DIFF ROWS DISPLAYED AND ACCOUNTED.
+TEXT PAYLOAD NOT VISIBLE IN THE PASTED CHAT TRANSCRIPT.
+DIFFERENCE CLASSIFICATION REMAINS UNRESOLVED.
+POWERED-OFF RECOVERY POINT NOT SEALED.
+BUILD EXECUTION NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  2d04950e948378ebac352194038f85618019b38f
+
+Command:
+  tools/SHOW-TEMPLEOSTS-VBOX-NORMALIZED-DIFF.ps1
+
+Input report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vbox-normalized-diff.txt
+
+OBSERVED SEALED IDENTITIES
+
+  report SHA256
+    C7253681589771FF0E36A56DDFA7627C6FCA48398A1AEE1465645470DC8B3A11
+
+  target
+    Temple1.10
+
+  target UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  VM state
+    poweroff
+
+  live VBOX SHA256
+    E537469A1B1A88DE13D18704B5D6299F3AF202DA518FB266F045485A8FC4F1E6
+
+  baseline VBOX SHA256
+    E7A884AD2590BAD05AF4465A22FD857A75F64AB9F91042E4638256E8B21AEB46
+
+  live normalized SHA256
+    CCB9C85945B1A432B35E1021D8C174E932E932FE1E2988D4655072FA68211859
+
+  baseline normalized SHA256
+    1E3FB6296E757B388F89A17AC05F02A0525C42D609CE67A8212032FE9E791866
+
+  first normalized character difference
+    971
+
+  normalized line-diff rows
+    9
+
+  current-only rows
+    5
+
+  baseline-only rows
+    4
+
+OBSERVED ROW COORDINATES AND HASHES
+
+  CURRENT-ONLY current=20 baseline=0
+    6F0A9D44ECCF1340382C8523C1B4D62EECDF8F1AACBFB1A140E7F46DCCFB134B
+
+  BASELINE-ONLY current=0 baseline=20
+    307FB4BB2899206C378814E21BE83D2DC1B0D65EEC19C468358C6D4184ED26A4
+
+  CURRENT-ONLY current=41 baseline=0
+    F30E86499D7EE9A00BE5DAC5D758576D922BFE408D7DD10743BC57EFC4592E06
+
+  BASELINE-ONLY current=0 baseline=41
+    58453F69AE809BD09F91D38045AF6A5449469B3D9076C249E4828870BD292B30
+
+  CURRENT-ONLY current=45 baseline=0
+    D64104E849BC4C8106E79C24611414E7F0247BEE7BACA80574A29FE3F6D732DA
+
+  CURRENT-ONLY current=46 baseline=0
+    39B38742ECE66B40741BD1A5D274E04C2461B13C8AB8C22FC8E1797CA1A5EC8C
+
+  BASELINE-ONLY current=0 baseline=45
+    725D5227FB985F94FFB116CCC1E5CAFE42D79FC75214CB2B00E39C798E63F559
+
+  CURRENT-ONLY current=48 baseline=0
+    D281BDD16A8D14A27B56A97F05D7B31F34BD0E1519F572140ADC5032CC2414ED
+
+  BASELINE-ONLY current=0 baseline=47
+    D94AAD55C52DA561445E602B3E6F1A6EA8CC25C5E88492BE4ABF8F612C9803FC
+
+ADJUDICATION
+
+The extractor bound the exact report and accepted all required metadata,
+status fields, section boundaries, row count, row schema and line coordinates.
+The report therefore contains nine nonempty row records with sealed line
+SHA256 values.
+
+The pasted chat transcript did not visibly preserve the row text payload after
+the SHA256 column.  The transcript alone does not establish whether this was
+caused by markup rendering, whitespace presentation or another display-layer
+transformation.
+
+The line hashes are not the SHA256 of an empty string.  That fact proves the
+original compared lines were not empty, but it does not reveal their content.
+No semantic classification is authorized without a presentation-safe encoding
+of the report text field.
+
+MUTATION BOUNDARY
+
+The extractor read and hashed one host evidence report and wrote nothing.  It
+made no VirtualBox call and performed no VM start, stop, snapshot operation,
+attachment change, VBOX write, VDI write, ISO write, guest delivery or compiler
+execution.
+
+NEXT ALLOWED WORK
+
+  bind report SHA256 C7253681589771FF0E36A56DDFA7627C6FCA48398A1AEE1465645470DC8B3A11
+  revalidate all sealed metadata and the nine row records
+  emit each report text field as UTF-8 Base64
+  emit each report text field with angle brackets and controls escaped
+  include character and UTF-8 byte counts
+  do not change the report
+  do not call VirtualBox
+  do not classify until the encoded payload is observed
+
+CURRENT STATUS
+
+  exact corpus                         SEALED
+  target guest VM                      SEALED
+  target VM state                      POWEROFF / OBSERVED
+  live VDI and ISO                     EXACT / OBSERVED
+  normalized VBOX relationship         MISMATCH / OBSERVED
+  normalized line-diff rows            9 / SEALED
+  normalized line-diff text            PRESENT BUT NOT VISIBLE
+  difference classification            UNRESOLVED
+  powered-off recovery point           NOT SEALED
+  restore execution                    NOT OBSERVED
+  guest delivery                       UNRESOLVED
+  compiler build execution             NOT AUTHORIZED
+  optimizer transformation             DENIED
+
+RULE
+
+A HIDDEN PAYLOAD IS NOT A CLASSIFIED PAYLOAD.
+DO NOT NORMALIZE WHAT HAS NOT BEEN DISPLAYED.
+NO VERIFIED RECOVERY POINT, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

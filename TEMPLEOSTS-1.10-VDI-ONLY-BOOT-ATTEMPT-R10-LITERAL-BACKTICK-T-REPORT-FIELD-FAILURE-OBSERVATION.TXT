@@ -1,0 +1,220 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R10 LITERAL BACKTICK-T REPORT FIELD FAILURE OBSERVATION
+
+CLASS
+
+THE R10 ENTRYPOINT PASSED ITS BLANK-ROW COLLECTION CORRECTION AND AST-OFFSET REPOSITORY-ROOT INJECTION.
+THE DYNAMIC R8 SOURCE WAS CREATED AND INVOKED.
+R8 VERIFIED THE EXACT PROBE REPORT PATH AND WHOLE-FILE SHA256 BEFORE FAILING IN FIELD PARSING.
+THE FAILURE OCCURRED BECAUSE THE PROBE GENERATOR WRITES TWO DIFFERENT FIELD SEPARATOR REPRESENTATIONS.
+DOUBLE-QUOTED REPORT ROWS CONTAIN A REAL TAB CHARACTER.
+SINGLE-QUOTED REPORT ROWS CONTAIN THE TWO LITERAL CHARACTERS BACKTICK AND LOWERCASE T.
+R8 GET-REPORTFIELD SEARCHED ONLY FOR KEY PLUS A REAL TAB.
+THE EXACT REPORT ROW virtualbox_registry_query THEREFORE HAD CARDINALITY ZERO UNDER THAT PARSER.
+R2, THE ORIGINAL PREPARER AND VBOXMANAGE WERE NOT INVOKED BY THIS ATTEMPT.
+NO BOOT-ATTEMPT ROOT, ISOLATED REGISTRY OR PREPARATION REPORT WAS CREATED.
+VM START, RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  dc215cc6d7b4b1c88ee2de8e0f9ee6359a1d357c
+
+Entrypoint:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R10.ps1
+
+R10 blob:
+  5ad32de1be482802e53bca04d0630458f4e57741
+
+Bound R8 blob:
+  8e051b4cff813de4160311c45833174180f11bd9
+
+Observed patched R8 SHA256:
+  9030928F68177696B594A4E2A06A4440B98B91C480E1C31D18402E5625421A18
+
+Required probe report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vboxmanage-modifyvm-help-surface-probe.txt
+
+Required probe-report SHA256:
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+Requested boot-attempt root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Requested preparation report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+OBSERVED R10 OUTPUT
+
+  BOUND R8 PREPARER:    8e051b4cff813de4160311c45833174180f11bd9
+  REPORT ROW BINDING:   ALLOW EMPTY STRING / EXACT THREE PARAMETERS
+  ROOT CLASSIFIER:      POWERSHELL AST / EXACT ASSIGNMENT STATEMENT
+  ROOT REPLACEMENT:     AST STARTOFFSET/ENDOFFSET SPLICE
+  LAYOUT DEPENDENCY:    NONE BEYOND ASSIGNMENT EXTENT
+  INJECTED REPO ROOT:   D:\TECHNICAL\DBYTE-HOLYC-OPT
+  PATCHED R8 SHA:       9030928F68177696B594A4E2A06A4440B98B91C480E1C31D18402E5625421A18
+
+OBSERVED FAILURE
+
+Terminal error:
+
+  probe report field cardinality mismatch: key=virtualbox_registry_query count=0
+
+Failure location in dynamic R8:
+
+  line 290
+  throw "probe report field cardinality mismatch: key=$Key count=$($Matches.Count)"
+
+The user-provided terminal output is the observed execution evidence.
+GitHub and the assistant environment did not execute the local PowerShell command.
+
+SOURCE EVIDENCE
+
+The exact probe generator blob is:
+
+  c63d9b0a6157db6b5cc0aa10f548663622a038d9
+
+Rows emitted with double-quoted PowerShell strings include:
+
+  "vboxmanage_path`t..."
+  "vboxmanage_version`t..."
+  "boot_attempt_root`t..."
+  "attempt_1_arguments`t..."
+  and the per-attempt measured rows.
+
+In a double-quoted PowerShell string, `t is interpreted as an actual tab character.
+
+Rows emitted with single-quoted PowerShell strings include:
+
+  'virtualbox_registry_query`tNOT-EXECUTED'
+  'virtualbox_mutation`tNOT-EXECUTED'
+  'vm_start`tNOT-AUTHORIZED'
+  'PROBE`tCOMPLETE'
+  'BOOT ATTEMPT COPY`tNOT-PREPARED'
+  'VM START`tNOT-AUTHORIZED'
+  'RESTORE BOOT`tNOT-OBSERVED'
+  'RECOVERY POINT`tNOT-SEALED'
+  'BUILD EXECUTION`tNOT-AUTHORIZED'
+  'VERDICT`tREAD-ONLY MODIFYVM HELP SURFACE PROBE COMPLETE'
+
+In a single-quoted PowerShell string, `t is not an escape sequence.  The report therefore contains a literal backtick followed by lowercase t in these rows.
+
+The exact whole-file report SHA256 already binds this mixed representation.
+
+EXECUTION BOUNDARY
+
+R10 completed:
+
+  exact R8 tree/local blob binding
+  exact-three AllowEmptyString signature replacement
+  AST parse of patched R8 source
+  exact executable RepoRoot assignment classification
+  AST extent range and text verification
+  repository-root assignment splice
+  final patched R8 parse
+  zero executable PSScriptRoot proof
+  dynamic R8 scriptblock creation and invocation
+
+R8 necessarily completed:
+
+  exact R2 path construction
+  exact R2 tree/local blob binding
+  exact probe-report path resolution
+  exact whole-file probe-report SHA256 verification
+  probe report ReadAllLines loading
+  blank-row-safe helper parameter binding
+  several real-tab field assertions before the first mixed-representation row
+
+R8 failed before:
+
+  completion of all probe report field assertions
+  attempt-matrix assertions
+  R2 source loading or patching
+  R2 dynamic execution
+  original-preparer binding or execution
+  any VBoxManage invocation
+  default-registry query
+  boot-attempt root creation
+  isolated VBOX_USER_HOME creation
+  copied VM registration
+  modifyvm execution
+  storageattach execution
+  manifest creation
+  preparation-report creation
+
+ROOT CAUSE
+
+Get-ReportField in R8 constructs only:
+
+  $Prefix = $Key + "`t"
+
+and searches for one row beginning with that real-tab prefix.
+
+The immutable probe report uses a real tab for dynamically formatted rows and a literal backtick-t for rows written as single-quoted constants.
+
+The parser representation contract therefore disagrees with the already observed report representation.
+This is not a probe hash mismatch and not a missing evidence row.
+
+ADJUDICATION
+
+A corrected parser may accept both exact separator encodings only under the existing whole-file SHA256 binding.
+
+For each requested key it must construct exactly two candidate prefixes:
+
+  key + real tab
+  key + literal backtick-t
+
+It must search the exact report lines for both representations, combine the matches, require total cardinality exactly one, and extract the suffix using the matched prefix length.
+
+This does not weaken evidence because:
+
+  the complete report bytes remain bound to SHA256 57117B1D...
+  every required key remains exact and case-sensitive
+  every required value remains exact and case-sensitive
+  duplicate rows across either separator representation cause cardinality failure
+  no fuzzy whitespace matching is permitted
+
+ONE DECISION
+
+Preserve R10 and R8.
+Create one R11 direct-R8 wrapper that combines:
+
+  the exact-three blank-row collection annotation correction
+  a mixed exact-separator Get-ReportField correction
+  the AST-offset executable repository-root splice
+
+Do not modify the probe report, R2, original preparer, fixed switches, VirtualBox configuration or authorization state.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal             VERIFIED / SEALED
+  boot readiness                             ADJUDICATED
+  modifyvm help native matrix                OBSERVED
+  fixed switch contract                      ADJUDICATED
+  R10 invocation                             FAILED CLOSED / RECORDED
+  probe whole-file hash                      PASSED / OBSERVED
+  report field representation                MIXED TAB / LITERAL-BACKTICK-T
+  boot-attempt root                          NOT CREATED BY THIS INVOCATION
+  boot-attempt copy                          NOT PREPARED
+  VM start                                   NOT AUTHORIZED
+  restore boot                               NOT OBSERVED
+  powered-off recovery point                 NOT SEALED
+  compiler build execution                   NOT AUTHORIZED
+  optimizer transformation                   DENIED
+
+RULE
+
+PARSE THE IMMUTABLE REPORT REPRESENTATION THAT WAS ACTUALLY WRITTEN.
+DO NOT NORMALIZE OR REWRITE THE OBSERVED REPORT.
+REQUIRE EXACTLY ONE MATCH ACROSS REAL-TAB AND LITERAL-BACKTICK-T PREFIXES.
+NO PREPARED BOOT COPY, NO VM START.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

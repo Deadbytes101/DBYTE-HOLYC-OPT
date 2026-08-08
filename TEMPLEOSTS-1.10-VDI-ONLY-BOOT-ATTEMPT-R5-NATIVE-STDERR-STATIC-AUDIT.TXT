@@ -1,0 +1,278 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R5 NATIVE STDERR STATIC AUDIT
+
+CLASS
+
+THE R5 BOOT-ATTEMPT PREPARER ENTRYPOINT WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+R5 PRESERVES AND BINDS THE FAILED R4 ENTRYPOINT BY EXACT TREE AND LOCAL BLOB.
+R5 PATCHES ONLY THE NATIVE HELP-PROBE ERROR-CHANNEL CONTRACT AND R4 DYNAMIC REPOSITORY-ROOT ANCHOR.
+THE R4, R3, R2 AND ORIGINAL-PREPARER CONTRACTS REMAIN BOUND BY THEIR EXISTING BLOBS.
+NO VIRTUALBOX MUTATION COMMAND OR AUTHORIZATION STATE WAS ADDED BY R5.
+VM START, RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R5.ps1
+
+Blob:
+  8ffc92184d5ba46c387fc3d7f6ef9e2e09709259
+
+BOUND CHAIN
+
+R4 path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R4.ps1
+
+Required R4 tree/local blob:
+  fcdec4c784f2d0610d8227aeb95ac138fa7e77d4
+
+R4 continues to bind R3 blob:
+  462a54f375439f60d9aefc37a62b9b3dd41e681e
+
+R3 continues to bind R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R2 continues to bind original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+OBSERVED FAILURE BOUNDARY
+
+The failed R4 invocation completed all wrapper source gates and reached the original
+preparer Get-ModifyVmSwitches call.
+
+The native command emitted:
+
+  Oracle VM VirtualBox Command Line Management Interface Version 7.0.12
+
+through the PowerShell error stream and was classified as:
+
+  NativeCommandError
+
+The original help probe inherited:
+
+  ErrorActionPreference = Stop
+
+Therefore the first native stderr record terminated the pipeline before the intended
+LASTEXITCODE gate could run.
+
+R5 NATIVE STDERR CONTRACT
+
+R5 injects one additional exact replacement into the dynamic R3 source.
+
+When R3 later patches R2, the additional replacement changes only this loop inside
+the R2-generated Get-ModifyVmSwitches function:
+
+  foreach native help attempt
+    save current ErrorActionPreference
+    set ErrorActionPreference to Continue
+    invoke the exact typed argument array
+    merge stdout and stderr into Captured
+    save LASTEXITCODE into ExitCode
+    restore the saved ErrorActionPreference in finally
+    retain Captured only if ExitCode equals zero
+
+The previous policy is restored even if the native invocation or output conversion
+throws.
+
+ErrorActionPreference remains Stop everywhere outside the narrow native call.
+
+The patch does not:
+
+  suppress a nonzero native exit code
+  treat stderr as success by itself
+  invent option names
+  remove the existing alternate help form
+  bypass supported-switch detection
+  change any VirtualBox mutation command
+
+HELP-ARGUMENT CONTRACT
+
+The inherited R3 correction still constructs a List[object] containing exactly two
+string arrays:
+
+  modifyvm --help
+  --help modifyvm
+
+Only an attempt whose saved ExitCode equals zero contributes text to option detection.
+
+The inherited R2 logic still requires one supported clipboard switch:
+
+  --clipboard-mode
+  or --clipboard
+
+and one supported drag-and-drop switch:
+
+  --drag-and-drop
+  or --draganddrop
+
+No successful help output or no supported switch still fails closed.
+
+INJECTION CONTRACT
+
+R5 stores the exact old and new R3 source seams as UTF-8 base64 constants.
+
+The decoded old seam contains:
+
+  R3 typed help-array replacement
+  immediate R3 repository-root anchor declaration
+
+The decoded new seam retains that replacement and inserts exactly one R2 help-loop
+replacement before the repository-root anchor.
+
+R5 uses exact-one replacement gates for:
+
+  the R4 source insertion anchor
+  the R4 executable repository-root seam
+
+The inherited R4 and R3 layers continue to apply their own exact-one replacement
+gates for every lower source seam.
+
+R5 rejects:
+
+  a missing or changed R4 blob
+  a missing R4 source insertion seam
+  a pre-existing new insertion seam
+  multiple R4 executable repository-root anchors
+  any PowerShell parse error in the patched R4 source
+  any exact PSScriptRoot VariableExpressionAst remaining after injection
+
+DYNAMIC EXECUTION CONTRACT
+
+R5 is file-backed and obtains the repository root from its own valid PSScriptRoot.
+
+Before dynamically invoking R4, R5:
+
+  parses the R4 source with the PowerShell AST
+  requires exactly one executable PSScriptRoot variable before root injection
+  requires exactly one executable repository-root anchor
+  injects the resolved repository root as a single-quoted literal
+  parses the final patched R4 source
+  requires zero executable PSScriptRoot variables
+
+The R4, R3 and R2 dynamic layers retain their own downstream repository-root and
+PSScriptRoot contracts.
+
+UNCHANGED PREPARER CONTRACTS
+
+R5 does not alter the original preparer gates for:
+
+  exact verification and readiness report hashes
+  exact sealed-rehearsal manifest and machine artifacts
+  exact NTFS file IDs
+  exact default registered target and attached live ISO
+  default target powered off
+  zero running rows, snapshots and shared folders
+  new disjoint boot-attempt root
+  copied VBOX, VDI and ISO identities
+  distinct copied NTFS file objects
+  copied-only VBOX path rewriting
+  empty isolated VBOX_USER_HOME
+  copied VM registration
+  disk-only boot order
+  all exposed NICs disabled
+  clipboard disabled
+  drag-and-drop disabled
+  copied ISO detached
+  VBoxVGA and 9 MB VRAM retained
+  zero running rows, snapshots and shared folders after correction
+  sealed rehearsal and default registry revalidation
+  incomplete-root preservation after any post-creation failure
+  manifest and external-report creation only after all gates pass
+
+NEGATIVE COMMAND SURFACE
+
+R5 itself invokes no VBoxManage command.
+
+The inherited chain still contains no:
+
+  startvm
+  controlvm
+  savestate
+  poweroff
+  unregistervm
+  snapshot take
+  snapshot restore
+  snapshot delete
+  clonemedium
+  modifymedium
+  closemedium
+  guestcontrol
+  compiler execution
+
+The inherited intended mutations remain limited to the new isolated boot-attempt copy:
+
+  registervm
+  modifyvm
+  storageattach --medium none
+
+WRITE BOUNDARY
+
+The corrected help probe occurs before:
+
+  boot-attempt root creation
+  isolated registry creation
+  file copy
+  registration
+  configuration mutation
+
+Before the help probe succeeds, R5 and the inherited chain write no boot-attempt root,
+manifest or external report.
+
+On successful preparation, writes remain limited to the new boot-attempt root and the
+external report selected by OutPath.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  BOOT ATTEMPT COPY                  PREPARED
+  POWERED-OFF CORRECTED CONFIG       OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  VM START                           NOT AUTHORIZED
+  RESTORE BOOT                       NOT OBSERVED
+  TEMPLEOS DESKTOP                   NOT OBSERVED
+  POWERED-OFF RECOVERY POINT         NOT SEALED
+  GUEST DELIVERY                     UNRESOLVED
+  COMPILER BUILD                     NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION           DENIED
+
+ADVERSARIAL JUDGMENT
+
+Native stderr is not equivalent to a nonzero process exit code.
+Ignoring all errors globally would weaken the preparation boundary.
+R5 instead relaxes the policy only around two read-only native help attempts, records
+the actual exit code before restoration and preserves Stop everywhere else.
+
+A successful R5 run may prepare only a powered-off corrected copy.  It still cannot
+authorize a start or establish restore boot.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal     VERIFIED / SEALED
+  boot readiness                     ADJUDICATED
+  R4 invocation                      FAILED CLOSED / RECORDED
+  R5 native stderr correction        STATICALLY AUDITED
+  boot-attempt copy                  EXECUTION PENDING
+  VM start                            NOT AUTHORIZED
+  restore boot                       NOT OBSERVED
+  powered-off recovery point          NOT SEALED
+  build execution                     NOT AUTHORIZED
+
+RULE
+
+RUN R5 ONLY.
+PRESERVE ANY INCOMPLETE BOOT ROOT.
+DO NOT START THE SEALED REHEARSAL OR BOOT COPY.
+PREPARATION IS NOT A BOOT PROOF.
+NATIVE STDERR MUST BE MEASURED WITH THE NATIVE EXIT CODE.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

@@ -1,0 +1,342 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT PREPARER STATIC AUDIT
+
+CLASS
+
+THE VDI-ONLY BOOT-ATTEMPT COPY PREPARER CHAIN WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+THE SEALED REHEARSAL AND READINESS REPORTS ARE BOUND BY EXACT HASH.
+THE ORIGINAL PREPARER, R2 HARDENING WRAPPER AND R3 ENTRYPOINT ARE BOUND BY EXACT GIT BLOBS.
+THE PREPARER MAY MUTATE ONLY A NEW BOOT-ATTEMPT ROOT AND ITS ISOLATED VBOX_USER_HOME.
+THE PREPARER DOES NOT START A VM.
+RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+AUDITED OBJECTS
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Original preparer:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT.ps1
+
+Original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+R2 hardening wrapper:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R2.ps1
+
+R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R3 file-backed entrypoint:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3.ps1
+
+R3 blob:
+  462a54f375439f60d9aefc37a62b9b3dd41e681e
+
+BOUND OBSERVED INPUTS
+
+Isolated powered-off rehearsal verification report SHA256:
+  F16F263F1A9217022F24FC318DC0CB4A9BEAFA295723AFB889C043EF428E51E8
+
+Boot-readiness adjudication report SHA256:
+  C96EA11818CCEF207D914F165CD6B5822ADFC71B4712E7025371E085D3627461
+
+Sealed rehearsal manifest SHA256:
+  AC2609C9C6EFC87316835BB6A4174AF5C28FEEE8DCEBD37E0E9D3DADB14D383F
+
+Sealed rehearsal root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1
+
+Required boot-attempt root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Machine UUID:
+  9c98691e-27cd-4487-a306-587969c2c78c
+
+VDI UUID:
+  55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+ISO UUID:
+  ab97b3a5-1331-494d-a917-e85b6e728c45
+
+STATIC PRECONDITION REVIEW
+
+The preparer requires:
+
+  exact resource commit 37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
+  clean tracked resource worktree and index
+  exact verification and readiness report hashes
+  exact report status fields
+  exact sealed rehearsal root and manifest
+  exact sealed VBOX, VDI and ISO hashes
+  exact sealed VBOX, VDI and ISO NTFS file IDs
+  exact default registered target before preparation
+  default target powered off
+  default zero running rows, snapshots and shared folders
+  exact live VBOX, VDI and ISO identities
+  unset process VBOX_USER_HOME
+  absent boot-attempt root
+  absent external preparation report
+  disjoint sealed and boot-attempt roots
+  output report outside resource, sealed, boot and live VM roots
+
+COPY AND IDENTITY CONTRACT
+
+The preparer creates a new root only after all read-only preconditions pass.
+
+It copies:
+
+  sealed Machine\Temple1.10.vbox
+  sealed Machine\Temple1.10.vdi
+  sealed Machine\TempleOSTS.iso
+
+It then requires:
+
+  copied VBOX pre-rewrite SHA256 equals sealed VBOX SHA256
+  copied VDI bytes and SHA256 equal the sealed VDI
+  copied ISO bytes and SHA256 equal the sealed ISO
+  copied VBOX NTFS file ID differs from sealed VBOX
+  copied VDI NTFS file ID differs from sealed and live VDI objects
+  copied ISO NTFS file ID differs from sealed ISO
+
+Only copied VBOX text receives pre-registration path changes.
+The sealed VBOX is never rewritten.
+
+Exact-one replacements change:
+
+  sealed rehearsal VDI path -> boot-attempt VDI path
+  sealed rehearsal ISO path -> boot-attempt ISO path
+
+ISOLATED REGISTRY CONTRACT
+
+The boot-attempt VBOX_USER_HOME is created empty.
+
+Before registration, the preparer requires:
+
+  exact VirtualBox version 7.0.12r159484
+  zero registered VM rows
+  zero running VM rows
+
+The preparer then registers only the copied VBOX in that isolated registry.
+The machine UUID and media UUIDs may be reused because the registry is disjoint from
+the default and sealed-rehearsal registries.
+
+POWERED-OFF CONFIGURATION CORRECTIONS
+
+The preparer applies only these copied-machine corrections:
+
+  boot1 disk
+  boot2 none
+  boot3 none
+  boot4 none
+  nic1 through nic8 none
+  clipboard disabled
+  drag-and-drop disabled
+  DVD slot medium none
+
+The DVD storage-controller name is parsed from the copied VBOX XML rather than guessed.
+
+The preparer deliberately does not change:
+
+  graphics controller
+  VRAM
+  CPU count
+  memory
+  chipset
+  firmware
+  storage-controller type
+  VDI contents
+  ISO contents
+  machine UUID
+  VDI UUID
+  ISO UUID
+
+R2 HARDENING CONTRACT
+
+R2 binds original preparer tree and local blob:
+
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+R2 patches only control and verification seams in memory.
+
+R2 adds:
+
+  optional exact ISO attachment binding in target-state checks
+  exact default ISO binding before and after isolated preparation
+  exact copied ISO binding before correction
+  pre-detach copied ISO UUID proof
+  acceptance of a missing IDE-0-1 key after a valid detach
+  rejection if any machine-readable value still equals the copied ISO path
+  at least one NIC field and all exposed NIC fields equal none
+  exact retained graphicscontroller vboxvga
+  exact retained VRAM 9 MB
+  zero-or-one machine-local DVD registry row after detach
+  local-path equality if that DVD registry row remains
+  VDI UUID proof after detach
+  copied VBOX XML proof that the ISO UUID is not attached
+
+R2 keeps every original mutation command and status boundary unchanged.
+
+R3 EXECUTION-CONTEXT CONTRACT
+
+R3 binds R2 tree and local blob:
+
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R3 replaces only:
+
+  nested help-attempt array construction
+  R2 repository-root anchor
+
+The help-attempt collection becomes a List[object] containing exactly two string arrays:
+
+  modifyvm --help
+  --help modifyvm
+
+This prevents PowerShell from flattening the intended argument arrays.
+Only successful read-only help invocations contribute to option detection.
+
+R3 is file-backed and derives the real repository root from its own PSScriptRoot.
+It injects that root into R2 before dynamic execution and requires zero remaining
+PSScriptRoot references in the patched R2 source.
+
+The original preparer itself contains zero PSScriptRoot references before R2 creates
+it as a scriptblock.
+
+POST-CORRECTION VERIFICATION
+
+Before the isolated context is closed, the preparer requires:
+
+  exactly one registered copied VM
+  zero running VM rows
+  machine state poweroff
+  exact copied VBOX configuration path
+  exact copied VDI attachment path
+  boot1 disk
+  boot2 none
+  boot3 none
+  boot4 none
+  clipboard disabled
+  drag-and-drop disabled
+  graphicscontroller vboxvga
+  VRAM 9
+  at least one NIC key
+  every exposed NIC mode none
+  copied ISO path absent from all machine-readable values
+  zero snapshot rows
+  zero shared-folder rows
+  exact copied VDI UUID
+
+The copied ISO UUID is proven immediately before detach.
+The copied ISO file remains preserved and byte-exact after detach.
+
+After VBoxSVC shutdown and return to the default registry, the preparer requires:
+
+  exact default target and live ISO attachment
+  default target still powered off
+  default zero running rows, snapshots and shared folders
+  exact live VBOX, VDI and ISO identities
+  exact sealed reports and manifest
+  exact sealed VBOX, VDI and ISO identities and NTFS file IDs
+  copied VDI and ISO byte identity
+  copied VBOX, VDI and ISO NTFS file IDs unchanged
+  copied VBOX XML contains the local copied VDI path
+  copied VBOX XML has no attached Image node with the ISO UUID
+  zero NVRAM files
+
+VOLATILE LOG AND MANIFEST CONTRACT
+
+VBoxSVC service logs are classified only under the exact case-sensitive namespace:
+
+  VBoxUserHome\VBoxSVC.log
+  VBoxUserHome\VBoxSVC.log.1
+  VBoxUserHome\VBoxSVC.log.2
+  ...
+
+All other boot-attempt files are immutable inventory rows with relative path, byte
+count and SHA256.
+
+The preparer writes:
+
+  BOOT-ATTEMPT-MANIFEST.txt inside the new root
+  one external preparation report selected by OutPath
+
+The incomplete marker is removed only after every preparation and identity gate passes.
+If a failure occurs after root creation, the root and an incomplete marker are preserved.
+The failed root must not be deleted or reused.
+
+NEGATIVE COMMAND SURFACE
+
+No occurrence was found in the boot-attempt preparer chain for:
+
+  startvm
+  controlvm
+  savestate
+  poweroff
+  unregistervm
+  snapshot take
+  snapshot restore
+  snapshot delete
+  clonemedium
+  modifymedium
+  closemedium
+  guestcontrol
+
+The only intended VirtualBox mutations are:
+
+  registervm on the new isolated registry
+  modifyvm on the copied powered-off machine
+  storageattach medium none on the copied DVD slot
+
+The preparer never mutates the sealed rehearsal or default registry.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  BOOT ATTEMPT COPY                  PREPARED
+  POWERED-OFF CORRECTED CONFIG       OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  VM START                           NOT AUTHORIZED
+  RESTORE BOOT                       NOT OBSERVED
+  TEMPLEOS DESKTOP                   NOT OBSERVED
+  POWERED-OFF RECOVERY POINT         NOT SEALED
+  GUEST DELIVERY                     UNRESOLVED
+  COMPILER BUILD                     NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION           DENIED
+
+ADVERSARIAL JUDGMENT
+
+A copied VDI with an attached ISO is not a restore proof.
+A copied VM with enabled host integration is not an isolated boot proof.
+A prepared powered-off copy is still not a successful boot.
+
+The script therefore stops after producing and verifying one corrected powered-off
+copy.  A later verifier must seal that prepared copy before any one-time start can be
+authorized.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal     VERIFIED / SEALED
+  boot readiness                     ADJUDICATED
+  boot-attempt preparer               STATICALLY AUDITED
+  boot-attempt copy                   EXECUTION PENDING
+  VM start                            NOT AUTHORIZED
+  restore boot                        NOT OBSERVED
+  powered-off recovery point          NOT SEALED
+  build execution                     NOT AUTHORIZED
+
+RULE
+
+RUN R3 ONLY.
+PRESERVE ANY INCOMPLETE BOOT ROOT.
+DO NOT START THE SEALED REHEARSAL OR THE NEW COPY.
+PREPARATION IS NOT A BOOT PROOF.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

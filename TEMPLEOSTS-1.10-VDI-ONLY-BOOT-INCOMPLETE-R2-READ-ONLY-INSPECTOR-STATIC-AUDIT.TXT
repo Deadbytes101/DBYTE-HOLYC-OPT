@@ -1,0 +1,223 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT INCOMPLETE R2 READ-ONLY INSPECTOR STATIC AUDIT
+
+CLASS
+
+THE R2 INCOMPLETE-ROOT INSPECTOR WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+THE INSPECTOR ACCEPTS NO VBOXMANAGE PATH AND CONTAINS NO VIRTUALBOX PROCESS INVOCATION.
+IT READS THE PRESERVED R1/R2 FILESYSTEM OBJECTS, HASHES FILES, QUERIES NTFS FILE IDS WITH FSUTIL, PARSES XML AND WRITES ONE EXTERNAL REPORT ONLY AFTER ALL COLLECTION GATES COMPLETE.
+NO WRITE IS PERFORMED INSIDE R1 OR R2.
+NO VM START, REGISTRATION, CONFIGURATION MUTATION, STORAGE MUTATION, SNAPSHOT ACTION, GUEST ACTION OR COMPILER ACTION IS PRESENT.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/INSPECT-TEMPLEOSTS-VDI-ONLY-BOOT-INCOMPLETE-R2.ps1
+
+Final blob:
+  efaecd9ca56042e927a457596da487484ceefb77
+
+A pre-release draft used single-quoted classification report rows containing `t and would therefore have emitted literal backtick-t separators.
+No run command was released for that draft.
+The same path was corrected before user execution so all machine-readable report fields use real TAB separators.
+
+FIXED INPUT CONTRACT
+
+R2 incomplete root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+
+Preserved R1 root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Expected absent final preparation report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+Only output path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r2-incomplete-inspection.txt
+
+The output report must be absent before inspection and its parent directory must already exist.
+
+R1 PRESERVATION GATES
+
+The inspector requires R1 still exists and rechecks:
+
+  VBOX SHA256
+    69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+  VBOX file ID
+    0X0000000000000000000100000006034F
+
+  VDI file ID
+    0X00000000000000000001000000060350
+
+  ISO file ID
+    0X00000000000000000001000000060351
+
+No R1 write occurs.
+
+R2 PRESERVATION / IDENTITY GATES
+
+The inspector requires:
+
+  R2 root present
+  BOOT-ATTEMPT-INCOMPLETE.txt present
+  BOOT-ATTEMPT-MANIFEST.txt absent
+  final preparation report absent
+  Machine/Temple1.10.vbox present
+
+It requires the copied R2 VDI still equals:
+
+  bytes   2097152
+  SHA256  90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+It requires the copied R2 ISO still equals:
+
+  bytes   30558208
+  SHA256  DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+The current R2 VBOX hash and VBOX/VDI/ISO NTFS file IDs are observed, not predeclared.
+The inspector also reports whether the current VBOX still equals the exact pre-registration sealed VBOX hash.
+
+R2 VBOX XML OBSERVATION
+
+The inspector parses the current R2 VBOX as XML and requires exactly one Machine node with UUID:
+
+  9c98691e-27cd-4487-a306-587969c2c78c
+
+It requires exactly one target HardDisk media-registry row for VDI UUID:
+
+  55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+It observes the target VDI location and reports whether it remains exactly:
+
+  Temple1.10.vdi
+
+For target ISO UUID:
+
+  ab97b3a5-1331-494d-a917-e85b6e728c45
+
+it observes zero or more current DVDImages rows without failing only because the row is absent after detach.
+If one row exists, the report states whether its location is exactly:
+
+  TempleOSTS.iso
+
+It separately counts currently attached Image nodes using that ISO UUID.
+
+SCHEMA-OBSERVATION SURFACE
+
+Instead of hardcoding an unobserved post-save schema, the inspector records node/attribute inventories for:
+
+  Boot/Order nodes
+  Network/Adapter nodes
+  XML nodes whose local name contains clipboard or drag
+  GraphicsAdapter nodes
+  StorageController/AttachedDevice nodes and Image UUID children
+
+These records are observational.
+The inspector does not mutate the XML and does not fail merely because a particular optional node count differs from an assumption.
+
+FILE-REPLACEMENT EVIDENCE
+
+The inspector recursively inventories R2/Machine files and records:
+
+  relative path
+  byte length
+  SHA256
+
+For VBOX-like files such as:
+
+  .vbox
+  .vbox-prev
+  .vbox-new
+  other .vbox-* variants
+
+it additionally records NTFS file ID.
+This permits later adjudication of whether the observed VBOX file-ID change correlates with a VirtualBox backup/replacement serialization pattern.
+The inspector itself does not infer that mechanism.
+
+ISOLATED VBOX_USER_HOME OBSERVATION
+
+The inspector recursively inventories R2/VBoxUserHome files and directories.
+For each file it records relative path, byte length and SHA256.
+
+If R2/VBoxUserHome/VirtualBox.xml exists, it parses MachineRegistry/MachineEntry nodes, records their attributes and counts entries matching the target machine UUID.
+No VBoxManage registry query is used.
+
+WRITE SURFACE
+
+The only intended write is the external report:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r2-incomplete-inspection.txt
+
+The output directory must already exist.
+No directory is created by the inspector.
+No file is written, renamed or deleted in R1 or R2.
+
+NATIVE COMMAND SURFACE
+
+The only native command intentionally invoked is:
+
+  fsutil file queryfileid <path>
+
+for read-only NTFS file-ID observation.
+
+The script contains no invocation of:
+
+  VBoxManage
+  VirtualBoxVM
+  VBoxHeadless
+  registervm
+  unregistervm
+  modifyvm
+  storageattach
+  startvm
+  controlvm
+  snapshot
+  guestcontrol
+  compiler execution
+
+The words VBoxManage/VirtualBox appear only in labels, paths and report classifications where applicable.
+
+AUTHORIZED RESULT
+
+  R2 INCOMPLETE ROOT READ-ONLY INSPECTION  COMPLETE
+  R1 ROOT                                  PRESERVED
+  R2 ROOT                                  PRESERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  R1 reuse                                 DENIED
+  R2 reuse                                 DENIED
+  VM start                                 NOT AUTHORIZED
+  restore boot                             NOT OBSERVED
+  powered-off recovery point               NOT SEALED
+  guest delivery                           UNRESOLVED
+  compiler build                           NOT AUTHORIZED
+  optimizer transformation                 DENIED
+
+CURRENT STATUS
+
+  R13 execution                            FAILED AFTER R2 CONFIGURATION CORRECTION
+  R1                                       PRESERVED / INSPECTED
+  R2                                       PRESERVED / INSPECTION PENDING
+  VBOX file-ID change mechanism            UNRESOLVED
+  next preparation root                    NOT AUTHORIZED
+  VM start                                 NOT AUTHORIZED
+
+RULE
+
+RUN THE R2 INSPECTOR ONLY.
+DO NOT RERUN R13.
+DO NOT DELETE OR REUSE R1 OR R2.
+DO NOT START EITHER COPY.
+DO NOT CHANGE THE VBOX FILE-ID CONTRACT BEFORE INSPECTION EVIDENCE EXISTS.
+NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

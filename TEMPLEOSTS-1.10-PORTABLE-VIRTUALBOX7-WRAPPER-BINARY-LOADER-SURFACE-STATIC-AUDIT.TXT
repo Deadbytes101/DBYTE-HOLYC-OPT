@@ -1,0 +1,145 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 PORTABLE VIRTUALBOX7 WRAPPER BINARY LOADER SURFACE STATIC AUDIT
+
+CLASS
+
+READ-ONLY STATIC INSPECTOR REVIEWED BEFORE USER EXECUTION.
+NO ASSISTANT-SIDE POWERSHELL EXECUTION IS CLAIMED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/INSPECT-PORTABLE-VIRTUALBOX7-WRAPPER-BINARY-LOADER-SURFACE.ps1
+
+Final blob:
+  159ee2c035598e2ec862b4272b8ecfd6b1b43134
+
+BOUND INPUT EVIDENCE
+
+Loader-surface report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-portable-vbox-driver-loader-surface-inspection.txt
+
+Required SHA256:
+  7C9ABBAE87AA926F11D73A16B17C24AC287EEBB7AB620A63C9A6EBA58866AA2C
+
+Portable root:
+  D:\Portable-VirtualBox7
+
+Wrapper:
+  D:\Portable-VirtualBox7\Portable-VirtualBox7.exe
+
+Required wrapper SHA256:
+  2F0F9F4E4096F7BA67284F8168D03E1CE0A992047782F49233374CA33B5F6E8E
+
+Output report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-portable-vbox-wrapper-binary-loader-inspection.txt
+
+The output must be absent before execution.
+
+PURPOSE
+
+The prior read-only evidence proves:
+  VBoxSup.sys payload present
+  VBoxSup.sys valid signature
+  VBoxSup.inf defines AddService=VBoxSup
+  VBoxSup host service object absent
+  pnputil driver context absent
+
+The exact Portable-VirtualBox7 loader route remains unresolved.
+
+This inspector therefore examines only the wrapper executable bytes for exposed ASCII and UTF-16LE strings that can identify its driver/service loader mechanism.
+
+STRING EXTRACTION
+
+The inspector reads Portable-VirtualBox7.exe as bytes.
+
+It extracts:
+  printable ASCII strings length >= 4
+  printable UTF-16LE strings length >= 4
+
+It does not execute or unpack the wrapper.
+
+LOADER TOKENS
+
+The inspected token set includes:
+  VBoxSup
+  VBoxDrv
+  VBoxDrvStub
+  VBoxSDS
+  VBoxSup.inf
+  VBoxSup.sys
+  drivers\vboxsup
+  devcon
+  pnputil
+  rundll32
+  InstallHinfSection
+  SetupAPI
+  SetupCopyOEMInf
+  DiInstallDriver
+  UpdateDriverForPlugAndPlayDevices
+  NewDev
+  OpenSCManager
+  CreateService
+  StartService
+  ControlService
+  DeleteService
+  sc.exe
+  net start
+  driver install
+  driver start
+  admin
+  elevat
+  runas
+
+DLL-oriented tokens include:
+  advapi32.dll
+  setupapi.dll
+  newdev.dll
+  cfgmgr32.dll
+  shell32.dll
+  kernel32.dll
+
+UNSIGNED WRAPPER HANDLING
+
+Prior evidence classified Portable-VirtualBox7.exe as NotSigned.
+
+The final inspector does not dereference a null SignerCertificate.
+It records wrapper_signature_signer as <missing> when no signer certificate exists.
+
+NEGATIVE MUTATION SURFACE
+
+The inspector does not invoke:
+  Portable-VirtualBox7.exe
+  VBoxManage.exe
+  VirtualBox.exe
+  VirtualBoxVM.exe
+  pnputil.exe
+  sc.exe
+  devcon
+  rundll32
+  SetupAPI installation APIs
+  service-control APIs
+  driver installation
+  driver start/stop
+  VM start/stop
+  snapshot operations
+  guestcontrol
+  compiler execution
+
+The only intended write is the external evidence report after all input identity gates pass.
+
+DECISION BOUNDARY
+
+This inspector does NOT authorize installing or starting VBoxSup.
+
+If the binary surface exposes a concrete portable-loader route, that evidence may be used to choose one bounded host mutation.
+
+If the binary is packed or exposes no useful loader strings, the route remains unresolved and no mutation is authorized from absence alone.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

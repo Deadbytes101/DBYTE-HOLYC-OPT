@@ -1,0 +1,124 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY R3 SINGLE CONTROLLED START HOST DRIVER FAILURE OBSERVATION
+
+CLASS
+
+THE FIRST AUTHORIZED R3 SINGLE CONTROLLED START WAS ISSUED ON THE USER HOST.
+THE START DID NOT REACH AN OBSERVED RUNNING VM STATE.
+THE OBSERVED FAILURE IS IN THE WINDOWS / VIRTUALBOX HOST STARTUP PATH BEFORE ANY TEMPLEOS VISUAL BOOT PROOF.
+NO CLAIM IS MADE THAT THE GUEST EXECUTED OR DID NOT EXECUTE INSTRUCTIONS.
+R3 MUST NOT BE STARTED AGAIN UNTIL THE HOST DRIVER / HARDENING FAILURE IS READ-ONLY INSPECTED AND ADJUDICATED.
+
+BOUND PRE-START STATE
+
+Repository branch at user execution:
+  overheaven-foundation
+
+Local HEAD verified before execution:
+  aae0644c69a4dc7d913ad8d2330f59297e4e5f04
+
+Controlled-start launcher blob verified before execution:
+  80df172f38b623afb770a1039a5ca888d48adce7
+
+Prepared R3 root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3
+
+Prepared verification report SHA256:
+  26DC5258CF4692FD55EC95D81E48E3CFE05B4667BC20CDAC0CFFD58DC8433EF7
+
+Boot-authorization adjudication report SHA256:
+  F8596A2CDECB75BE1FEC02377E9B6A428F15A3F4FC2C81D33F27A0CD962C3482
+
+The launcher reported before the start boundary:
+  START BOUNDARY:         ALL PRE-START GATES PASSED
+  AUTHORIZED MUTATION:    startvm TARGET --type gui / ONCE
+  ROLLBACK MUTATION:      NONE
+
+OBSERVED START FAILURE
+
+The controlled start produced an external failure report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r3-single-controlled-boot-attempt.txt
+
+Failure report SHA256:
+  AC22D9A63234B8BC16FFFAE21BDAAE78704BDE6635A4072093EECCD070EE80D4
+
+VBoxManage start result:
+  exit code 1
+
+Observed VBoxManage error:
+  The virtual machine 'Temple1.10' has terminated unexpectedly during startup
+  with exit code -1073740791 (0xc0000409).
+  More details may be available in:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r3\Machine\Logs\VBoxHardening.log
+
+VBoxManage details:
+  code E_FAIL (0x80004005)
+  component MachineWrap
+  interface IMachine
+
+OBSERVED WINDOWS DIALOG
+
+The user supplied a screenshot of the VirtualBox hardening error dialog.
+Visible title:
+  VirtualBox - Error In supR3HardenedWinReSpawn
+
+Visible primary error:
+  NtCreateFile(\Device\VBoxDrvStub) failed: 0xc0000034
+  STATUS_OBJECT_NAME_NOT_FOUND (0 retries) (rc=-101)
+
+Visible guidance:
+  Make sure the kernel module has been loaded successfully.
+
+Visible where-field:
+  supR3HardenedWinReSpawn
+
+Visible what-field:
+  3 VERR_OPEN_FAILED (-101) - File/Device open failed.
+  Driver is probably stuck stopping/starting.
+
+The dialog also suggests querying the VBox support driver through sc.exe.
+
+ADJUDICATION BOUNDARY
+
+What is observed:
+  the exact controlled start boundary was reached
+  one VBoxManage startvm request was issued
+  VBoxManage returned failure
+  the VM did not reach the launcher's required observed running state
+  Windows/VirtualBox reported a missing host device object \Device\VBoxDrvStub
+  VBoxHardening.log was named as the primary detailed host-side evidence source
+
+What is NOT established:
+  whether any TempleOS guest instruction executed
+  whether the VDI guest boot sector was entered
+  whether the R3 VDI contents changed
+  whether VirtualBox machine configuration files changed during failed startup
+  the exact Windows driver/service root cause
+  whether Portable-VirtualBox driver installation/loading was absent, failed, stopped, blocked, or otherwise unavailable
+
+R3 STATUS
+
+R3 is now a post-start-attempt evidence root.
+Do not delete it.
+Do not reuse it for another start until its post-failure state is inspected.
+Do not modify its VBOX, VDI, ISO, logs, registry, or manifest files.
+Do not run startvm again.
+
+NEXT DECISION
+
+Perform a READ-ONLY host + R3 post-failure inspection before any repair or retry.
+The inspection must include:
+  VBoxHardening.log hash/content classification
+  controlled-start failure report hash
+  current R3 VBOX / VBOX-PREV / VDI / ISO hashes and file IDs
+  current isolated VirtualBox.xml hash
+  current VM registered/running state through read-only VBoxManage only if the driver failure does not prevent those reads
+  Windows VirtualBox driver/service inventory through read-only system queries
+  Portable-VirtualBox driver-file inventory
+
+No driver start/stop/install/uninstall action is authorized yet.
+No VM retry is authorized yet.
+No guest build is authorized.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

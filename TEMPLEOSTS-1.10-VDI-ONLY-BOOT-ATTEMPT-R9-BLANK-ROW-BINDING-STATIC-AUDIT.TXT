@@ -1,0 +1,260 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R9 BLANK ROW BINDING STATIC AUDIT
+
+CLASS
+
+THE R9 BLANK-ROW-SAFE REPORT-BOUND BOOT-ATTEMPT PREPARER ENTRYPOINT WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+R9 PRESERVES AND BINDS THE FAILED R8 ENTRYPOINT BY EXACT TREE AND LOCAL BLOB.
+R9 CHANGES ONLY THREE REPORT-LINE COLLECTION PARAMETER ANNOTATIONS AND THE R8 DYNAMIC REPOSITORY-ROOT SEAM.
+THE EXACT PROBE REPORT, MATRIX, FIXED SWITCH, R2, ORIGINAL-PREPARER AND VM PREPARATION CONTRACTS REMAIN UNCHANGED.
+NO VM START, RESTORE-BOOT CLAIM, RECOVERY-POINT SEAL OR BUILD AUTHORIZATION WAS ADDED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R9.ps1
+
+Blob:
+  2c686198f0a96d10c68bad9b317e51ba3346cbb6
+
+BOUND R8
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R8.ps1
+
+Required tree/local blob:
+  8e051b4cff813de4160311c45833174180f11bd9
+
+R8 continues to bind R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R2 continues to bind original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+R8 continues to bind probe-report SHA256:
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+OBSERVED FAILURE BOUNDARY
+
+The failed R8 invocation reported:
+
+  Cannot bind argument to parameter 'Lines' because it is an empty string.
+
+The probe report is a line-oriented text format containing deliberate blank separator rows.
+R8 loads it using ReadAllLines, producing a nonempty string array that includes empty-string elements.
+
+Three helper functions accepted that array through:
+
+  [Parameter(Mandatory = $true)][string[]]$Lines
+
+The PowerShell binder rejected the empty-string element before the report helper body ran.
+
+R8 failed before:
+
+  completion of the first report-field assertion
+  complete probe-matrix validation
+  R2 source loading or patching
+  R2 dynamic execution
+  original-preparer binding or execution
+  any VBoxManage command
+  boot-attempt root creation
+  isolated registry creation
+  copied VM registration or correction
+
+R9 COLLECTION-BINDING CORRECTION
+
+R9 binds the exact R8 blob and replaces exactly three occurrences of:
+
+  [Parameter(Mandatory = $true)][string[]]$Lines,
+
+with:
+
+  [Parameter(Mandatory = $true)][AllowEmptyString()][string[]]$Lines,
+
+The three target functions are:
+
+  Get-ReportField
+  Assert-ReportField
+  Assert-Attempt
+
+R9 requires:
+
+  old signature count before replacement   3
+  new signature count before replacement   0
+  old signature count after replacement    0
+  new signature count after replacement    3
+
+No broad regex rewrite or function-body replacement is used.
+
+FIELD CONTRACT RETENTION
+
+AllowEmptyString changes only collection element admission.
+It does not change report interpretation.
+
+The retained R8 helper logic still:
+
+  constructs an exact key-plus-tab prefix
+  searches every report line using ordinal StartsWith
+  requires exactly one matching row
+  extracts only the suffix after the exact prefix
+  compares the observed value using case-sensitive ordinal equality
+
+Blank rows cannot match a nonempty key-plus-tab prefix and therefore cannot satisfy, duplicate or alter a required field.
+
+R8 still requires the complete report file to match exact SHA256 before parsing.
+It still requires all version, path, exit-code, byte-count, output-hash and marker fields.
+
+UNCHANGED FIXED SWITCH CONTRACT
+
+R9 does not alter R8's fixed report-bound Get-ModifyVmSwitches replacement.
+The selected switches remain exactly:
+
+  --clipboard-mode
+  --drag-and-drop
+
+No native help invocation is reintroduced during preparation.
+The compact --draganddrop spelling remains rejected.
+
+REPOSITORY-ROOT CONTRACT
+
+R9 is file-backed and obtains the repository root from its own valid PSScriptRoot.
+
+Before dynamic R8 execution R9:
+
+  verifies exact R8 tree and local blobs
+  detects one exact newline style
+  applies the three parameter annotations
+  parses the patched R8 source
+  requires exactly one executable PSScriptRoot variable token
+  replaces the complete R2-relative-path, RepoRoot assignment and R2-path seam exactly once
+  parses the final patched R8 source
+  requires zero executable PSScriptRoot variable tokens
+  requires the patched source differs from bound R8 source
+
+The injected repository path is emitted as a single-quoted PowerShell literal with embedded single quotes doubled.
+
+UNCHANGED R8 AND R2 CONTRACTS
+
+R9 does not alter R8 gates for:
+
+  exact VBoxManage executable path recorded in the probe report
+  exact VirtualBox version 7.0.12r159484
+  exact boot-attempt and preparation-report paths
+  exact absent-state rows from the probe
+  exact four help/usage attempt vectors
+  exact nonzero exit codes
+  exact stdout and stderr byte counts
+  exact stdout and stderr SHA256 values
+  exact usage and option markers
+  exact probe verdict and authorization rows
+  base64-bound fixed-function source replacement
+  R2 AST repository-root injection
+
+R9 does not alter R2 hardening for:
+
+  default and copied ISO binding
+  pre-detach ISO UUID proof
+  detached slot value-or-missing handling
+  all exposed NICs none
+  clipboard and drag-and-drop disabled
+  VBoxVGA and 9 MB VRAM retention
+  copied VDI UUID proof
+  machine-local DVD registry row handling
+  copied ISO detached proof
+  sealed rehearsal and default registry revalidation
+  incomplete-root preservation on post-creation failure
+
+MUTATION SURFACE
+
+R9 itself invokes no VBoxManage command.
+
+The inherited intended VirtualBox mutations remain limited to the new isolated boot-attempt copy:
+
+  registervm
+  modifyvm copied powered-off machine
+  storageattach copied DVD slot --medium none
+
+The inherited chain still contains no:
+
+  startvm
+  controlvm
+  savestate
+  poweroff
+  unregistervm
+  snapshot take
+  snapshot restore
+  snapshot delete
+  guestcontrol
+  compiler execution
+
+WRITE BOUNDARY
+
+Before dynamic R8 and the original preparer are invoked, R9 writes no boot root, registry, manifest or evidence report.
+
+On successful inherited preparation, writes remain restricted to:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+  its copied Machine files
+  its isolated VBoxUserHome
+  its manifest
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+Any failure after root creation must preserve the incomplete root and marker.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  BOOT ATTEMPT COPY                  PREPARED
+  POWERED-OFF CORRECTED CONFIG       OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  VM START                           NOT AUTHORIZED
+  RESTORE BOOT                       NOT OBSERVED
+  TEMPLEOS DESKTOP                   NOT OBSERVED
+  POWERED-OFF RECOVERY POINT         NOT SEALED
+  GUEST DELIVERY                     UNRESOLVED
+  COMPILER BUILD                     NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION           DENIED
+
+ADVERSARIAL JUDGMENT
+
+Rejecting blank separator rows before exact report parsing is a parameter-annotation defect, not an evidence mismatch.
+Allowing empty strings in the Lines array does not accept a missing report, empty collection, duplicate field or changed field value.
+The exact whole-file hash remains the primary immutable binding and every salient row remains independently asserted.
+
+A successful R9 run may prepare only a corrected powered-off copy.
+It still cannot authorize a VM start or establish restore boot.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal     VERIFIED / SEALED
+  boot readiness                     ADJUDICATED
+  modifyvm help native matrix        OBSERVED
+  fixed switch contract              ADJUDICATED
+  R8 invocation                      FAILED CLOSED / RECORDED
+  R9 collection correction           STATICALLY AUDITED
+  boot-attempt copy                  EXECUTION PENDING
+  VM start                           NOT AUTHORIZED
+  restore boot                       NOT OBSERVED
+  powered-off recovery point         NOT SEALED
+  build execution                    NOT AUTHORIZED
+
+RULE
+
+RUN R9 ONLY.
+ALLOW BLANK REPORT ROW ELEMENTS WITHOUT WEAKENING EXACT FIELD MATCHING.
+BIND THE EXACT R8 BLOB AND PROBE REPORT.
+PRESERVE ANY INCOMPLETE BOOT ROOT.
+DO NOT START THE SEALED REHEARSAL OR BOOT COPY.
+PREPARATION IS NOT A BOOT PROOF.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

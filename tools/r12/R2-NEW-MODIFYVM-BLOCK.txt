@@ -1,0 +1,8 @@
+$NewModifyHelp = @'
+function Get-ModifyVmSwitches {
+    return [pscustomobject]@{
+        Clipboard = '--clipboard-mode'
+        DragDrop = '--drag-and-drop'
+    }
+}
+'@

@@ -1,0 +1,186 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 PORTABLE VIRTUALBOX7 WRAPPER PE SURFACE R2 STATIC AUDIT
+
+CLASS
+
+STATIC REVIEW BEFORE USER EXECUTION.
+NO ASSISTANT-SIDE POWERSHELL EXECUTION IS CLAIMED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/INSPECT-PORTABLE-VIRTUALBOX7-WRAPPER-PE-SURFACE-R2.ps1
+
+Final blob:
+  f1c28ad864ad6cbf9c4465ac1e15613745f6d000
+
+BOUND EVIDENCE
+
+Wrapper binary inspection report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-portable-vbox-wrapper-binary-loader-inspection.txt
+
+Required SHA256:
+  57DB3BA61960C74AF529C0AB1EBA86DD44CE06C7AFDD7D58E0A961B7794AB721
+
+Wrapper:
+  D:\Portable-VirtualBox7\Portable-VirtualBox7.exe
+
+Required wrapper SHA256:
+  2F0F9F4E4096F7BA67284F8168D03E1CE0A992047782F49233374CA33B5F6E8E
+
+Output report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-portable-vbox-wrapper-pe-surface-inspection.txt
+
+The output must be absent before execution.
+
+READ-ONLY SCOPE
+
+The inspector reads only:
+  wrapper bytes;
+  wrapper file metadata/hash;
+  the already-sealed wrapper binary inspection report.
+
+The only intended filesystem write is the external inspection report after the complete PE parse succeeds.
+
+No wrapper process is started.
+No Portable-VirtualBox process is started.
+No VBoxManage process is started.
+No pnputil/devcon/sc/net process is started.
+No driver install/start operation is present.
+No VM start is present.
+
+PE HEADER CONTRACT
+
+The inspector requires:
+  DOS MZ signature;
+  bounded e_lfanew;
+  PE signature;
+  bounded COFF header;
+  section count 1..96;
+  bounded optional header;
+  PE32 or PE32+ optional-header magic;
+  minimum optional-header size for the selected PE form;
+  data directories fully inside SizeOfOptionalHeader;
+  bounded section table;
+  each non-empty raw section fully inside the wrapper bytes.
+
+PE32+ ordinal-mask construction uses UInt64.Parse with HexNumber rather than a potentially ambiguous signed hexadecimal literal.
+
+SECTION EVIDENCE
+
+For every section the report records:
+  index;
+  name;
+  virtual address;
+  virtual size;
+  raw offset;
+  raw size;
+  Shannon entropy;
+  section characteristics.
+
+The entry-point RVA is classified against the section virtual spans.
+This is evidence for packed/high-entropy entrypoint analysis; it is not by itself a packer verdict.
+
+IMPORT EVIDENCE
+
+The inspector reads the import data directory through RVA-to-file-offset mapping.
+
+Safety bounds:
+  import descriptors <= 1024;
+  import thunks per DLL <= 65536;
+  each list must terminate explicitly;
+  DLL names and import names require bounded NUL terminators;
+  unmapped RVAs fail closed.
+
+The report records:
+  import DLL count;
+  each DLL and its function count;
+  all imported function names/ordinals;
+  a focused interesting-import set.
+
+Interesting imports include service/process/registry/dynamic-loader APIs such as:
+  OpenSCManager*;
+  CreateService*;
+  OpenService*;
+  StartService*;
+  ControlService;
+  DeleteService;
+  CreateProcess*;
+  ShellExecute*;
+  WinExec;
+  RegCreateKeyEx*;
+  RegSetValueEx*;
+  LoadLibrary*;
+  GetProcAddress.
+
+Presence is evidence of an available API route, not proof of the runtime path.
+Absence is not treated as proof that the wrapper cannot reach such APIs indirectly.
+
+RESOURCE / SECURITY / OVERLAY EVIDENCE
+
+The inspector records:
+  resource directory RVA/size;
+  section containing the resource directory when uniquely resolvable;
+  security directory file offset/size;
+  end of mapped section/security file data;
+  remaining overlay byte count.
+
+It does not execute or extract resources.
+
+PACKER / COMPILER MARKER EVIDENCE
+
+The inspector scans raw wrapper bytes for ASCII and UTF-16LE markers including:
+  UPX;
+  MPRESS;
+  AutoIt;
+  AutoHotkey;
+  Nullsoft/NSIS;
+  Inno Setup;
+  ASPack;
+  PECompact;
+  Themida;
+  VMProtect;
+  7-Zip SFX.
+
+A marker hit is evidence only.
+No marker hit is not treated as proof that packing or compiled scripting is absent.
+
+NEGATIVE MUTATION SURFACE
+
+Explicitly absent from the inspector execution surface:
+  Portable-VirtualBox7.exe execution;
+  VBoxManage;
+  startvm;
+  controlvm;
+  modifyvm;
+  storageattach;
+  registervm;
+  pnputil;
+  devcon;
+  sc.exe;
+  net.exe;
+  driver install/start;
+  guestcontrol;
+  compiler execution.
+
+PRE-RELEASE CORRECTION HISTORY
+
+An earlier unexecuted PE-inspector draft contained the non-PowerShell keyword 'elif'.
+That draft was static-rejected before user execution and removed from the final branch tree.
+
+The released R2 path uses 'elseif' and was reviewed at the optional-header and import-parser seams before this audit was sealed.
+
+DECISION BOUNDARY
+
+The R2 inspector only determines the next evidence layer.
+It does not authorize any host driver mutation or VM retry.
+
+After inspection, driver installation/activation remains denied until the observed PE/import/packing surface supports one exact route.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

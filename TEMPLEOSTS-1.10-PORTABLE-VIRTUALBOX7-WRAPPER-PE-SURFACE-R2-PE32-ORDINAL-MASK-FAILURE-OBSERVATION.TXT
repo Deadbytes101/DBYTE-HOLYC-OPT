@@ -1,0 +1,58 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10
+PORTABLE VIRTUALBOX7 WRAPPER PE SURFACE R2
+PE32 ORDINAL-MASK FAILURE OBSERVATION
+
+CLASSIFICATION
+
+INSPECTOR-ONLY NUMERIC CONVERSION FAILURE.
+NO WRAPPER EXECUTION.
+NO HOST DRIVER MUTATION.
+NO VBOXMANAGE.
+NO VM START.
+NO PE INSPECTION REPORT WAS OBSERVED AS WRITTEN.
+
+EXECUTED INSPECTOR
+
+tools/INSPECT-PORTABLE-VIRTUALBOX7-WRAPPER-PE-SURFACE-R2.ps1
+blob f1c28ad864ad6cbf9c4465ac1e15613745f6d000
+
+OBSERVED LOCAL SYNC
+
+branch head 35f6ed8c70cd82572fe8c5fa19dd3cac1d64cc75
+inspector tree/local blob f1c28ad864ad6cbf9c4465ac1e15613745f6d000
+LOCAL SYNC VERIFIED.
+
+OBSERVED FAILURE
+
+Cannot convert value "-2147483648" to type "System.UInt64".
+Value was either too large or too small for a UInt64.
+FullyQualifiedErrorId InvalidCastIConvertible.
+
+SOURCE DEFECT
+
+PE32 branch contains:
+
+  $OrdinalMask = [uint64]0x80000000
+
+Windows PowerShell parses literal 0x80000000 as signed Int32 -2147483648 before the UInt64 conversion. The cast therefore fails.
+
+The PE32+ branch already avoids the analogous problem by using UInt64.Parse with NumberStyles.HexNumber and InvariantCulture.
+
+BOUNDARY
+
+The failure occurs after binding the exact wrapper/report inputs and while parsing PE header state, before output report creation is observed.
+
+No evidence from this failure changes the prior host-driver adjudication:
+
+- VBoxSup payload present.
+- host VBoxSup service/driver object absent.
+- wrapper plaintext loader route unresolved.
+- driver mutation denied.
+- VM retry denied.
+
+ONE DECISION
+
+Preserve this failed R2 blob and correct only the PE32 ordinal mask conversion before continuing PE inspection.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

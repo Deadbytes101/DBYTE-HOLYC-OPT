@@ -1,0 +1,217 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 PASS CONTRACT ADJUDICATION
+
+CLASS
+
+MANUAL EXACT-SOURCE CONTRACT ADJUDICATION.
+EXACT EXPANDED HISTORICAL BYTES.
+SEAM LOCATION SEALED.
+NO-REWRITE ASSERTION ONLY.
+NO OPTIMIZER TRANSFORMATION AUTHORIZED.
+
+EVIDENCE
+
+Target ISO SHA256:
+  DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+Expanded manifest SHA256:
+  6556485E4425386687C53F4F626146A2136AE12F38E075E2646C98147D61CB68
+
+Pass-boundary report SHA256:
+  D0D3EE768491C299B072BF3975BD707BA894349633E477D96670A6538E6F44F9
+
+Source identities:
+
+  Compiler/ICLCC.CPP
+    SHA256  2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
+
+  Compiler/OptPass6.CPP
+    SHA256  1A960B56AB366DC821F1AE26045DC822B8FB81CCD3A653C52ECEADA689902487
+
+  Compiler/OptPass789.CPP
+    SHA256  7AEB06CD2850BA6F7CDBC6B9B4076BE26EE14260388EFBD660DA6584B823667F
+
+LCCHeaderPut CONTRACT
+
+Compiler/ICLCC.CPP lines 361 through 375 define LCCHeaderPut.
+
+When optimizer trace is present:
+
+  put TRUE
+    optionally prints the previous pass number
+    optionally emits the current LCC queue through LCCQuePut
+
+  put FALSE
+    optionally prints the supplied pass number
+
+Every path assigns:
+
+  lx->pass=pass
+
+LCCHeaderPut performs no displayed intermediate-code rewrite.
+
+Inside LCCCompile:
+
+  line 398  LCCHeaderPut(lx,7,TRUE)
+  lines 400-408  forward jump-table labels
+  line 410  LCCHeaderPut(lx,7,FALSE)
+
+Line 410 therefore preserves or reasserts pass state 7 after label forwarding
+and emits only the existing pass-trace boundary when tracing requests it.
+
+Status:
+  LCCHEADERPUT BOUNDARY CONTRACT SEALED
+
+OptPass6 BOUNDARY-RELEVANT OUTPUT CONTRACT
+
+OptPass6 walks the existing lx->lcc intermediate-code chain and mutates nodes in
+place.  Displayed operations include:
+
+  stack-temporary to register mapping where allowed
+  call clobber-mask propagation
+  result and dependency flag normalization
+  selected instruction replacement or NOP conversion
+  integer-use flag propagation
+
+OptPass6 initializes its parser-stack cursors before traversal and rejects the
+displayed invalid residual-stack condition.  When fun_class is supplied it
+writes the final used_reg_mask and clobbered_reg_mask derived by the pass.
+
+OptPass6 returns U0.  Its output crosses the boundary through the mutated
+lx->lcc chain and fun_class register masks.  No separate return object must be
+carried into OptPass789.
+
+After OptPass6 returns, LCCCompile forwards every displayed jump-table target
+and default target through OptLabelFwd before entering the sealed seam.
+
+Status:
+  OPTPASS6 BOUNDARY-RELEVANT OUTPUT CONTRACT SEALED
+
+OptPass789 ENTRY AND CONVERGENCE CONTRACT
+
+Compiler/OptPass789.CPP states its pass-state contract directly:
+
+  lx->pass==7  first time
+  lx->pass==8  repeated until size stops shrinking
+  lx->pass==9  final
+
+LCCCompile enforces that contract:
+
+  pass 7
+    first sizing/finalization call with buf NULL and _dbg NULL
+
+  pass 8
+    repeated sizing calls with buf NULL and _dbg NULL
+    code size may shrink
+    code-size growth raises ST_OPT_INTERNAL_ERROR
+    repetition stops when size no longer shrinks
+
+  pass 9
+    called after AOT or JIT output allocation
+    receives the output buffer and optional debug pointer
+    performs final emission
+
+The displayed first-time branch in OptPass789 sets ICF_CODE_FINAL and performs
+pass-7-only initialization before later sizing and emission work.  Therefore a
+new pre-finalization action must run before the first pass-7 OptPass789 call.
+
+Status:
+  OPTPASS789 ENTRY CONTRACT SEALED
+  OPTPASS789 CALLER CONVERGENCE CONTRACT SEALED
+
+EXACT INSERTION SEAM
+
+File:
+  Compiler/ICLCC.CPP
+
+Function:
+  LCCCompile
+
+Exact location:
+
+  after
+    LCCHeaderPut(lx,7,FALSE);
+
+  before
+    code_size=OptPass789(lx,fun_class,reg_offsets,NULL,NULL);
+
+Original source lines:
+  410 and 411
+
+State at this seam:
+
+  both OptPass012 executions completed
+  OptPass3 completed
+  OptPass4 completed
+  OptPass5 completed
+  OptPass6 completed
+  fun_class register masks finalized by OptPass6 when applicable
+  jump-table labels forwarded through OptLabelFwd
+  lx->pass equals 7
+  OptPass789 first-time finalization not started
+  sizing not started
+  output storage not allocated
+  final emission not started
+
+The seam is placed after LCCHeaderPut rather than before it so the existing
+trace and pass-state transition remains intact and the inserted verifier sees
+the exact state delivered to OptPass789.
+
+Status:
+  POST-LCCHEADERPUT7 / PRE-OPTPASS789 SEAM SEALED
+
+FIRST PATCH AUTHORIZATION
+
+Authorized:
+
+  one no-rewrite runtime assertion at the sealed seam
+
+Exact assertion:
+
+  if (lx->pass!=7)
+    LexExcept(lx,"ST_OPT_INTERNAL_ERROR");
+
+On the valid path this assertion reads lx->pass and performs no write.  It does
+not traverse, reorder, add, delete, or rewrite intermediate code.  It does not
+change labels, register masks, pass numbering, sizing, allocation, debug data,
+or emission.
+
+Not authorized:
+
+  any optimizer transformation
+  any intermediate-code mutation
+  any pass-number change
+  any jump-table change
+  any OptPass789 convergence change
+  any JIT or AOT output change
+
+STATUS
+
+  LCCCompile pipeline ownership             SEALED
+  executable pass order                     SEALED
+  LCCHeaderPut boundary contract             SEALED
+  OptPass6 boundary-relevant output          SEALED
+  OptPass789 entry contract                  SEALED
+  OptPass789 caller convergence contract     SEALED
+  exact insertion seam                       SEALED
+  no-rewrite assertion patch                 AUTHORIZED
+  optimizer transformation patch             DENIED
+  compiler rebuild                           NOT OBSERVED
+  guest semantic differential run            NOT OBSERVED
+
+NEXT ALLOWED WORK
+
+  create a new working tree from all 1057 manifest-verified expanded files
+  preserve the original evidence tree unchanged
+  install only the exact no-rewrite assertion
+  verify the patched source differs only by that assertion
+  rebuild the rare compiler
+  execute representative guest semantic differential tests
+
+RULE
+
+SEALED SEAM AUTHORIZES ONLY THE NAMED PATCH.
+NO OBSERVED BUILD, NO COMPILER CLAIM.
+NO GUEST DIFFERENTIAL, NO SEMANTIC CLAIM.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

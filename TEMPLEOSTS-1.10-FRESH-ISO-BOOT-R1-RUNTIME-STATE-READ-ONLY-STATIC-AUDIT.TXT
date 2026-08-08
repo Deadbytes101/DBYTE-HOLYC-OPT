@@ -1,0 +1,33 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / RUNTIME STATE READ-ONLY / STATIC AUDIT
+
+SCRIPT	tools/ADJUDICATE-TEMPLEOSTS-FRESH-ISO-BOOT-R1-RUNTIME-STATE-READ-ONLY.ps1
+SCRIPT BLOB	eeb1e0400f307b3052d6c750fecc32f371c187c4
+BOUND START REPORT SHA256	23E802ADF0EF790F51D6D4DECA66EE0D10C755AE6C818CAA1C3934100BE43D76
+TARGET UUID	9c98691e-27cd-4487-a306-587969c2c78c
+TARGET ROOT	D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1
+
+STATIC CONTRACT
+Native invocation helper uses ArgumentList, not PowerShell automatic $args.
+No $Home variable appears.
+VBOX_USER_HOME is set only to the existing isolated fresh-ISO registry for read operations and restored in finally.
+VBoxManage calls are limited to --version, list vms, list runningvms, and showvminfo --machinereadable.
+No startvm appears.
+No controlvm appears.
+No storageattach appears.
+No modifyvm appears.
+No registervm or unregistervm appears.
+No snapshot mutation appears.
+No service mutation appears.
+No guest delivery or compiler build appears.
+The script reads VBox.log and VBoxHardening.log when present.
+Temple1.10.vbox and isolated VirtualBox.xml are SHA256-bound before and after VBoxManage read operations; drift is fail-closed.
+The only intended persistent write is RUNTIME-STATE-R1.txt under the already-existing fresh ISO root.
+
+PURPOSE
+Resolve current target VMState and running inventory after visual R2 observed zero running rows.
+Preserve host log evidence before any restart decision.
+
+VERDICT	STATICALLY BOUNDED READ-ONLY RUNTIME ADJUDICATION
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

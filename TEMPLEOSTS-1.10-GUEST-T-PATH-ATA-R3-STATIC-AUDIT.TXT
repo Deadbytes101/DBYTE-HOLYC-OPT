@@ -1,0 +1,44 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / GUEST T-PATH + ATA PROBE R3 / STATIC AUDIT
+
+script	tools/PROBE-TEMPLEOSTS-GUEST-T-PATH-AND-ATA-R3.ps1
+script_blob	5b803d3cb6936217239fd3faec553f91b50e61f6
+
+BOUND INPUTS
+r2_post_png_sha256	0CD00EB81A4902E30FF1236AD79D6F7B1EEB72C94F6DD8A241185FE6805320D5
+r2_report_sha256	B1E197C412B5E01B44A5AAAB69EE11B2DBAD6096AFCDD26E8FCA9E9B4CF1B3C3
+iso_sha256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+machine_uuid	9c98691e-27cd-4487-a306-587969c2c78c
+
+GUEST COMMAND 1
+Dir("T:/Compiler/ICLCC.CPP");
+
+The double quotes are emitted by the R2-observed Set-1 scancode sequence 2a 28 a8 aa. The remaining command text is emitted through keyboardputstring.
+
+GUEST COMMAND 2
+ATARep(FALSE,TRUE);
+
+The script captures a PNG after each command and requires the VM to remain running after the T-path command and again after both commands.
+
+DENIED / ABSENT
+C: probe	ABSENT
+target compiler write	ABSENT
+Copy/Move/Del/FileWrite	ABSENT
+Cmp/compiler project build	ABSENT
+install/format	ABSENT
+startvm	ABSENT
+poweroff/reset	ABSENT
+storageattach/modifyvm	ABSENT
+network enablement	ABSENT
+service mutation	ABSENT
+
+CONTROLVM OPERATIONS
+keyboardputstring	COMMAND TEXT ONLY
+keyboardputscancode	QUOTE + ENTER ONLY
+screenshotpng	T-PATH + ATA CAPTURES
+
+Interactive command execution may update the guest command-line temp file; the script does not claim zero guest writes. It performs no deliberate write to Compiler/ICLCC.CPP and no compiler build.
+
+STATUS	STATIC-AUDIT-PASS-T-PATH-ATA-R3
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

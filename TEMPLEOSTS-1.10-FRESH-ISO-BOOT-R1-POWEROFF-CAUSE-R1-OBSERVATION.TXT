@@ -1,0 +1,24 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / POWEROFF CAUSE R1 OBSERVATION
+
+Observed user execution of committed analyzer:
+
+tool	tools/ANALYZE-TEMPLEOSTS-FRESH-ISO-BOOT-R1-POWEROFF-CAUSE-READ-ONLY.ps1
+analyzer_blob	4a5d287e205065f8a69a0899cac3e5031af9f319
+input_runtime_report_sha256	0C4D594761ED669BBDD096B8B73BECD05685A8D1CE0568DAFC4849235E5EBC8A
+
+vbox_log_lines	1867
+state_transition_rows	14
+pre_destroy_candidate_rows	4
+pre_destroy_error_rows	1
+destroying_line	1183
+analyzer_verdict	ERROR-MARKERS-BEFORE-DESTROYING-OBSERVED
+poweroff_cause_report_sha256	78420DA53E37ACA5DCA0C000E6DBDD606704BB2FBF80F8DC9264D52757F89ADA
+
+The console filter used by the caller did not surface the state/candidate/context rows, so the exact pre-destroy error marker and its causal relationship to poweroff are not yet observed here.
+
+No restart, stop, reset, screenshot, storage mutation, service mutation, guest delivery, or compiler build is authorized by this observation.
+
+STATUS	POWEROFF-CAUSE-SUMMARY-OBSERVED-DETAIL-PENDING
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

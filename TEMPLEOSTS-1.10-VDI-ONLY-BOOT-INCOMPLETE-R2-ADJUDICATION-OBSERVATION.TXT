@@ -1,0 +1,230 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT INCOMPLETE R2 ADJUDICATION OBSERVATION
+
+CLASS
+
+THE COMPLETED R2 INSPECTION REPORT WAS ADJUDICATED READ-ONLY.
+THE RESULT DISPROVES THE ORIGINAL VBOX FILE-ID STABILITY ASSUMPTION.
+THE RESULT ALSO DISPROVES ANY ASSUMPTION THAT THE FINAL .vbox-prev GENERATION MUST EQUAL THE PRE-REGISTRATION VBOX.
+R1 AND R2 REMAIN PERMANENT EVIDENCE OBJECTS AND MUST NOT BE REUSED.
+NO VM START, RESTORE BOOT, RECOVERY-POINT SEAL, GUEST DELIVERY OR BUILD IS AUTHORIZED BY THIS OBSERVATION.
+
+BOUND INSPECTION REPORT
+
+Path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r2-incomplete-inspection.txt
+
+SHA256:
+  9C2F6A2C2838CF00412F37BA2753DBB1718605FBE165B6D9D2A9FFBFC5E2D42A
+
+ADJUDICATION REPORT
+
+Path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-r2-incomplete-adjudication.txt
+
+SHA256:
+  7580785C1CCDD4471344F8B7BD9E361F0CC6D6B36DF9A798756C1C2A84EA26B5
+
+CURRENT R2 VBOX
+
+Path:
+  Machine\Temple1.10.vbox
+
+Bytes:
+  2522
+
+SHA256:
+  8EADB39D54CABE5E7B791E5D7E05BCF4CBBF32D4AB6B58291BEC0B2FAD607C0C
+
+NTFS file ID:
+  0X00000000000000000005000000060670
+
+Pre-registration sealed/copy VBOX SHA256:
+  69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+Current VBOX matches pre-registration VBOX:
+  False
+
+VBOX COMPANION GENERATION
+
+Path:
+  Machine\Temple1.10.vbox-prev
+
+Bytes:
+  2716
+
+SHA256:
+  C93D128227EE80B647DB63FE64277CEF1BDC61C224110472C73CBFFEC63877A7
+
+NTFS file ID:
+  0X00000000000000000004000000060676
+
+Companion matches pre-registration VBOX SHA256:
+  False
+
+Observed VBOX-like file count:
+  2
+
+Interpretation bounded by observed execution:
+  VirtualBox 7.0.12 performed multiple settings saves during the correction sequence.
+  The current VBOX is a new settings generation.
+  The final .vbox-prev is an intermediate prior generation, not necessarily the original pre-registration copy.
+  Therefore a fixed VBOX NTFS file-ID continuity gate is invalid for this preparation route.
+  Therefore a fixed '.vbox-prev must equal pre-registration VBOX' gate would also be invalid.
+
+MEDIA IDENTITIES
+
+R2 VDI:
+  bytes 2097152
+  SHA256 90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+  file ID 0X00000000000000000001000000060671
+
+R2 ISO:
+  bytes 30558208
+  SHA256 DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+  file ID 0X00000000000000000001000000060672
+
+Target VDI registry location:
+  Temple1.10.vdi
+
+Target ISO registry location:
+  TempleOSTS.iso
+
+Attached target ISO count:
+  0
+
+The relative-media policy is therefore preserved after VirtualBox settings serialization.
+The copied ISO remains present as a file and registry medium but is not attached to the machine.
+
+STRUCTURAL SETTINGS EVIDENCE
+
+Boot order nodes:
+  position 1 -> HardDisk
+  position 2 -> None
+  position 3 -> None
+  position 4 -> None
+
+Network adapter nodes:
+  1
+
+Observed XML adapter attributes:
+  MACAddress 0800274CCB00
+  slot 0
+
+Clipboard/drag nodes:
+  1
+
+Observed node:
+  Clipboard
+  attribute count 0
+
+Graphics nodes selected by the read-only XML inspector:
+  0
+
+Storage attached-device nodes:
+  1
+
+Observed storage device:
+  type HardDisk
+  port 1
+  device 0
+  hotpluggable false
+  image UUID {55c1f29d-a681-402e-b90d-bfbb6b09f207}
+
+IMPORTANT SEMANTIC BOUNDARY
+
+The XML replay above is not used to weaken the existing post-correction VBoxManage semantic gates.
+Before the original R13 failure, the inherited R2/original-preparer route had already observed through post-correction showvminfo:
+  boot1 disk
+  boot2 none
+  boot3 none
+  boot4 none
+  clipboard disabled
+  draganddrop disabled
+  graphicscontroller vboxvga
+  vram 9
+  at least one exposed NIC field and every exposed NIC none
+  detached ISO slot/path
+  zero snapshots
+  copied VDI UUID exact
+
+Those semantic gates remain required for any next preparation attempt.
+
+ISOLATED REGISTRY
+
+VBoxUserHome files:
+  VBoxSVC.log
+  VirtualBox.xml
+
+VirtualBox.xml SHA256 observed by inspection:
+  0C3FA516801DB81FC33C24E327229A97AE64D17C302BE8100E0AF85C9FC75BD0
+
+Machine registry entries:
+  1
+
+Target machine entries:
+  1
+
+Target registry source:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2\Machine\Temple1.10.vbox
+
+Target UUID:
+  {9c98691e-27cd-4487-a306-587969c2c78c}
+
+ADJUDICATED POLICY CONSEQUENCE
+
+Invalid old invariant:
+  post-correction VBOX file ID == pre-registration copied VBOX file ID
+
+Invalid proposed invariant:
+  final .vbox-prev SHA256 == pre-registration VBOX SHA256
+
+Required replacement policy for a new root:
+  preserve exact pre-registration copied VBOX identity before registration
+  preserve exact VDI and ISO bytes/SHA256/file IDs through correction
+  allow VirtualBox to rotate the VBOX settings file object
+  require the post-correction current VBOX to be valid and semantically corrected
+  require only the expected VBOX generation files to remain
+  record current VBOX post-correction SHA256 and file ID
+  record pre-registration VBOX file ID separately
+  record .vbox-prev SHA256 and file ID as observed generation evidence
+  do not require .vbox-prev to equal the original pre-registration generation
+  retain exact relative media locations and detached ISO postcondition
+  retain default-registry and sealed-rehearsal revalidation
+
+PRESERVATION
+
+R1:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+  PRESERVED / NEVER REUSE
+
+R2:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r2
+  PRESERVED / NEVER REUSE
+
+AUTHORIZED NEXT DESIGN TARGET
+
+A new preparation attempt may target only a new r3 root after a separately static-audited preparer implements the generation-aware VBOX policy above.
+
+NOT AUTHORIZED BY THIS RECORD
+
+  R1 reuse                              DENIED
+  R2 reuse                              DENIED
+  VM start                              NOT-AUTHORIZED
+  restore boot                          NOT-OBSERVED
+  TempleOS desktop                      NOT-OBSERVED
+  powered-off recovery point            NOT-SEALED
+  guest delivery                        UNRESOLVED
+  compiler build                        NOT-AUTHORIZED
+  optimizer transformation              DENIED
+
+RULE
+
+SETTINGS GENERATION IDENTITY IS CONTENT/SEMANTIC, NOT VBOX NTFS FILE-ID CONTINUITY.
+PRESERVE MEDIA FILE OBJECT IDENTITIES.
+PRESERVE R1 AND R2.
+USE ONLY A NEW ROOT FOR ANY NEXT ATTEMPT.
+NO VM START.
+NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

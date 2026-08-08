@@ -1,0 +1,300 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 COMPILER BUILD ROUTE ADJUDICATION
+
+CLASS
+
+MANUAL EXACT-SOURCE BUILD-ROUTE ADJUDICATION.
+EXACT TEMPLEOSTS 1.10 T.S. INTERNAL CORPUS.
+COMPILER-ONLY BUILD ROUTE SEALED.
+BUILD EXECUTION NOT AUTHORIZED.
+NO COMPILER REBUILD OBSERVED.
+
+EVIDENCE BASIS
+
+Target ISO:
+  TempleOSTS.iso
+
+ISO bytes:
+  30558208
+
+ISO SHA256:
+  DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+Pinned extraction implementation:
+  Deadbytes101/DBYTE-HOLYC-TOOLS
+  commit 37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
+
+Expanded manifest SHA256:
+  6556485E4425386687C53F4F626146A2136AE12F38E075E2646C98147D61CB68
+
+Observed build-route display SHA256:
+  ED5108F73DE8363E948D559F7625F8752C15B6AD0AED941C40EDD01D0A8488A6
+
+The exact archival ISO was independently opened as ISO 9660 and its legacy CArc
+payloads were expanded with the pinned HolyArchive decoding contract.  All 1057
+expanded file identities matched the sealed manifest.  Raw exact matches for
+Compiler.PRJ, Compiler.BIN, and Compiler.MAP reproduced the observed count 20.
+
+SOURCE IDENTITIES
+
+Adam/Boot/InsBoot.CPP
+  bytes   8807
+  SHA256  B56AE293BD2B314C820CF181ECAACD627266E8791E84985D4BF0661648D5533E
+
+Compiler/Compiler.PRJ
+  bytes   858
+  SHA256  D82BBFE3B9A75B67D5C3E1B6E5EB03628960B81FAC9E3453212AE1163A47F779
+
+Compiler/CmpMain.CPP
+  bytes   15275
+  SHA256  B4F1DE8EC776EAE47E3FBB77A7E6E23A50FEB9F4EEED6605986D4736283E4B8B
+
+Compiler/Compiler.BIN
+  bytes   206512
+  SHA256  010F06358F26B5804600EE5BD6E6D313209C006C606E5F72C1E68D4028825AD1
+
+Compiler/Compiler.MAP
+  bytes   202757
+  SHA256  8509A6224474915233209975E9D56598FA79E005F616B31B878D4350CED247A5
+
+Kernel/KEnd.CPP
+  bytes   5960
+  SHA256  64EAB115D8AD03641611A718CC49AE8A7DE77A150686C4AB093DE493CA7EA62C
+
+Kernel/Hash1b.CPP
+  bytes   10942
+  SHA256  C395E583477305D1E04DCEBCC3B845EFAEA71C0BA97326B276DC8BD08E9102D2
+
+Accts/Adam3bPkgs.CPP
+  bytes   447
+  SHA256  62412FE06AF028C14E577E45DE3D7F89BF40E2BEA9630ED555F18DAB7FD03736
+
+Kernel/Dsk/Dsk1b.CPP
+  bytes   13932
+  SHA256  8EA93EC23D5C85CD88E500E5E40D3048357617DB17AD78033A290A036E18EB6B
+
+PROJECT CONTRACT
+
+Compiler/Compiler.PRJ is the exact AOT compiler project.  It enables the
+historical compiler options, imports the required kernel definitions, and then
+includes the rare compiler implementation through CmpMain.
+
+No later project file, common mirror, normalized source, or reconstructed
+project is used for this decision.
+
+MAKEALL ROUTE
+
+Adam/Boot/InsBoot.CPP lines 125 through 139 define MakeAll.
+
+The executable sequence is:
+
+  Cd("/Compiler");
+  if (Cmp("Compiler","Compiler",,':'))
+    throw;
+
+  Cd("/Kernel");
+  if (Cmp("Kernel","Kernel",,':'))
+    throw;
+
+MakeAll therefore builds the compiler first and the kernel second.  It is a
+whole-AOT wrapper, not the narrow first execution for the no-rewrite assertion.
+
+MakeOSPrtBootInstall calls MakeAll and then continues into boot-loader and boot
+installation work.  It is broader than the required compiler-only proof and is
+not authorized for the first rebuild.
+
+COMPILER-ONLY BUILD ROUTE
+
+The exact source-owned compiler-only invocation is:
+
+  Cd("/Compiler");
+  if (Cmp("Compiler","Compiler",,':'))
+    throw;
+
+Required guest working directory:
+  /Compiler
+
+Cmp arguments:
+  filename       Compiler
+  map_name       Compiler
+  out_name       NULL
+  mapfile_drv    ':'
+
+Status:
+  COMPILER-ONLY BUILD ROUTE SEALED
+
+CMP INPUT AND OUTPUT RESOLUTION
+
+Compiler/CmpMain.CPP lines 346 through 362 define Cmp input and map resolution:
+
+  filename Compiler
+    -> Compiler.PRJ.Z
+
+  map_name Compiler
+    -> Compiler.MAP.Z
+
+  project input
+    -> #include "Compiler.PRJ.Z"
+
+Compiler/CmpMain.CPP lines 486 through 491 define binary output resolution:
+
+  out_name NULL
+    -> change Compiler.PRJ.Z extension to Compiler.BIN.Z
+
+  when cmp_do_not_write_to_dsk is false
+    -> FileWrite("Compiler.BIN.Z",...)
+
+Exact output objects:
+  /Compiler/Compiler.MAP.Z
+  /Compiler/Compiler.BIN.Z
+
+Status:
+  PROJECT INPUT ROUTE SEALED
+  MAP OUTPUT NAME SEALED
+  BINARY OUTPUT NAME SEALED
+
+WRITE ORDER AND FAILURE SURFACE
+
+CmpBuf enters CmpJoin with the resolved map path.  CmpJoin writes the map through
+Who when compilation succeeds and cmp_do_not_write_to_dsk is false.
+
+Cmp later constructs the binary module and writes Compiler.BIN.Z through
+FileWrite.
+
+Observed caller-visible order:
+
+  compile and link project
+  write Compiler.MAP.Z
+  construct binary module and checksum
+  write Compiler.BIN.Z
+  return compiler error count
+
+MakeAll throws when Cmp returns a nonzero error count.
+
+No temporary output name, backup copy, rename-based commit, or explicit rollback
+appears in the displayed Cmp, CmpJoin, MakeAll, or MakeOSPrtBootInstall call
+chain.  This statement does not infer undocumented atomicity or non-atomicity
+inside the underlying filesystem implementation.
+
+Kernel/Dsk/Dsk1b.CPP shows FileWrite dispatching directly to the active RedSea or
+FAT32 filesystem writer.  The displayed layer contains no extra compiler-output
+transaction.
+
+Risk:
+  Compiler.MAP.Z may be written before Compiler.BIN.Z is committed by the caller
+  sequence.  A guarded first build therefore requires pre-build copies and an
+  independently verified restore procedure for both objects.
+
+Status:
+  OUTPUT ORDER SEALED
+  EXPLICIT TEMP OUTPUT ABSENT IN DISPLAYED ROUTE
+  EXPLICIT ROLLBACK ABSENT IN DISPLAYED ROUTE
+  GUARDED BACKUP AND RESTORE CONTRACT REQUIRED
+
+BOOT LOAD ROUTE
+
+Kernel/KEnd.CPP lines 216 through 222 execute:
+
+  ChgDsk(':');
+  Cd("/Compiler");
+  Load("Compiler",LDF_SILENT);
+
+Kernel/Hash1b.CPP lines 359 through 421 show that Load:
+
+  resolves Compiler to Compiler.BIN.Z
+  reads the binary module
+  validates module alignment
+  validates the TEMPLEOS_XSUM checksum
+  performs LoadPass1
+  performs LoadPass2 unless LDF_JUST_LOAD is set
+
+The boot compiler module is therefore Compiler.BIN.Z.  Compiler.PRJ.Z is build
+input and is not the boot loader input.
+
+Status:
+  COMPILER BOOT LOAD ROUTE SEALED
+
+MAP LOAD ROUTE
+
+Accts/Adam3bPkgs.CPP lines 22 through 23 execute:
+
+  MapFileLoad("::/Kernel/Kernel");
+  MapFileLoad("::/Compiler/Compiler");
+
+Compiler.MAP.Z is loaded later for source and symbol mapping.  It is not the
+module loaded by Kernel/KEnd.CPP before the compiler run level is set.
+
+Status:
+  COMPILER MAP LOAD ROUTE SEALED
+
+RAW REFERENCE ADJUDICATION
+
+The twenty raw build-name references are navigation evidence only.  References
+inside T.S. distro packaging, demos, documentation, rants, or line-count output
+do not replace the executable MakeAll, Cmp, Load, and MapFileLoad call chains.
+
+No literal Compiler.MAP occurrence is required in Cmp because the path is formed
+from the map_name argument and the MAP.Z default extension.
+
+EXECUTION DECISION
+
+Sealed:
+  exact Compiler.PRJ project
+  MakeAll whole-AOT wrapper
+  compiler-only Cmp invocation
+  required guest working directory
+  Compiler.PRJ.Z input resolution
+  Compiler.MAP.Z output resolution
+  Compiler.BIN.Z output resolution
+  caller-visible map-before-binary write order
+  compiler boot load route
+  compiler map load route
+
+Not sealed:
+  host-to-guest delivery of the patched ICLCC.CPP
+  guest baseline backup destination
+  verified guest restore procedure
+  powered-off VM snapshot or equivalent recovery point for this attempt
+  post-build binary and map evidence capture
+  representative semantic differential execution
+
+STATUS
+
+  exact compiler build route               SEALED
+  exact compiler boot load route           SEALED
+  exact compiler map load route            SEALED
+  build guard and rollback contract         REQUIRED
+  guest delivery route                     UNRESOLVED
+  compiler build execution                 NOT AUTHORIZED
+  compiler rebuild                         NOT OBSERVED
+  guest semantic differential              NOT OBSERVED
+  optimizer transformation                 DENIED
+
+NEXT ALLOWED WORK
+
+  preserve the exact no-rewrite workspace
+  prepare immutable baseline copies of Compiler.PRJ, Compiler.BIN, and Compiler.MAP
+  bind those copies to the manifest and observed workspace hashes
+  select and observe a host-to-guest delivery route for patched ICLCC.CPP
+  define a guest restore procedure for both Compiler.BIN.Z and Compiler.MAP.Z
+  do not invoke Cmp until delivery, backup, and restore are all observed
+
+NOT AUTHORIZED
+
+  running MakeAll
+  running MakeOSPrtBootInstall
+  invoking Cmp in the guest
+  replacing Compiler.BIN.Z
+  replacing Compiler.MAP.Z
+  booting from an unverified rebuilt compiler
+  any optimizer transformation
+
+RULE
+
+EXACT BUILD ROUTE IS NOT BUILD AUTHORIZATION.
+NO OBSERVED DELIVERY, NO GUEST SOURCE CLAIM.
+NO VERIFIED BACKUP AND RESTORE, NO BUILD.
+NO OBSERVED BUILD, NO COMPILER CLAIM.
+NO GUEST DIFFERENTIAL, NO SEMANTIC CLAIM.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

@@ -1,0 +1,54 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 ALREADY-POWEROFF ADJUDICATOR / STATIC AUDIT
+
+TARGET
+
+  tools/ADJUDICATE-TEMPLEOSTS-R3-ALREADY-POWEROFF-AFTER-NO-BOOT.ps1
+  blob 6d89e9030e702b5675aa2561192f6188009d9de0
+
+INTENT
+
+Resolve the observed zero-row pre-stop running inventory without manufacturing a controlvm poweroff claim.
+
+READ-ONLY GATES
+
+  - binds exact second controlled boot-attempt report SHA256 E6780E727989B974727402F782CA16B1B870FBF05591FACA6D131F6244F71430
+  - binds exact VBoxSup.sys hash
+  - requires process VBOX_USER_HOME initially unset
+  - uses only the isolated R3 VBoxUserHome
+  - requires VirtualBox 7.0.12r159484
+  - requires exactly one registered Temple1.10 UUID 9c98691e-27cd-4487-a306-587969c2c78c
+  - requires zero running VM rows
+  - requires VMState poweroff
+  - requires exact R3 CfgFile, VDI path and VDI UUID
+  - requires disk/none/none/none boot order
+  - denies any attached ISO at IDE-0-1
+  - requires zero snapshots
+  - requires VBoxSup numeric STATE 4 before and after
+  - requires isolated VirtualBox.xml hash unchanged across VBoxManage reads
+  - waits for VBoxSVC exit after restoring process VBOX_USER_HOME
+
+MUTATION SURFACE
+
+  controlvm          NONE
+  startvm            NONE
+  modifyvm           NONE
+  storageattach      NONE
+  snapshot mutation  NONE
+  service mutation   NONE
+  compiler build     NONE
+
+OUTPUT CONTRACT
+
+Success report states truthfully:
+
+  running_vm_rows    0
+  machine_state      poweroff
+  CONTROLVM          NOT-EXECUTED
+  STATUS             R3-ALREADY-POWEROFF-PRESERVED
+
+CONCLUSION
+
+Static audit PASS for read-only R3 power-state adjudication.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

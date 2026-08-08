@@ -1,0 +1,334 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R8 REPORT-BOUND SWITCH STATIC AUDIT
+
+CLASS
+
+THE R8 REPORT-BOUND BOOT-ATTEMPT PREPARER ENTRYPOINT WAS REVIEWED STATICALLY.
+NO LOCAL POWERSHELL EXECUTION WAS CLAIMED.
+R8 BINDS THE EXACT READ-ONLY MODIFYVM HELP-SURFACE REPORT AND THE EXACT R2 BLOB.
+R8 REPLACES DYNAMIC HELP DISCOVERY WITH TWO VERSION-AND-REPORT-BOUND SWITCH CONSTANTS.
+R8 DOES NOT EXECUTE A NATIVE HELP COMMAND DURING PREPARATION.
+R2 CONTINUES TO BIND AND HARDEN THE ORIGINAL PREPARER BY EXACT BLOB.
+NO VM START, RESTORE-BOOT CLAIM, RECOVERY-POINT SEAL OR BUILD AUTHORIZATION WAS ADDED.
+
+AUDITED OBJECT
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R8.ps1
+
+Final blob:
+  8e051b4cff813de4160311c45833174180f11bd9
+
+The first repository draft of R8 contained a nested here-string representation that
+was detected during static review before any run command was released.  The file was
+replaced in the branch before user execution.  The final blob above uses UTF-8 base64
+source seams and contains no nested here-string delimiter collision.
+
+BOUND OBJECTS
+
+R2 path:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R2.ps1
+
+Required R2 tree/local blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+R2-bound original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+Required probe-report path:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vboxmanage-modifyvm-help-surface-probe.txt
+
+Required probe-report SHA256:
+  57117B1D94D963C8DBDFFED0E3D4FE90CA410B2AF8712ACDCDAA1B70245266E7
+
+Required VBoxManage version:
+  7.0.12r159484
+
+PROBE-REPORT BINDING
+
+R8 requires the complete report file to match the exact SHA256 above.
+This binds every timestamp-independent and timestamp-dependent byte in the observed
+report, including its base64 stdout and stderr material.
+
+R8 additionally parses and requires one exact tab-delimited row for each salient
+field.  It requires:
+
+  exact resolved VBoxManage path
+  version 7.0.12r159484
+  version exit code 0
+  exact boot-attempt root
+  boot-attempt root absent True
+  exact preparation-report path
+  preparation report absent True
+  process VBOX_USER_HOME empty before and after
+  VirtualBox registry query NOT-EXECUTED
+  VirtualBox mutation NOT-EXECUTED
+  VM start NOT-AUTHORIZED
+  probe COMPLETE
+  boot-attempt copy NOT-PREPARED
+  restore boot NOT-OBSERVED
+  recovery point NOT-SEALED
+  build execution NOT-AUTHORIZED
+  exact read-only-probe verdict
+
+R8 rejects missing, duplicate or changed fields.
+Field keys are matched case-sensitively with an exact tab suffix, so the lowercase
+vm_start probe-state row and uppercase VM START classification row remain distinct.
+
+OBSERVED MATRIX CONTRACT
+
+ATTEMPT 1
+
+  arguments         modifyvm --help
+  exit              2
+  stdout bytes      0
+  stdout SHA256     E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+  stderr bytes      7057
+  stderr SHA256     81512DB8141ECC159671E0D0FC558859D802AB0D9F1E2E9FE6F0C0ACA845A46B
+
+ATTEMPT 2
+
+  arguments         --help modifyvm
+  exit              1
+  stdout bytes      70110
+  stdout SHA256     221D40C22A784A7AE2BC6F241C4174B75B3745EB9686AE351E3FC479B818A899
+  stderr bytes      0
+  stderr SHA256     E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+
+ATTEMPT 3
+
+  arguments         help modifyvm
+  exit              1
+  stdout bytes      70110
+  stdout SHA256     221D40C22A784A7AE2BC6F241C4174B75B3745EB9686AE351E3FC479B818A899
+  stderr bytes      0
+  stderr SHA256     E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+
+ATTEMPT 4
+
+  arguments         modifyvm
+  exit              1
+  stdout bytes      6834
+  stdout SHA256     FC8D05B08C87A25ECCA0F8C307EFCB192326610676F4DE4A46C33E7C7501C5AF
+  stderr bytes      0
+  stderr SHA256     E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+
+For every attempt R8 requires:
+
+  modifyvm usage marker             True
+  --clipboard-mode marker           True
+  --clipboard marker                True
+  --drag-and-drop marker            True
+  --draganddrop marker              False
+
+The --clipboard marker is not used to select the shorter switch because it is a
+substring of --clipboard-mode.  The exact clipboard-mode marker controls selection.
+
+FIXED SWITCH CONTRACT
+
+After every report gate passes, R8 changes only the R2 source template assigned to:
+
+  $NewModifyHelp
+
+The R2-generated original-preparer function becomes:
+
+  function Get-ModifyVmSwitches {
+      return [pscustomobject]@{
+          Clipboard = '--clipboard-mode'
+          DragDrop = '--drag-and-drop'
+      }
+  }
+
+R8 therefore selects exactly:
+
+  --clipboard-mode
+  --drag-and-drop
+
+It does not select:
+
+  --clipboard
+  --draganddrop
+
+It does not run:
+
+  modifyvm --help
+  --help modifyvm
+  help modifyvm
+  modifyvm without a target
+
+during the preparation execution.
+
+SOURCE REPRESENTATION CONTRACT
+
+The exact old and new $NewModifyHelp source objects are stored as UTF-8 base64
+constants.  They are decoded only after R8 binds the R2 blob.
+
+R8 determines whether the local blob-backed R2 source uses LF or CRLF and requires one
+single newline style.  The decoded seams are normalized to that exact style before
+ordinal exact replacement.
+
+The old dynamic-help source object must occur exactly once.
+The fixed report-bound source object must be absent before replacement and occur once
+after replacement.
+
+R8 also replaces the exact R2 terminal classification:
+
+  MODIFYVM HELP:        TWO READ-ONLY PROBES
+
+with:
+
+  MODIFYVM SWITCHES:    REPORT-BOUND / VERSION-EXACT
+
+This output-only replacement prevents an inaccurate claim after dynamic help has been
+removed.
+
+REPOSITORY-ROOT CONTRACT
+
+R8 parses the R2 source with the PowerShell AST.
+Before root injection it requires:
+
+  exact PSScriptRoot VariableExpressionAst count     1
+  exact expected RepoRoot AssignmentStatementAst    1
+
+It replaces the exact executable assignment with the file-backed R8 repository root,
+escaped as a single-quoted PowerShell literal.
+
+After injection it requires:
+
+  exact PSScriptRoot VariableExpressionAst count     0
+  old expected RepoRoot assignment count             0
+
+The final patched R2 source must parse without error before scriptblock creation.
+
+UNCHANGED R2 HARDENING
+
+R8 does not alter the R2 hardening replacements for:
+
+  optional exact ISO attachment binding
+  default ISO binding before and after preparation
+  copied ISO binding before correction
+  pre-detach ISO UUID proof
+  detached slot value-or-missing handling
+  machine-readable ISO-path rejection after detach
+  at least one exposed NIC and all exposed NICs none
+  exact VBoxVGA retention
+  exact 9 MB VRAM retention
+  zero-or-one machine-local DVD registry row
+  copied VDI UUID proof after detach
+  copied VBOX XML proof that the ISO UUID is not attached
+
+R2 still binds the original preparer by exact tree and local blob before applying any
+hardening source replacement.
+
+PREPARATION MUTATION SURFACE
+
+The inherited original-preparer mutation surface remains limited to the new isolated
+boot-attempt copy:
+
+  registervm
+  modifyvm copied powered-off machine
+  storageattach copied DVD slot --medium none
+
+The corrected configuration remains:
+
+  boot1 disk
+  boot2 none
+  boot3 none
+  boot4 none
+  all exposed NICs none
+  clipboard disabled
+  drag-and-drop disabled
+  copied ISO detached
+  VBoxVGA retained
+  9 MB VRAM retained
+  machine state poweroff
+
+NEGATIVE COMMAND SURFACE
+
+R8 itself invokes no VBoxManage command before dynamic R2 execution.
+The inherited chain still contains no:
+
+  startvm
+  controlvm
+  savestate
+  poweroff
+  unregistervm
+  snapshot take
+  snapshot restore
+  snapshot delete
+  guestcontrol
+  compiler execution
+
+WRITE BOUNDARY
+
+Before the original preparer is invoked, R8 performs only Git blob reads, probe-report
+reads, source parsing and in-memory exact replacements.
+
+On successful preparation, writes remain restricted to:
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+  its copied Machine files
+  its isolated VBoxUserHome
+  its manifest
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+Any failure after boot-root creation must preserve the incomplete root and marker.
+
+AUTHORIZED RESULT ON SUCCESS
+
+  BOOT ATTEMPT COPY                  PREPARED
+  POWERED-OFF CORRECTED CONFIG       OBSERVED
+
+NOT AUTHORIZED OR CLAIMED
+
+  VM START                           NOT AUTHORIZED
+  RESTORE BOOT                       NOT OBSERVED
+  TEMPLEOS DESKTOP                   NOT OBSERVED
+  POWERED-OFF RECOVERY POINT         NOT SEALED
+  GUEST DELIVERY                     UNRESOLVED
+  COMPILER BUILD                     NOT AUTHORIZED
+  OPTIMIZER TRANSFORMATION           DENIED
+
+ADVERSARIAL JUDGMENT
+
+A nonzero help exit status is not accepted generically.
+The selected switches are authorized only because an exact immutable report binds the
+exact version, complete output hashes and consistent markers from four measured forms.
+
+R8 does not broaden option acceptance and does not retain a fallback switch spelling.
+Any different report byte, version, output hash or marker fails before preparation.
+
+A successful R8 run prepares only a corrected powered-off copy.  It does not prove a
+VDI restore boot and does not authorize starting the copy.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal     VERIFIED / SEALED
+  boot readiness                     ADJUDICATED
+  modifyvm help native matrix        OBSERVED
+  fixed switch contract              ADJUDICATED
+  R8 entrypoint                      STATICALLY AUDITED
+  boot-attempt copy                  EXECUTION PENDING
+  VM start                           NOT AUTHORIZED
+  restore boot                       NOT OBSERVED
+  powered-off recovery point         NOT SEALED
+  build execution                    NOT AUTHORIZED
+
+RULE
+
+RUN R8 ONLY.
+BIND THE EXACT PROBE REPORT AND R2 BLOB.
+DO NOT RUN NATIVE HELP DURING PREPARATION.
+PRESERVE ANY INCOMPLETE BOOT ROOT.
+DO NOT START THE SEALED REHEARSAL OR BOOT COPY.
+PREPARATION IS NOT A BOOT PROOF.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

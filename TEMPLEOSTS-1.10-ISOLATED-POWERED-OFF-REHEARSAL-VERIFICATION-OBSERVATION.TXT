@@ -1,0 +1,220 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED POWERED-OFF REHEARSAL VERIFICATION OBSERVATION
+
+CLASS
+
+THE ISOLATED REHEARSAL VERIFIER R2 COMPLETED SUCCESSFULLY.
+THE IMMUTABLE REHEARSAL INVENTORY MATCHED THE PREPARATION MANIFEST.
+VBOXSVC SERVICE-LOG VOLATILITY WAS BOUNDED, CONTIGUOUS AND RECORDED.
+THE ISOLATED REGISTRY CONTAINED THE EXACT EXPECTED POWERED-OFF VM.
+THE DEFAULT REGISTRY, LIVE ARTIFACTS, SEALED RECOVERY BUNDLE AND DISPOSABLE MEDIA IDENTITIES WERE REVALIDATED.
+THE ISOLATED POWERED-OFF REHEARSAL ENVIRONMENT IS SEALED.
+NO VM START, RESTORE BOOT, GUEST DELIVERY OR COMPILER EXECUTION OCCURRED.
+THE POWERED-OFF RECOVERY POINT REMAINS NOT SEALED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  db9f54ce1c5f5a6a152d5d1888a1cd973fb12fc6
+
+Entrypoint:
+  tools/VERIFY-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL-R2.ps1
+
+Bound original verifier blob:
+  fe7437577605a8e72f27c7fa0c0f54558d62af6c
+
+R2 wrapper blob:
+  46123974c89c61cd02acdddbbe9e5bc6fbbc7562
+
+Patched verifier SHA256:
+  FF1CC2C03B0E035C62D07AE545F93BA5B57D3CBFC7149B5BD246F8FFC2B85EC3
+
+Inputs:
+  bundle verification report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-config-exact-recovery-verification.txt
+
+  restore-route report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-restore-route-adjudication.txt
+
+  rehearsal preparation report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-isolated-rehearsal-preparation.txt
+
+  recovery bundle
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2
+
+  rehearsal root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1
+
+  output report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-isolated-rehearsal-verification.txt
+
+OBSERVED EVIDENCE
+
+  preparation report SHA256
+    7E8BABD61E456403AAD8F56FE326C7062A39C7937ABA02B331E0F90F95B39165
+
+  rehearsal manifest SHA256
+    AC2609C9C6EFC87316835BB6A4174AF5C28FEEE8DCEBD37E0E9D3DADB14D383F
+
+  verification report SHA256
+    F16F263F1A9217022F24FC318DC0CB4A9BEAFA295723AFB889C043EF428E51E8
+
+  manifest inventory files
+    8
+
+  immutable inventory files
+    7
+
+  volatile log files before isolated access
+    2
+
+  volatile log files after isolated access
+    3
+
+  total rehearsal files after verification
+    11
+
+OBSERVED MACHINE IDENTITY
+
+  machine UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  VDI UUID
+    55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+  ISO UUID
+    ab97b3a5-1331-494d-a917-e85b6e728c45
+
+  disposable VBOX SHA256
+    69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+  disposable VBOX NTFS file ID
+    0X0000000000000000000100000006010A
+
+  disposable VDI SHA256
+    90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  disposable VDI NTFS file ID
+    0X0000000000000000000100000006010B
+
+  disposable ISO SHA256
+    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+  disposable ISO NTFS file ID
+    0X0000000000000000000100000006010C
+
+BOUNDED VOLATILITY
+
+The verifier classified only this exact case-sensitive namespace as volatile:
+
+  VBoxUserHome\VBoxSVC.log
+  VBoxUserHome\VBoxSVC.log.1
+  VBoxUserHome\VBoxSVC.log.2
+  and further contiguous positive decimal rotations
+
+The observed sequence advanced from two files to three files during the verification
+session.  Every non-log manifest row remained exact by relative path, byte count and
+SHA256.  VirtualBox.xml, the disposable VBOX, VDI and ISO, copied reports and all
+other rehearsal files remained outside the volatile class.
+
+EXECUTION BOUNDARY
+
+The successful invocation observed:
+
+  exact resource commit and clean tracked resource tree
+  exact sealed reports and recovery-bundle identities
+  exact rehearsal manifest and preparation-report identities
+  exact immutable rehearsal inventory before isolated access
+  bounded contiguous VBoxSVC log inventory before isolated access
+  exact disposable VBOX, VDI and ISO hashes and NTFS file IDs
+  exact default-registry target, powered-off state and attachments before isolation
+  zero default running rows, snapshots and shared folders
+  exact isolated-registry target, powered-off state and local attachments
+  zero isolated running rows, snapshots and shared folders
+  exact machine, VDI and ISO UUIDs
+  restoration of process VBOX_USER_HOME after isolated access
+  exact default registry and live artifacts after isolation
+  exact sealed reports, recovery bundle and disposable media after isolation
+  exact immutable rehearsal inventory after isolated VBoxSVC shutdown
+  bounded contiguous VBoxSVC log inventory after isolated access
+  creation of one external verification report
+
+The invocation did not observe:
+
+  a VM start
+  a transition to running state
+  a guest framebuffer or screenshot
+  a TempleOS boot screen or desktop
+  a boot from the disposable VDI
+  a destructive restore drill
+  guest source delivery
+  guest file backup or restore
+  compiler execution
+  Compiler.BIN.Z or Compiler.MAP.Z replacement
+  any optimizer transformation
+
+ADJUDICATION
+
+The exact prepared powered-off rehearsal environment is now verified and sealed under
+the bounded VBoxSVC service-log volatility contract.
+
+This does not prove that the disposable VDI boots.  The attached ISO and the current
+boot order must not be allowed to create a false restore claim.  Network, clipboard
+and drag-and-drop state must also be classified before a boot attempt.
+
+ONE DECISION
+
+Create and execute one read-only isolated boot-readiness adjudicator.
+
+The adjudicator must bind verification report SHA256:
+
+  F16F263F1A9217022F24FC318DC0CB4A9BEAFA295723AFB889C043EF428E51E8
+
+It must revalidate the sealed powered-off rehearsal and report:
+
+  boot1 through boot4
+  whether the VDI is the first boot device
+  whether the ISO remains attached
+  all NIC attachment modes and cable states
+  clipboard mode
+  drag-and-drop mode
+  graphics controller and VRAM
+  exact current powered-off state
+
+It must perform no VM start or configuration mutation.
+
+A later boot executor may operate only on a second disposable boot-attempt copy.  It
+must never start the sealed powered-off rehearsal directly.  It must enforce VDI-only
+offline boot before start and capture visual evidence for semantic review.
+
+CURRENT STATUS
+
+  exact TempleOSTS corpus                    SEALED
+  configuration-exact recovery bundle        VERIFIED / IDENTITY SEALED
+  restore route                              ADJUDICATED
+  isolated rehearsal preparation             COMPLETE / OBSERVED
+  isolated powered-off environment           VERIFIED / SEALED
+  boot readiness                             ADJUDICATION PENDING
+  VM start                                   NOT AUTHORIZED
+  restore boot                               NOT OBSERVED
+  powered-off recovery point                 NOT SEALED
+  guest delivery                             UNRESOLVED
+  compiler build execution                   NOT AUTHORIZED
+  optimizer transformation                   DENIED
+
+RULE
+
+A SEALED POWERED-OFF ENVIRONMENT MUST NOT BE BOOTED DIRECTLY.
+A BOOT FROM THE ISO IS NOT A RESTORE PROOF.
+THE BOOT-ATTEMPT COPY MUST BE VDI-ONLY AND OFFLINE.
+VISUAL EVIDENCE REQUIRES SEMANTIC REVIEW BEFORE A RESTORE-BOOT CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

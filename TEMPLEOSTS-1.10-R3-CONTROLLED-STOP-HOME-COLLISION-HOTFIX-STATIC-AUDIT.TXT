@@ -1,0 +1,72 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 CONTROLLED STOP / HOME COLLISION HOTFIX STATIC AUDIT
+
+SUBJECT
+
+  tools/RUN-STOP-TEMPLEOSTS-R3-NO-BOOTABLE-MEDIUM-HOME-COLLISION-HOTFIX.ps1
+  blob 95d6355ece09aa80faec09ea818a381e9bf0a3df
+
+BOUND BASE
+
+  tools/STOP-TEMPLEOSTS-R3-NO-BOOTABLE-MEDIUM-CONTROLLED.ps1
+  blob 06f7270ab7b8d97fc9a3fce06f3e86ed65375398
+
+DEFECT
+
+The base source uses the PowerShell variable name Home. PowerShell variable names are case-insensitive and the observed host exposes HOME as read-only/constant. The released stop invocation therefore failed before the stop boundary with VariableNotWritable.
+
+SURGICAL CHANGE
+
+The hotfix runner does not modify the committed base source. It reads the exact bound base bytes and applies one in-memory token rename:
+
+  $Home
+    ->
+  $IsolatedVBoxHome
+
+The runner requires both text and AST cardinality:
+
+  before:
+    Home               4
+    IsolatedVBoxHome   0
+
+  after:
+    Home               0
+    IsolatedVBoxHome   4
+
+The patched source is reparsed with the PowerShell parser before execution.
+
+MUTATION-SURFACE JUDGE
+
+The runner verifies before and after patching:
+
+  exact controlvm poweroff command occurrences   1
+  startvm token occurrences                     0
+  storageattach token occurrences               0
+
+The underlying stop object's authorization remains:
+
+  VBoxManage controlvm 9c98691e-27cd-4487-a306-587969c2c78c poweroff
+
+exactly once and only after the stop object's existing pre-mutation gates.
+
+The runner itself performs no VBoxManage mutation before invoking the patched stop object.
+
+OUTCOME BOUNDARY
+
+If patch binding, cardinality, mutation-surface checks, or AST parse fail, the dynamic stop object is not invoked.
+
+If all hotfix gates pass, the original stop logic proceeds with only the local variable name corrected.
+
+No ISO preparation, ISO start, compiler build, optimizer transformation, or guest mutation is introduced by this hotfix.
+
+VERDICT
+
+  HOME COLLISION ROOT CAUSE       SEALED
+  BASE STOP OBJECT                PRESERVED
+  HOTFIX SCOPE                    SURGICAL VARIABLE RENAME ONLY
+  CONTROLVM POWEROFF SURFACE      EXACTLY ONE / UNCHANGED
+  STARTVM                         NONE
+  STORAGEATTACH                   NONE
+  EXECUTION                       READY FOR OBSERVED RUN
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

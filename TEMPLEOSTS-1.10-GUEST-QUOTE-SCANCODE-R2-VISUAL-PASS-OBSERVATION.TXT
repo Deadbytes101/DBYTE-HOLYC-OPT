@@ -1,0 +1,33 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / GUEST QUOTE SCANCODE R2 / VISUAL PASS OBSERVATION
+
+execution_head	681226683c7929de69fa80e607a099f1e15663d7
+script	tools/RESTART-TEMPLEOSTS-FRESH-ISO-R1-AND-TEST-QUOTE-SCANCODE-R2.ps1
+script_blob	98c66207885dba59ba88c47c16d90f3ea7583a4f
+
+pre_png_sha256	3EC9846AC564DF5A5FB1F1E86B99080A7C701A99C9C94B7D0699620285403AF6
+post_png_sha256	0CD00EB81A4902E30FF1236AD79D6F7B1EEB72C94F6DD8A241185FE6805320D5
+report_sha256	B1E197C412B5E01B44A5AAAB69EE11B2DBAD6096AFCDD26E8FCA9E9B4CF1B3C3
+poweroff_exit	0
+start_exit	0
+post_vm_state	running
+post_running_rows	1
+
+VISUAL OBSERVATION
+The POST capture visibly contains the command:
+"DBYTE_QUOTE_SCANCODE_R2";
+
+The guest then visibly prints/evaluates DBYTE_QUOTE_SCANCODE_R2 with an answer value. Both double quotes are present in the command text. No undefined-identifier or invalid-lvalue fault is introduced by this R2 marker command.
+
+ADJUDICATION
+quote_scancode_transport	PASS-OBSERVED
+keyboardputstring_embedded_quote_transport	REJECTED-BY-R1-EVIDENCE
+next_guest_probe	T:/Compiler/ICLCC.CPP THEN ATARep(FALSE,TRUE)
+C_drive_probe	DEFERRED
+compiler_target_write	NOT-EXECUTED
+compiler_build	NOT-EXECUTED
+install	NOT-EXECUTED
+
+STATUS	QUOTE-SCANCODE-R2-VISUAL-PASS-SEALED
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

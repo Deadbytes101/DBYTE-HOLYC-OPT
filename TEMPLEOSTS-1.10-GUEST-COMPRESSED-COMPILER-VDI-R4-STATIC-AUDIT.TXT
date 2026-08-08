@@ -1,0 +1,27 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / COMPRESSED COMPILER + VDI R4 / STATIC AUDIT
+
+script	tools/PROBE-TEMPLEOSTS-GUEST-COMPRESSED-COMPILER-AND-VDI-R4.ps1
+script_blob	bec241189f801c29f1ca899296d2c5ca972aac0c
+
+BOUND INPUTS
+r3_report_sha256	076FEA00B852DA7B2A82B176AAF24511E4704C8C7693BE11AE1B61FEB19B8A21
+r3_t_png_sha256	549B086AAC4E3A7E25063798202D5F2CACE449C6EF0B7141C5BC59E259D1981F
+r3_ata_png_sha256	CF7A075A0AC2266745DF95769170D723BB8047B87FABF86E68B9097DDA43F53C
+iso_sha256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+GUEST COMMANDS
+Dir("T:/Compiler/ICLCC.CPP.Z");
+Dir("T:/Compiler/Compiler.PRJ.Z");
+
+HOST QUERY
+VBoxManage showmediuminfo disk <bound VDI> --machinereadable
+
+The quote characters are emitted with the already-observed Set-1 quote scancode transport.
+The script requires the exact isolated VM to remain running and network adapters disabled before guest input.
+The script contains no install command, Copy, Move, Del, Fmt, compiler invocation, startvm, poweroff, reset, storageattach, modifyvm or network enablement.
+The only controlvm operations are keyboard input and screenshotpng.
+
+STATUS	STATIC-AUDIT-PASS-R4-READ-ONLY-PROBE
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

@@ -1,0 +1,186 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 VDI-ONLY BOOT ATTEMPT R4 NATIVE HELP STDERR FAILURE OBSERVATION
+
+CLASS
+
+THE R4 BOOT-ATTEMPT PREPARER CHAIN PASSED ALL WRAPPER SOURCE CONTRACTS.
+THE ORIGINAL PREPARER THEN FAILED CLOSED DURING THE READ-ONLY MODIFYVM HELP PROBE.
+WINDOWS POWERSHELL 5.1 CONVERTED VBOXMANAGE STDERR INTO A NATIVECOMMANDERROR.
+ERRORACTIONPREFERENCE WAS STOP, SO THE PIPELINE TERMINATED BEFORE LASTEXITCODE COULD BE ADJUDICATED.
+THE BOOT-ATTEMPT ROOT HAD NOT BEEN CREATED.
+NO VM REGISTRATION, MODIFYVM, STORAGEATTACH OR VM START OCCURRED.
+RESTORE BOOT, RECOVERY-POINT SEALING AND BUILD EXECUTION REMAIN NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  d4eeca5fef956890eb3742138fa15afce739f28f
+
+Entrypoint:
+  tools/PREPARE-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R4.ps1
+
+R4 blob:
+  fcdec4c784f2d0610d8227aeb95ac138fa7e77d4
+
+Bound R3 blob:
+  462a54f375439f60d9aefc37a62b9b3dd41e681e
+
+Bound R2 blob:
+  796f23166f2ddf14f2e981a14fc31cc5732c5c71
+
+Bound original preparer blob:
+  3e12ae01d062b60cf7011cc7f960b1d64b2700b4
+
+Observed patched R3 SHA256:
+  D57D5E83970B31FCB1DFE419049624A65E243A605067EDEEBFDE1293C9D275DA
+
+Observed patched R2 SHA256:
+  70BFB813CD7739BC91D5E00C8DB04EB84367DC0A809305E6B3D1228DE3F3C8E3
+
+Observed patched original-source SHA256:
+  2E46C87F9FB23B0B2C08E6E19EE05271C9093BBBCADA8257EE86590532159069
+
+Requested boot-attempt root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-BOOT\templeosts-1.10-vdi-only-r1
+
+Requested external report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-vdi-only-boot-attempt-preparation.txt
+
+OBSERVED FAILURE
+
+First native output line:
+
+  Oracle VM VirtualBox Command Line Management Interface Version 7.0.12
+
+PowerShell classification:
+
+  NativeCommandError
+
+Failure location in the dynamically patched original preparer:
+
+  line 705
+  & $script:VBox @Arguments 2>&1 |
+
+The user-provided terminal output is the observed execution evidence.
+GitHub and the assistant environment did not execute the local PowerShell command.
+
+EXECUTION BOUNDARY
+
+The wrapper chain completed:
+
+  R4 exact R3 tree and local blob binding
+  R4 PowerShell AST exact-variable classification
+  R4 file-backed repository-root injection
+  R3 exact R2 tree and local blob binding
+  R3 typed List[object] help argument-array correction
+  R3 file-backed repository-root injection
+  R2 exact original-preparer tree and local blob binding
+  all R2 hardening exact-one source replacements
+  creation of the patched original-preparer scriptblock
+  original-preparer parameter binding
+  exact report and sealed-rehearsal identity checks before the help probe
+
+The original preparer reached:
+
+  $Switches = Get-ModifyVmSwitches
+
+This call is located before:
+
+  default-registry readiness queries
+  boot-attempt Machine directory creation
+  boot-attempt VBoxUserHome creation
+  incomplete-marker creation
+  sealed-machine file copying
+  copied-VBOX path rewriting
+  isolated VBOX_USER_HOME selection
+  VM registration
+  modifyvm configuration changes
+  storageattach ISO detach
+  boot-attempt manifest creation
+  external preparation-report creation
+
+OBSERVED COMMAND SURFACE
+
+The failing command was a read-only option-discovery attempt:
+
+  VBoxManage modifyvm --help
+
+The command emitted text through stderr.  Under Windows PowerShell 5.1, native stderr
+is represented as an ErrorRecord.  Because the script-wide ErrorActionPreference was
+Stop, the first stderr record became a terminating NativeCommandError before the
+function could save LASTEXITCODE or attempt its alternate help form.
+
+The displayed version line does not establish the native exit code because execution
+terminated before the function stored or adjudicated it.
+
+The invocation did not reach any VirtualBox mutation command.
+
+ROOT CAUSE
+
+The help-probe code attempted to be exit-code driven:
+
+  capture stdout and stderr
+  inspect LASTEXITCODE
+  retain output only for successful attempts
+
+However, it inherited ErrorActionPreference Stop around the native process.  On
+Windows PowerShell 5.1, that policy can terminate on native stderr before the intended
+exit-code contract runs.
+
+This is an error-channel handling defect, not evidence that VBoxManage modifyvm help
+is unavailable and not evidence that the boot-attempt configuration failed.
+
+ADJUDICATION
+
+The corrected help probe must:
+
+  preserve the R4, R3, R2 and original-preparer objects by exact blob
+  preserve the two typed argument arrays
+  lower ErrorActionPreference to Continue only around each native help invocation
+  merge stdout and stderr into the captured row set
+  save LASTEXITCODE before restoring ErrorActionPreference
+  restore the exact previous ErrorActionPreference in a finally block
+  accept output only when the saved exit code equals zero
+  retain existing option-name detection and fail if no supported switches are found
+  make no change to any VirtualBox mutation command or preparation contract
+
+The global script policy remains Stop outside that narrowly bounded probe.
+
+ONE DECISION
+
+Preserve R4 and create one file-backed R5 wrapper that injects a single native-help
+stderr handling correction into the dynamic R3-to-R2 source patch chain.
+
+R5 must also inject its file-backed repository root before dynamically invoking R4.
+
+CURRENT STATUS
+
+  isolated powered-off rehearsal             VERIFIED / SEALED
+  boot readiness                             ADJUDICATED
+  R4 wrapper source contracts                PASSED / OBSERVED
+  modifyvm help option discovery             NATIVE STDERR DEFECT / FAILED CLOSED
+  boot-attempt root                          NOT CREATED BY THIS INVOCATION
+  boot-attempt copy                          NOT PREPARED
+  VM start                                   NOT AUTHORIZED
+  restore boot                               NOT OBSERVED
+  powered-off recovery point                 NOT SEALED
+  compiler build execution                   NOT AUTHORIZED
+  optimizer transformation                   DENIED
+
+RULE
+
+NATIVE STDERR IS NOT A FAILED EXIT CODE.
+CAPTURE THE EXIT CODE BEFORE RESTORING THE ERROR POLICY.
+RESTORE ERRORACTIONPREFERENCE IN FINALLY.
+DO NOT CREATE OR REUSE A BOOT ROOT UNTIL THE HELP PROBE PASSES.
+NO PREPARED BOOT COPY, NO VM START.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

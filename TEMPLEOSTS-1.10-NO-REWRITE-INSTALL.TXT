@@ -1,0 +1,109 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 NO-REWRITE WORKSPACE INSTALL
+
+CLASS
+
+OBSERVED WINDOWS HOST INSTALL.
+EXACT MANIFEST-VERIFIED WORKSPACE.
+ONE NO-REWRITE ASSERTION.
+NO OPTIMIZER TRANSFORMATION.
+NO COMPILER BUILD CLAIM.
+
+TARGET
+
+  artifact    TempleOSTS.iso
+  role        TempleOS 1.10 T.S. internal distro
+  bytes       30558208
+  SHA256      DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+EVIDENCE
+
+  expanded manifest SHA256
+    6556485E4425386687C53F4F626146A2136AE12F38E075E2646C98147D61CB68
+
+  evidence Compiler/ICLCC.CPP SHA256
+    2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
+
+  sealed seam
+    Compiler/ICLCC.CPP
+    LCCCompile
+    after  LCCHeaderPut(lx,7,FALSE);
+    before code_size=OptPass789(lx,fun_class,reg_offsets,NULL,NULL);
+
+AUTHORIZED ASSERTION
+
+  if (lx->pass!=7)
+    LexExcept(lx,"ST_OPT_INTERNAL_ERROR");
+
+OBSERVED HOST INVOCATION 12
+
+Date:
+  2026-08-06
+
+Command tool:
+  tools/INSTALL-TEMPLEOSTS-NO-REWRITE-SEAM.ps1
+
+Work root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-WORK\templeosts-1.10-no-rewrite
+
+Report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-no-rewrite-seam.txt
+
+Observed output:
+
+  MANIFEST FILES        1057/1057
+  COPIED FILES          1057/1057
+  EVIDENCE ICLCC        2F7A5A00947504E1D4D7DCFDBC99B16944D44F6C1DCEDABF2DAE6C60E5CD4873
+  PATCHED ICLCC         DB1C75A5EE71B07ADAEC32E984146602E73D9A0D606E2B76B8CCCC624E0CDCB8
+  CHANGED FILES         1
+  REPORT SHA256         59B0BB29AA5C088114E38FE27FCF5CB5E2D3F59120CD6FD2678DF9D566C75E32
+  WORKSPACE             EXACT-COPY-PLUS-ONE-ASSERTION
+  SEAM                  SEALED
+  PATCH CLASS           NO-REWRITE-ASSERTION
+  OPT TRANSFORMS        NONE
+  BUILD                 NOT-OBSERVED
+  VERDICT               INSTALL COMPLETE
+
+ADJUDICATION
+
+The host invocation passed every installer gate.
+
+All 1057 manifest files were copied into a new work root.
+The original evidence ICLCC hash remained unchanged.
+The workspace ICLCC hash changed to the observed patched hash.
+Exactly one workspace file differed from the manifest.
+The installed change is the authorized pass-state assertion only.
+No optimizer transformation was installed.
+
+STATUS
+
+  exact workspace copy                  OBSERVED
+  evidence tree unchanged               OBSERVED BY INSTALLER GATE
+  one changed workspace file            OBSERVED
+  no-rewrite assertion installed        OBSERVED
+  optimizer transformations             NONE
+  compiler build                        NOT OBSERVED
+  guest execution                       NOT OBSERVED
+  semantic differential                 NOT OBSERVED
+
+NEXT ALLOWED WORK
+
+  discover the exact TempleOSTS 1.10 compiler build route
+  inspect Compiler/Compiler.PRJ from the verified workspace
+  inspect Compiler/CmpMain.CPP build and load context
+  preserve the workspace until the build route is sealed
+
+NOT AUTHORIZED
+
+  guessing a build command from a later TempleOS release
+  changing another workspace file
+  replacing Compiler.BIN before the build route is proved
+  executing an optimizer transformation
+  claiming compiler or semantic success before observation
+
+RULE
+
+WORKSPACE INSTALL IS NOT A BUILD.
+A BUILD IS NOT A SEMANTIC DIFFERENTIAL.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

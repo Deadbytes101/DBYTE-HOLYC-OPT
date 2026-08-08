@@ -1,0 +1,156 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 SECOND CONTROLLED START / HARDENING-EVIDENCE HOTFIX R2 STATIC AUDIT
+
+CLASSIFY
+
+The first hardening-evidence hotfix runner failed before invoking the base second-start launcher because its report replacement postcondition used a one-line old needle that is intentionally retained inside the new report block.
+No VM start occurred in that failed hotfix run.
+R2 corrects only the runner patch-proof mechanism and preserves the base second-start launcher as the execution target.
+
+BOUND OBJECTS
+
+base_launcher	tools/START-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3-SECOND-CONTROLLED.ps1
+base_launcher_blob	f7a2d82b0e20739cc763fc93b395fa33f7701f27
+failed_hotfix_runner	tools/RUN-TEMPLEOSTS-R3-SECOND-CONTROLLED-START-HARDENING-EVIDENCE-HOTFIX.ps1
+failed_hotfix_runner_blob	413b63b758db14fae1ade09e08aee30743576de3
+r2_runner	tools/RUN-TEMPLEOSTS-R3-SECOND-CONTROLLED-START-HARDENING-EVIDENCE-HOTFIX-R2.ps1
+r2_runner_blob	ee9a75b124e7899559940723fba9a248eac80123
+
+R2 PATCH 1 / HARDENING CAPTURE
+
+Old Get-HardeningEvidence behavior:
+- missing log returns empty hash/tail.
+- existing log is hashed/read with fatal semantics.
+
+New behavior:
+- missing log returns Path + empty Hash/Tail/Error.
+- existing log hash/tail capture is wrapped in try/catch.
+- capture error becomes observation text and cannot replace the actual start outcome.
+
+Exact function replacement cardinality:
+- before: old=1 new=0
+- after: old=0 new=1
+
+R2 PATCH 2 / REPORT BOUNDARY
+
+The failed hotfix used the old one-line needle:
+
+    hardening_log_sha256 row
+
+That line necessarily remains inside the new report block, so old=0 was impossible after replacement.
+
+R2 uses the larger exact boundary:
+
+old:
+    hardening_log_sha256 row
+    foreach hardening tail opener
+
+new:
+    hardening_log_sha256 row
+    hardening_log_capture_error row
+    foreach hardening tail opener
+
+This makes the old and new blocks non-overlapping for cardinality proof.
+
+Exact report-boundary replacement cardinality:
+- before: old=1 new=0
+- after: old=0 new=1
+
+R2 PATCH 3 / START-ISSUED POSITION
+
+Old boundary:
+- Invoke-Native startvm
+- StartIssued=true
+
+New boundary:
+- StartIssued=true
+- Invoke-Native startvm
+
+This lets the failure-report path observe exceptions that occur after the irreversible start boundary has been crossed.
+It does not add another start command.
+
+START COMMAND PROOF
+
+R2 uses a literal, non-interpolated source needle:
+
+$StartArgs = @('startvm', $ExpectedMachineUuid, '--type', 'gui')
+
+The runner requires this exact source command constructor to occur once before patch and once after patch.
+The literal is single-quoted in the runner so StrictMode cannot evaluate base-launcher variables in runner scope.
+
+START COMMAND COUNT	1 -> 1
+
+PATCH DISCIPLINE
+
+- tree blob must equal f7a2d82b0e20739cc763fc93b395fa33f7701f27.
+- local blob must equal f7a2d82b0e20739cc763fc93b395fa33f7701f27.
+- all three replacement pairs require exact preconditions.
+- all three replacement pairs require exact postconditions.
+- start command count must remain exactly one.
+- patched source must parse with zero PowerShell AST errors before scriptblock creation.
+- patched source SHA256 is runtime-derived and displayed before launcher invocation.
+
+BASE LAUNCHER PRE-START GATES PRESERVED
+
+- exact VBoxManage path/version.
+- exact R3 root.
+- exact host-ready report SHA256 2F674C33658CE25661DA07C7EBC4336858D5A442F58ADCA7B8C3E6FC7F97BC9C.
+- exact first failed-attempt report SHA256 AC22D9A63234B8BC16FFFAE21BDAAE78704BDE6635A4072093EECCD070EE80D4.
+- exact signed VBoxSup.sys hash/version.
+- VBoxSup service registry contract exact.
+- VBoxSup numeric STATE 4 before VirtualBox reads and at start boundary.
+- exact R3 VBOX/current-prev, VDI, ISO hashes and file IDs.
+- exact isolated VirtualBox.xml SHA256.
+- no prior VirtualBox runtime process.
+- exactly one registered target; zero running VMs.
+- VMState poweroff.
+- exact quoted-key-aware IDE-1-0 VDI path and image UUID.
+- boot disk/none/none/none.
+- clipboard/dragdrop disabled.
+- VBoxVGA / 9 MB.
+- all NICs none.
+- no shared-folder mapping keys.
+- ISO slot none when exposed.
+- zero snapshots.
+- showmediuminfo VDI UUID exact.
+- sealed identities rechecked immediately before start.
+
+AUTHORIZED MUTATION
+
+Exactly one intended mutation remains:
+
+VBoxManage startvm 9c98691e-27cd-4487-a306-587969c2c78c --type gui
+
+No automatic retry.
+No automatic rollback.
+No controlvm.
+No modifyvm.
+No storageattach.
+No snapshot mutation.
+No guestcontrol.
+No service mutation.
+No compiler build.
+
+FAILURE SEMANTICS
+
+If start is issued and fails, or post-start observation fails:
+- second-attempt evidence is attempted;
+- hardening-log capture is best-effort;
+- no poweroff/controlvm rollback occurs;
+- actual host/VM state is preserved for observation.
+
+If R2 runner patch preconditions/postconditions/AST checks fail:
+- base launcher is never invoked;
+- VM start is not executed by that runner.
+
+STATIC VERDICT
+
+R2 RUNNER	STATIC PASS
+FAILED HOTFIX RUNNER	PRESERVED / DO NOT RERUN
+BASE SECOND-START LAUNCHER	UNEXECUTED DIRECTLY / USE R2 RUNNER ONLY
+VM START	AUTHORIZED ONLY THROUGH EXACT R2 RUNNER OBJECT
+GUEST VISUAL BOOT	NOT OBSERVED
+BUILD	NOT AUTHORIZED
+PR	MUST REMAIN DRAFT
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

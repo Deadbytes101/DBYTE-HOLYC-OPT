@@ -1,0 +1,83 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / FRESH ISO BOOT R1 / ADOPTED BASELINE ROUTE STATIC AUDIT
+
+OBJECTS
+
+  tools/PREPARE-TEMPLEOSTS-FRESH-ISO-BOOT-R1-FROM-ADOPTED-BASELINE.ps1
+  tools/START-TEMPLEOSTS-FRESH-ISO-BOOT-R1-CONTROLLED.ps1
+
+SOURCE AUTHORITY
+
+  locator report SHA256
+  D1CE0E7839DD474EEB92247074E30824A51BB7F852A6BEAC75251AE5B098E8EA
+
+  adopted baseline VBOX SHA256
+  E7A884AD2590BAD05AF4465A22FD857A75F64AB9F91042E4638256E8B21AEB46
+
+  exact VDI SHA256
+  90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  exact ISO SHA256
+  DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+FRESH ROOT
+
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-ISOBOOT-FRESH-R1
+
+PREPARATION CONTRACT
+
+  - root must not exist before invocation
+  - VirtualBox runtime processes must be absent
+  - VBOX_USER_HOME must be unset in caller process
+  - VBoxSup must be STATE 4
+  - locator, adopted baseline, live cross-check, driver and media hashes are revalidated
+  - only adopted baseline VBOX/VDI/ISO are copied to the fresh root
+  - media locations are discovered by exact VDI/ISO UUID in the copied VBOX and rewritten only in the copy
+  - copied VDI and ISO must be distinct NTFS file objects from source files
+  - a new isolated VBoxUserHome is used
+  - isolated inventory must be empty before registervm
+  - preparation mutations are limited to the fresh copy: registervm, boot order, NIC disable, clipboard disable, drag/drop disable, graphics controller and VRAM
+  - no startvm appears in the preparer
+  - final machine state must remain poweroff
+  - exact VDI/ISO UUID, hash, attachment, boot order and zero snapshot/shared-folder state are revalidated
+  - source and live VDI/ISO hashes are revalidated after preparation
+  - INCOMPLETE marker remains on failure and is removed only after manifest/report write and hash
+
+START CONTRACT
+
+  - fresh preparation artifacts and manifest are revalidated
+  - exact copied VDI/ISO hashes and file IDs are rebound
+  - copied VBOX and isolated registry hashes are rebound
+  - VirtualBox runtime processes must be absent before entering isolated home
+  - isolated inventory must contain exactly Temple1.10 UUID 9c98691e-27cd-4487-a306-587969c2c78c
+  - pre-start state must be poweroff
+  - boot route must be dvd / disk / none / none
+  - exact ISO must remain attached at IDE 0-1
+  - exact VDI must remain attached at IDE 1-0
+  - snapshots and shared folders must be zero
+  - VBoxSup must be STATE 4 at start boundary
+  - startvm TARGET --type gui is issued once
+  - no automatic rollback exists
+  - controlvm and storageattach are not executed by the starter
+  - compiler build is not executed
+  - post-start host observation requires VMState running and exactly one running VM row
+  - hardening log capture is best-effort evidence only
+
+POWERHELL DEFECT REGRESSION CHECKS
+
+  - no variable named Home is used by either object
+  - machine-readable keys strip surrounding quotes
+  - snapshot rows are filtered to actual SnapshotName/UUID/Node keys
+  - evidence output lives inside the new fresh root and does not depend on the disappeared historical evidence directory
+  - string-list report construction does not use the failed Mandatory List[string] binder pattern
+
+ADJUDICATION
+
+  fresh-source decision         PASS
+  live VM mutation             DENIED
+  old R3 dependency            REMOVED
+  old evidence-root dependency REMOVED
+  guest build                  NOT AUTHORIZED
+  optimizer transformation     DENIED
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

@@ -1,0 +1,245 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED RESTORE REHEARSAL PREPARATION OBSERVATION
+
+CLASS
+
+THE ISOLATED DISPOSABLE REHEARSAL ROOT WAS CREATED.
+THE SEALED RECOVERY BUNDLE WAS COPIED INTO DISTINCT DISPOSABLE FILE OBJECTS.
+ONLY THE DISPOSABLE VBOX ISO LOCATION WAS REWRITTEN.
+THE DISPOSABLE VM WAS REGISTERED IN AN ISOLATED VBOX_USER_HOME.
+THE DISPOSABLE VM REMAINED POWERED OFF.
+THE DEFAULT REGISTRY AND SEALED/LIVE ARTIFACT IDENTITIES WERE REVALIDATED AFTER REGISTRATION.
+NO VM START, RESTORE BOOT, GUEST DELIVERY OR COMPILER EXECUTION OCCURRED.
+THE POWERED-OFF RECOVERY POINT REMAINS NOT SEALED.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  2c4f358434c5cb6efd9e0fd48c262847fe0e16fe
+
+Entrypoint:
+  tools/PREPARE-TEMPLEOSTS-ISOLATED-RESTORE-REHEARSAL-R4.ps1
+
+Inputs:
+  VBoxManage
+    D:\Portable-VirtualBox7\app64\VBoxManage.exe
+
+  resource root
+    D:\TECHNICAL\DBYTE-HOLYC-TOOLS
+
+  sealed bundle verification report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-config-exact-recovery-verification.txt
+
+  sealed restore-route report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-restore-route-adjudication.txt
+
+  sealed recovery bundle
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-RECOVERY\templeosts-1.10-config-exact-r2
+
+  requested rehearsal root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1
+
+  requested preparation report
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-isolated-rehearsal-preparation.txt
+
+OBSERVED WRAPPER BINDING
+
+  R2 wrapper blob
+    5ba96e9792911ba2f254d1bbf87f1e45db925677
+
+  R4 patched R2 SHA256
+    9380F3FDB7B5B332FD4F9921B0776823A849F604CDFA0F1C7C372B78386478BB
+
+  original preparer blob
+    cec7ca5dc9439c11d0375eebe45f0864a5f7f995
+
+  final patched preparer SHA256
+    3D1347FE543A112D1970A5F64EB938A6611B37DD40CAE1693F9BB6C85954CC89
+
+  extension replacement contract
+    OLD-IN-NEW CARDINALITY / EXACT-ONE-REPLACEMENT
+
+  repository root anchor
+    FILE-BACKED R4 / EXACT-ONE-REPLACEMENT
+
+  injected repository root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT
+
+  label parse guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  disposable VBOX file-ID guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  post-operation sealed/disposable hash guard
+    IN-MEMORY / EXACT-ONE-REPLACEMENT
+
+  report field guards
+    IN-MEMORY / EXACT-ONE-REPLACEMENTS
+
+OBSERVED SOURCE EVIDENCE
+
+  route report SHA256
+    8AD50F9DB56C228B1D1CF1366D2A34D9F3413DA8B2CD043B6971FB9004ED9AC4
+
+  bundle verification report SHA256
+    887D93D1869CA321A8A4A11816A7ABA6A74366BBA64D4138E1D7DF223F7A9CEC
+
+  recovery-bundle manifest SHA256
+    3E7C4285920A981BF72AFCD179C467B2DEC35AB1828D21EB4767A1DEB3619F45
+
+OBSERVED REHEARSAL IDENTITY
+
+  rehearsal root
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1
+
+  isolated VBOX_USER_HOME
+    D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1\VBoxUserHome
+
+  machine UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  VDI UUID
+    55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+  ISO UUID
+    ab97b3a5-1331-494d-a917-e85b6e728c45
+
+  disposable VBOX SHA256 before ISO rewrite
+    E537469A1B1A88DE13D18704B5D6299F3AF202DA518FB266F045485A8FC4F1E6
+
+  disposable VBOX SHA256 after ISO rewrite
+    69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+  disposable VBOX SHA256 after isolated registration
+    69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+  disposable VBOX NTFS file ID before rewrite
+    0X0000000000000000000100000006010A
+
+  disposable VBOX NTFS file ID after registration
+    0X0000000000000000000100000006010A
+
+  disposable VDI SHA256
+    90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  disposable VDI NTFS file ID
+    0X0000000000000000000100000006010B
+
+  disposable ISO SHA256
+    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+  disposable ISO NTFS file ID
+    0X0000000000000000000100000006010C
+
+  rehearsal manifest SHA256
+    AC2609C9C6EFC87316835BB6A4174AF5C28FEEE8DCEBD37E0E9D3DADB14D383F
+
+  preparation report SHA256
+    7E8BABD61E456403AAD8F56FE326C7062A39C7937ABA02B331E0F90F95B39165
+
+OBSERVED EXECUTION BOUNDARY
+
+The invocation observed:
+
+  exact sealed report and bundle identities before preparation
+  the exact default registered target and its powered-off state
+  zero default running rows, snapshots and shared folders
+  exact live VBOX, VDI and ISO identities before preparation
+  a new disjoint rehearsal root and empty isolated VBOX_USER_HOME
+  distinct disposable VBOX, VDI and ISO NTFS file objects
+  exact disposable VDI and ISO hashes
+  one ISO-location rewrite in the disposable VBOX only
+  an empty isolated registry before registration
+  exactly one disposable VM registered in the isolated registry
+  the disposable VM powered off after registration
+  zero isolated running rows, snapshots and shared folders
+  the expected machine, VDI and ISO UUIDs
+  exact disposable VDI and ISO identities after registration
+  exact sealed reports and recovery-bundle identities after registration
+  the exact default registry and live VBOX, VDI and ISO identities after registration
+  restoration of the process VBOX_USER_HOME value
+  an isolated rehearsal manifest and an external preparation report
+
+The invocation did not observe:
+
+  a VM start
+  a guest boot from the disposable VDI
+  a successful login or TempleOS desktop
+  a restore drill after destructive corruption
+  guest source delivery
+  guest file backup or restore
+  compiler execution
+  Compiler.BIN.Z or Compiler.MAP.Z replacement
+  any optimizer transformation
+
+MUTATION BOUNDARY
+
+Host-side mutations were restricted to:
+
+  creating the new rehearsal root
+  copying sealed inputs into disposable files
+  rewriting the ISO location in the disposable VBOX
+  creating an isolated VirtualBox registry under the rehearsal root
+  registering the disposable VBOX in that isolated registry
+  writing the rehearsal manifest and external preparation report
+
+No default-registry registration, unregistration, live VBOX write, live VDI write,
+live ISO write, snapshot mutation, attachment change, VM start, guest delivery or
+compiler execution occurred.
+
+ONE DECISION
+
+Create and execute a read-only verifier for the prepared isolated rehearsal.
+The verifier must bind the observed preparation report and rehearsal manifest,
+reopen every manifest inventory file, revalidate disposable file IDs and hashes,
+revalidate the isolated registry with VBOX_USER_HOME scoped only to the rehearsal,
+revalidate the default registry and sealed/live artifacts after returning from the
+isolated registry, and write one external verification report.
+
+A successful verifier may seal only:
+
+  ISOLATED POWERED-OFF REHEARSAL ENVIRONMENT
+
+It must not seal:
+
+  RESTORE BOOT
+  POWERED-OFF RECOVERY POINT
+  GUEST BACKUP AND RESTORE
+  BUILD AUTHORIZATION
+
+CURRENT STATUS
+
+  exact TempleOSTS corpus                 SEALED
+  configuration-exact recovery bundle     VERIFIED
+  recovery-bundle identity                SEALED
+  restore route                            ADJUDICATED
+  isolated rehearsal root                 PREPARED / OBSERVED
+  isolated registry                       PREPARED / OBSERVED
+  disposable VM registration              OBSERVED
+  disposable VM state                     POWEROFF / OBSERVED
+  isolated powered-off environment         VERIFICATION PENDING
+  VM start                                 NOT AUTHORIZED
+  restore boot                             NOT OBSERVED
+  powered-off recovery point               NOT SEALED
+  guest delivery                           UNRESOLVED
+  compiler build execution                 NOT AUTHORIZED
+  optimizer transformation                 DENIED
+
+RULE
+
+PREPARATION IS NOT A BOOT PROOF.
+REGISTRATION IS NOT A RESTORE.
+A SEALED BUNDLE MUST NEVER BE REGISTERED OR REWRITTEN DIRECTLY.
+ONLY DISPOSABLE COPIES MAY ENTER THE ISOLATED REGISTRY.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

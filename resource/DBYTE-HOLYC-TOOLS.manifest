@@ -1,0 +1,52 @@
+DBYTE-HOLYC-TOOLS RESOURCE MANIFEST
+
+REPOSITORY	Deadbytes101/DBYTE-HOLYC-TOOLS
+COMMIT	37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
+
+BLOB	PROJECT-CLOSURE.txt	6b60a22b63ef188caae5cb49937c30185d559636
+BLOB	preservation/templeos-legacy/README.md	e15a165115d55344a52857b34370e504ffd0f281
+BLOB	preservation/templeos-legacy/STATUS.txt	7ce7efa9f16219bd0e03c7117a95cb4dba1f3864
+BLOB	preservation/templeos-legacy/ISOS.tsv	8866fc6603ea210283233681adeb982b653098c1
+BLOB	scripts/verify-templeos-ts-110-install-corpus.ps1	a1c2508642d5ab942b48ce3120b1f3dbfcb3ae96
+BLOB	docs/LOSETHOS-CODEGEN-MILESTONE.md	9a77331b1a2f0df6a97c8c39bfb29624afee8edb
+BLOB	scripts/run-losethos-deep-archaeology.ps1	71c3e7d22e39cef24a78f75f4f917eeb53f2e3d0
+BLOB	crates/holylex/lib.rs	4ac74cc7f87020c24b3935dbb4a96bb0b7310c0c
+BLOB	crates/holyindex/src/lib.rs	e189c9ebf4ce9ad8d9d5c237b81c010252386722
+
+RARE TARGET
+
+ARTIFACT	TempleOSTS.iso
+ROLE	TS-INTERNAL
+VERSION	1.10
+BYTES	30558208
+SHA256	DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+FILES	1057
+COMPRESSED	937
+CARC	LEGACY-20
+
+USE
+
+preservation/templeos-legacy/ISOS.tsv
+  exact rare ISO identity
+
+preservation/templeos-legacy/README.md
+  raw, expanded, and normalized extraction contract
+
+preservation/templeos-legacy/STATUS.txt
+  observed extraction shape and open evidence boundary
+
+scripts/verify-templeos-ts-110-install-corpus.ps1
+  exact-ISO and holyarchive invocation reference
+
+docs/LOSETHOS-CODEGEN-MILESTONE.md
+  older Terry compiler code-template and fix-up archaeology
+
+holylex and holyindex
+  navigation support only; never compiler input and never patch authority
+
+FORBIDDEN TARGET INPUTS
+
+  DBYTE-HOLYC-TOOLS/templeos
+  cia-foundation/TempleOS
+  normalized holy files as patch bases
+  later forks and ports

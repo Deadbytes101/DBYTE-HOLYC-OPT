@@ -1,0 +1,148 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 SECOND CONTROLLED START / HARDENING-EVIDENCE HOTFIX STATIC AUDIT
+
+CLASSIFY
+
+A second controlled start is now eligible for execution because the post-VBoxSup host-ready verifier passed and sealed the exact powered-off R3 state.
+The second-start base launcher has not been executed.
+Static review found two reporting-boundary robustness issues before release; both are corrected by a bounded in-memory runner.
+
+BOUND OBJECTS
+
+base_launcher	tools/START-TEMPLEOSTS-VDI-ONLY-BOOT-ATTEMPT-R3-SECOND-CONTROLLED.ps1
+base_launcher_blob	f7a2d82b0e20739cc763fc93b395fa33f7701f27
+runner	tools/RUN-TEMPLEOSTS-R3-SECOND-CONTROLLED-START-HARDENING-EVIDENCE-HOTFIX.ps1
+runner_blob	413b63b758db14fae1ade09e08aee30743576de3
+
+HOST-READY EVIDENCE BINDING
+
+host_ready_report	D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-portable-vbox-vboxsup-host-ready-r3-verification.txt
+host_ready_report_sha256	2F674C33658CE25661DA07C7EBC4336858D5A442F58ADCA7B8C3E6FC7F97BC9C
+first_failed_attempt_report_sha256	AC22D9A63234B8BC16FFFAE21BDAAE78704BDE6635A4072093EECCD070EE80D4
+
+STATIC CORRECTION 1
+
+Base behavior:
+- Write-AttemptReport captured VBoxHardening.log by Get-FileHash + Get-Content with fatal error semantics.
+- a successful running VM may still hold the hardening log open.
+- evidence capture failure must not be allowed to overwrite the actual start outcome.
+
+Runner correction:
+- exact Get-HardeningEvidence function cardinality 1 -> 1.
+- missing log remains a normal empty observation.
+- existing log hash/tail capture is wrapped in try/catch.
+- capture failure returns Path + empty Hash/Tail + Error text.
+- report records hardening_log_capture_error.
+- no start/service/storage state is changed by this correction.
+
+STATIC CORRECTION 2
+
+Base behavior:
+- StartIssued was set true immediately after Invoke-Native returned from startvm.
+
+Runner correction:
+- StartIssued is set true immediately before the startvm invocation.
+- after the irreversible start boundary is crossed, any invocation/post-observation exception can therefore enter the failure-report route.
+- this does not add another start command.
+
+PATCH DISCIPLINE
+
+runner_requires_tree_blob	f7a2d82b0e20739cc763fc93b395fa33f7701f27
+runner_requires_local_blob	f7a2d82b0e20739cc763fc93b395fa33f7701f27
+hardening_replacement_cardinality	1 -> 1
+hardening_report_replacement_cardinality	1 -> 1
+start_boundary_replacement_cardinality	1 -> 1
+patched_source_ast_parse	REQUIRED-BEFORE-INVOKE
+patched_source_sha256	RUNTIME-DERIVED-AND-DISPLAYED
+
+PRE-START GATES PRESERVED
+
+- exact VBoxManage path and version 7.0.12r159484.
+- exact R3 root.
+- exact host-ready report hash.
+- exact first failed-attempt report hash.
+- exact signed VBoxSup.sys hash/version.
+- exact VBoxSup service ImagePath, Type=1, Start=2, ErrorControl=1, DisplayName=PortableVBoxSUP.
+- VBoxSup numeric STATE 4 before VirtualBox reads and again at the start boundary.
+- exact R3 current VBOX hash/file ID.
+- exact R3 previous VBOX hash/file ID.
+- exact R3 VDI hash/file ID.
+- exact R3 ISO hash/file ID.
+- exact isolated VirtualBox.xml SHA256.
+- process VBOX_USER_HOME must be unset before isolated binding.
+- no VBoxSVC/VirtualBoxVM/VBoxHeadless/VirtualBox runtime process before start.
+- exactly one registered target VM.
+- zero running VMs.
+- target VM state poweroff.
+- exact CfgFile.
+- quoted-key-aware IDE-1-0 exact R3 VDI path.
+- IDE-ImageUUID-1-0 exact VDI UUID.
+- boot order disk/none/none/none.
+- clipboard disabled.
+- drag-and-drop disabled.
+- VBoxVGA / 9 MB.
+- all exposed NICs none.
+- zero machine shared-folder mapping keys.
+- ISO slot none when exposed.
+- zero snapshots.
+- showmediuminfo VDI UUID exact.
+- all sealed R3 identities rechecked immediately at the start boundary.
+
+AUTHORIZED MUTATION SURFACE
+
+Exactly one intended VM mutation command exists in the patched launcher route:
+
+VBoxManage startvm 9c98691e-27cd-4487-a306-587969c2c78c --type gui
+
+No second startvm call exists.
+No automatic retry exists.
+No automatic rollback exists.
+No controlvm command exists.
+No modifyvm command exists.
+No storageattach command exists.
+No snapshot create/restore/delete exists.
+No guestcontrol command exists.
+No sc create/start/stop/delete exists in this launcher.
+No compiler build exists.
+
+POST-START INTERPRETATION
+
+On start exit 0 the launcher only requires:
+- showvminfo VMState=running.
+- list runningvms contains exactly the target VM.
+- VBoxSup still exposes numeric STATE 4.
+
+It intentionally does not require the VDI SHA256 to remain equal after start.
+Once guest execution begins, guest disk writes are possible and are part of the runtime behavior under observation.
+The report explicitly states that guest disk writes after start are possible/not adjudicated there.
+
+A host-running verdict is not guest visual boot proof.
+User visual evidence remains required before any guest build or guest mutation decision.
+
+FAILURE BEHAVIOR
+
+If startvm is issued and fails, or if post-start observation fails:
+- a distinct second-attempt report is attempted.
+- VBoxHardening.log capture is best-effort.
+- no automatic poweroff/controlvm/rollback is executed.
+- actual host/VM state is preserved for follow-up observation.
+
+ADVERSARIAL JUDGE
+
+The second-start route answers one causal question only:
+Does the same sealed R3 boot-attempt copy cross the VirtualBox host startup boundary now that the exact VBoxSup support driver is installed and running?
+
+It does not authorize guest compiler execution.
+It does not authorize optimizer transformation.
+It does not merge or mark PR #1 ready.
+
+STATIC VERDICT
+
+SECOND CONTROLLED R3 START HOTFIX RUNNER: STATIC PASS
+BASE LAUNCHER: UNEXECUTED / USE RUNNER ONLY
+VM START: SEPARATELY AUTHORIZED ONLY THROUGH EXACT RUNNER OBJECT
+GUEST BOOT: NOT OBSERVED
+BUILD: NOT AUTHORIZED
+PR: MUST REMAIN DRAFT
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

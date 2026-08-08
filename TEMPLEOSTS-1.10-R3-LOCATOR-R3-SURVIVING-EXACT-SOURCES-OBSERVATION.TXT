@@ -1,0 +1,60 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 / R3 LOCATOR R3 / SURVIVING EXACT SOURCES OBSERVATION
+
+OBSERVED USER RUN
+
+Locator report:
+
+  D:\TECHNICAL\templeosts-r3-root-locator-r3.txt
+  SHA256 D1CE0E7839DD474EEB92247074E30824A51BB7F852A6BEAC75251AE5B098E8EA
+
+Observed state:
+
+  expected R3 root exists       False
+  historical evidence root     False
+  known live root exists       True
+  candidate VBOXes             2
+  machine UUID VBOXes          2
+  named VDIs                   2
+  exact VDIs                   2
+  named ISOs                   3
+  exact ISOs                   3
+  VirtualBox process rows      0
+
+Surviving exact adopted baseline:
+
+  D:\TECHNICAL\DBYTE-HOLYC-TOOLS\vm-output\virtualbox\Temple1.10-adopted-baseline\baseline1\Temple1.10.vbox
+  SHA256 E7A884AD2590BAD05AF4465A22FD857A75F64AB9F91042E4638256E8B21AEB46
+  machine UUID present True
+  VDI UUID present     True
+  ISO UUID present     True
+
+  D:\TECHNICAL\DBYTE-HOLYC-TOOLS\vm-output\virtualbox\Temple1.10-adopted-baseline\baseline1\Temple1.10.vdi
+  bytes 2097152
+  SHA256 90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  D:\TECHNICAL\DBYTE-HOLYC-TOOLS\vm-output\virtualbox\Temple1.10-adopted-baseline\baseline1\TempleOSTS.iso
+  bytes 30558208
+  SHA256 DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+Surviving live read-only cross-check:
+
+  D:\VirtualBox VMs\Temple1.10\Temple1.10.vbox
+  SHA256 E537469A1B1A88DE13D18704B5D6299F3AF202DA518FB266F045485A8FC4F1E6
+
+  D:\VirtualBox VMs\Temple1.10\Temple1.10.vdi
+  bytes 2097152
+  SHA256 90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  D:\TempleOSTS.iso
+  bytes 30558208
+  SHA256 DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+DECISION
+
+The disappeared R3 and historical evidence roots are no longer required as execution dependencies.
+Prepare a new isolated ISO-boot copy from the surviving exact adopted baseline, while treating the live VM as read-only cross-check evidence only.
+
+No VM start, stop, service mutation, storage attachment, compiler build, or optimizer transformation is established by the locator run.
+
+REPORTS ARE CLAIMS, NOT EVIDENCE.

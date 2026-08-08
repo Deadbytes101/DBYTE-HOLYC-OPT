@@ -1,0 +1,216 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 ISOLATED BOOT READINESS ADJUDICATION OBSERVATION
+
+CLASS
+
+THE SEALED ISOLATED POWERED-OFF REHEARSAL WAS ADJUDICATED FOR RESTORE-BOOT READINESS.
+THE SEALED REHEARSAL WAS NOT STARTED OR MODIFIED.
+THE OBSERVED CONFIGURATION IS NOT SUITABLE FOR A VDI-ONLY OFFLINE RESTORE BOOT.
+A SECOND DISPOSABLE BOOT-ATTEMPT COPY IS REQUIRED.
+VM START, RESTORE BOOT, RECOVERY-POINT SEALING AND COMPILER BUILD REMAIN NOT AUTHORIZED.
+
+OBSERVED INVOCATION
+
+Repository:
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+Branch:
+  overheaven-foundation
+
+Starting head:
+  8fca32dc361814e60538e9c51af9448592b327a1
+
+Entrypoint:
+  tools/ADJUDICATE-TEMPLEOSTS-ISOLATED-BOOT-READINESS-R2.ps1
+
+Bound original adjudicator blob:
+  c5cc5684617f019dcbb6c23e0ee5f4905d5a5cac
+
+R2 wrapper blob:
+  63f028578d038937d2fd81acc71c2d825344babb
+
+Observed patched-source SHA256:
+  29CD116AF1AA70D9A4D3CA0D37B70A0D6A2021507D7AD77C497CE4E1D658C3CF
+
+Bound isolated rehearsal verification report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-isolated-rehearsal-verification.txt
+
+Bound verification-report SHA256:
+  F16F263F1A9217022F24FC318DC0CB4A9BEAFA295723AFB889C043EF428E51E8
+
+Sealed rehearsal root:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-REHEARSAL\templeosts-1.10-isolated-r1
+
+Observed readiness report:
+  D:\TECHNICAL\DBYTE-HOLYC-OPT-EVIDENCE\templeosts-isolated-boot-readiness-adjudication.txt
+
+Observed readiness-report SHA256:
+  C96EA11818CCEF207D914F165CD6B5822ADFC71B4712E7025371E085D3627461
+
+OBSERVED MACHINE IDENTITY
+
+Machine name:
+  Temple1.10
+
+Machine UUID:
+  9c98691e-27cd-4487-a306-587969c2c78c
+
+VDI UUID:
+  55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+ISO UUID:
+  ab97b3a5-1331-494d-a917-e85b6e728c45
+
+Disposable sealed-rehearsal VBOX SHA256:
+  69224A832694CA0C657CA2135ED370F6B7E667B84F93C08D921AED4A6D21F39B
+
+Disposable sealed-rehearsal VBOX NTFS file ID:
+  0X0000000000000000000100000006010A
+
+Disposable sealed-rehearsal VDI NTFS file ID:
+  0X0000000000000000000100000006010B
+
+Disposable sealed-rehearsal ISO NTFS file ID:
+  0X0000000000000000000100000006010C
+
+OBSERVED BOOT AND HOST-INTEGRATION SURFACE
+
+Boot device 1:
+  floppy
+
+Boot device 2:
+  dvd
+
+Boot device 3:
+  disk
+
+Boot device 4:
+  none
+
+VDI first boot device:
+  False
+
+ISO attached:
+  True
+
+Network disabled:
+  False
+
+Clipboard disabled:
+  False
+
+Drag-and-drop disabled:
+  False
+
+Graphics controller:
+  vboxvga
+
+VRAM:
+  9 MB
+
+ADJUDICATION
+
+The current sealed rehearsal must not be started directly because:
+
+  the VDI is not the first boot device
+  an exact TempleOSTS ISO remains attached
+  one or more virtual NICs remain enabled
+  bidirectional clipboard or another non-disabled clipboard mode remains enabled
+  bidirectional drag-and-drop or another non-disabled drag-and-drop mode remains enabled
+
+A boot from this configuration would not prove that the copied VDI is independently
+restorable.  It could boot from optical media and retain host-integration channels.
+
+The graphics controller and VRAM were observed but were not adjudicated as defects.
+No evidence currently requires changing VBoxVGA or 9 MB VRAM before the first bounded
+boot attempt.  Extra configuration changes without evidence are denied.
+
+REQUIRED BOOT-ATTEMPT COPY
+
+The next object must be a new root disjoint from:
+
+  the sealed recovery bundle
+  the sealed powered-off rehearsal
+  the live VirtualBox VM root
+  the resource repository
+  the evidence directory
+
+The preparation must:
+
+  bind readiness-report SHA256 C96EA11818CCEF207D914F165CD6B5822ADFC71B4712E7025371E085D3627461
+  bind rehearsal-verification SHA256 F16F263F1A9217022F24FC318DC0CB4A9BEAFA295723AFB889C043EF428E51E8
+  revalidate the sealed rehearsal VBOX, VDI and ISO hashes and NTFS file IDs
+  copy the sealed rehearsal Machine files into distinct NTFS file objects
+  rewrite only copied VBOX media locations to the new root before registration
+  create a new empty process-scoped VBOX_USER_HOME
+  register only the copied VBOX in that isolated registry
+  keep the machine powered off
+  set boot1 to disk and boot2 through boot4 to none
+  detach the DVD medium from the copied machine
+  disable every exposed NIC
+  disable clipboard
+  disable drag-and-drop
+  retain the observed graphics controller and VRAM unless new evidence requires change
+  validate exact local VDI attachment and no attached ISO medium
+  validate expected machine, VDI and ISO UUID identities
+  validate zero running rows, snapshots and shared folders
+  revalidate the sealed rehearsal and default registry after isolation
+  write a boot-attempt manifest and one external preparation report
+
+The preparation must not:
+
+  start the VM
+  alter the sealed rehearsal
+  alter the sealed recovery bundle
+  modify the default VirtualBox registry
+  modify live VBOX, VDI or ISO artifacts
+  change the copied VDI bytes
+  change the copied ISO bytes
+  create or restore snapshots
+  deliver guest files
+  execute TempleOS or the compiler
+
+ONE DECISION
+
+Create and execute one boot-attempt-copy preparer.
+
+A successful preparer may establish only:
+
+  VDI-ONLY OFFLINE BOOT-ATTEMPT COPY PREPARED
+  CORRECTED POWERED-OFF CONFIGURATION OBSERVED
+
+It must not establish:
+
+  SUCCESSFUL VM START
+  RESTORE BOOT
+  TEMPLEOS DESKTOP
+  POWERED-OFF RECOVERY POINT
+  GUEST BACKUP AND RESTORE
+  BUILD AUTHORIZATION
+
+CURRENT STATUS
+
+  exact TempleOSTS corpus                    SEALED
+  configuration-exact recovery bundle        VERIFIED / IDENTITY SEALED
+  restore route                              ADJUDICATED
+  isolated powered-off rehearsal             VERIFIED / SEALED
+  boot readiness                             ADJUDICATED
+  sealed rehearsal direct start              DENIED
+  VDI-only boot-attempt copy                 REQUIRED / NOT PREPARED
+  VM start                                   NOT AUTHORIZED
+  restore boot                               NOT OBSERVED
+  powered-off recovery point                 NOT SEALED
+  guest delivery                             UNRESOLVED
+  compiler build execution                   NOT AUTHORIZED
+  optimizer transformation                   DENIED
+
+RULE
+
+A BOOT FROM AN ATTACHED ISO IS NOT A VDI RESTORE PROOF.
+DO NOT START OR MODIFY THE SEALED REHEARSAL.
+ONLY A NEW DISPOSABLE COPY MAY RECEIVE BOOT-ORDER, MEDIA OR HOST-INTEGRATION CHANGES.
+ONE PREPARATION STEP DOES NOT AUTHORIZE VM START.
+NO OBSERVED RESTORE BOOT, NO RECOVERY CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.

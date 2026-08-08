@@ -1,0 +1,181 @@
+DBYTE-HOLYC-OPT
+TEMPLEOSTS 1.10 RESTORE ROUTE ADJUDICATOR STATIC AUDIT
+
+CLASS
+
+THE RESTORE-ROUTE ADJUDICATOR WAS REVIEWED STATICALLY.
+IT WAS NOT EXECUTED BY THE ASSISTANT.
+IT PERFORMS READ-ONLY BUNDLE, XML, FILE-IDENTITY AND VIRTUALBOX INVENTORY CHECKS.
+IT WRITES ONLY A NEW ADJUDICATION REPORT AFTER ALL GATES PASS.
+IT DOES NOT REGISTER, UNREGISTER, START, STOP, CLONE, ATTACH, DETACH OR RESTORE A VM OR MEDIUM.
+BUILD EXECUTION REMAINS NOT AUTHORIZED.
+
+REPOSITORY
+
+  Deadbytes101/DBYTE-HOLYC-OPT
+
+BRANCH
+
+  overheaven-foundation
+
+TOOL
+
+  tools/ADJUDICATE-TEMPLEOSTS-RESTORE-ROUTE.ps1
+
+TOOL BLOB
+
+  8c025af8592ab0dabee57fd8f214503f5ae892eb
+
+SEALED INPUT
+
+  configuration-exact bundle verification report SHA256
+    887D93D1869CA321A8A4A11816A7ABA6A74366BBA64D4138E1D7DF223F7A9CEC
+
+  bundle manifest SHA256
+    3E7C4285920A981BF72AFCD179C467B2DEC35AB1828D21EB4767A1DEB3619F45
+
+  bundle VBOX SHA256
+    E537469A1B1A88DE13D18704B5D6299F3AF202DA518FB266F045485A8FC4F1E6
+
+  bundle VDI SHA256
+    90D453A94F075760A11E0772862E60C4B031ED874F28AA396EAE638F7EB8B31B
+
+  bundle ISO SHA256
+    DD3709A0D43FF25439D2284B2F19F1DFA70BDE5B5A58A3733C5B1B244DDA37EC
+
+PINNED IDENTITIES
+
+  machine UUID
+    9c98691e-27cd-4487-a306-587969c2c78c
+
+  VDI UUID
+    55c1f29d-a681-402e-b90d-bfbb6b09f207
+
+  ISO UUID
+    ab97b3a5-1331-494d-a917-e85b6e728c45
+
+  VirtualBox build
+    7.0.12r159484
+
+STATICALLY REVIEWED GATES
+
+1. VERIFICATION CHAIN
+
+  Requires the exact verification-report SHA256.
+  Requires VERIFIED configuration-exact bundle identity.
+  Requires SEALED bundle identity.
+  Requires recovery point NOT-SEALED.
+  Requires restore route UNRESOLVED.
+  Requires restore execution NOT-OBSERVED.
+  Requires build execution NOT-AUTHORIZED.
+
+2. RESOURCE AUTHORITY
+
+  Requires DBYTE-HOLYC-TOOLS commit:
+    37b0457e8735ab8cc34a23f2717fcfb808e6a7a8
+
+  Requires a clean tracked resource tree.
+
+3. BUNDLE IDENTITY
+
+  Requires the exact ten-file bundle set.
+  Rehashes the manifest, VBOX, VDI and ISO.
+  Rechecks the observed bundle VBOX and VDI NTFS file IDs.
+
+4. VBOX XML PARSING
+
+  Uses namespace-independent local-name XPath expressions.
+  Requires exactly one Machine node with the expected name and UUID.
+  Requires exactly one matching hard-disk media row.
+  Requires exactly one matching DVD-image media row.
+  Requires one IDE-1-0 hard-disk attachment referencing the expected VDI UUID.
+  Requires one IDE-0-1 DVD attachment referencing the expected ISO UUID.
+
+5. BUNDLE PATHS
+
+  Resolves relative media locations against the bundle directory.
+  Requires the hard-disk location to resolve to the sealed bundle VDI.
+  Displays and classifies the ISO location as:
+
+    LIVE-ABSOLUTE
+    BUNDLE-LOCAL
+    OTHER
+
+  The tool does not rewrite either location.
+
+6. LIVE REGISTRY
+
+  Requires VirtualBox build 7.0.12r159484.
+  Requires one exact registered target row.
+  Requires zero running target rows.
+  Requires target poweroff state.
+  Requires exact live VBOX, VDI and ISO attachments.
+  Requires zero shared-folder keys.
+  Requires zero snapshot rows, accepting only the exact observed no-snapshot sentinel.
+
+7. MEDIUM IDENTITIES
+
+  Rehashes the live VBOX, VDI and ISO.
+  Rechecks the live VDI NTFS file ID.
+  Reads the live VDI and ISO UUIDs through read-only showmediuminfo calls.
+  Requires the pinned VDI and ISO UUIDs.
+
+8. ROUTE CLASSIFICATION
+
+  Current-registry side-by-side registration is denied when the bundle machine
+  UUID and VDI UUID collide with the live registered identities.
+
+  Direct use of the sealed bundle is denied because sealed evidence files must
+  remain immutable.
+
+  In-place cold restore is classified as structurally defined but destructive
+  and not authorized.
+
+  An isolated VBOX_USER_HOME rehearsal using disposable copies is the only
+  candidate next proof route.  It remains not prepared and not executed.
+
+9. WRITE BOUNDARY
+
+  No output directory or report is created until all identity, XML, path,
+  VirtualBox-state and collision gates pass.
+
+  The only intended write is one new UTF-8 adjudication report outside the
+  resource root, sealed bundle root and live VM root.
+
+STATIC VERDICT
+
+  verification report binding             PRESENT
+  bundle identity binding                  PRESENT
+  VBOX XML identity parsing                PRESENT
+  attachment cardinality checks            PRESENT
+  bundle VDI path resolution               PRESENT
+  ISO location classification              PRESENT
+  live registry identity checks            PRESENT
+  live medium UUID checks                   PRESENT
+  current-registry collision classification PRESENT
+  registration mutation                    ABSENT
+  VM execution                             ABSENT
+  restore execution                        ABSENT
+  compiler execution                       ABSENT
+
+CURRENT STATUS
+
+  bundle identity                         SEALED / OBSERVED
+  restore-route adjudicator               STATICALLY REVIEWED
+  restore route                           UNRESOLVED UNTIL OBSERVED RUN
+  isolated disposable rehearsal           NOT PREPARED
+  restore execution                       NOT OBSERVED
+  powered-off recovery point              NOT SEALED
+  guest delivery                          UNRESOLVED
+  compiler build execution                NOT AUTHORIZED
+  optimizer transformation                DENIED
+
+RULE
+
+IDENTITY COLLISION MUST BE DISPLAYED, NOT TESTED AGAINST THE LIVE REGISTRY.
+SEALED FILES ARE SOURCES FOR DISPOSABLE PROOF COPIES, NOT EXECUTION TARGETS.
+STATIC REVIEW IS NOT OBSERVED EXECUTION.
+NO OBSERVED RESTORE, NO RESTORE CLAIM.
+NO VERIFIED GUEST BACKUP AND RESTORE, NO BUILD.
+REPORTS ARE CLAIMS, NOT EVIDENCE.
+NO COSTUME RIGOR.
