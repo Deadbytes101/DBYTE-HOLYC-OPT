@@ -43,7 +43,7 @@ class StageTests(unittest.TestCase):
 
     def test_safe_tar_member(self):
         self.assertEqual(str(safe_member("Compiler/PrsLib.HC")), "Compiler/PrsLib.HC")
-        for name in ("../escape", "/absolute", "C:/root", r"C:\root", "a/../b"):
+        for name in ("../escape", "/absolute", "C:/root", r"C:\root", "a/../b", "a/./b", "a//b"):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 safe_member(name)
 
