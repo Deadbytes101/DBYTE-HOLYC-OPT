@@ -45,7 +45,7 @@ def splice_exact(original, before, after):
 
 def safe_member(name):
     p = PurePosixPath(name)
-    if (p.is_absolute() or not p.parts or
+    if (p.is_absolute() or not p.parts or str(p) != name or
             any(part in ("..", ".", "") for part in p.parts) or
             ":" in p.parts[0] or "\\" in name):
         raise ValueError("unsafe archive member")

@@ -31,6 +31,14 @@ python -m unittest discover -s tests -v
 generate a new stage
 python tools/stage.py --upstream <pinned-source> --out <new-directory>
 
+r2 full-source verification
+python tools/verify_stage.py --upstream <pinned-source> --stage <staged-directory>
+compares every staged source byte against the pinned git archive and exact patches
+rejects missing files, unexpected files, symlinks, modified source and false receipts
+also rejects noncanonical tar member names containing dot or empty components
+verify the entire stage again immediately before any guest delivery
+host pass does not authorize guest disk writes or prove a working optimizer
+
 unproven
 native guest compiler build
 native guest execution
