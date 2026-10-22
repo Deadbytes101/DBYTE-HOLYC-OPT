@@ -1,0 +1,3 @@
+# GitHub language stats represent the HolyC compiler, not the host verification tools.
+*.HC linguist-language=HolyC
+*.py -linguist-detectable
