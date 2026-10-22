@@ -57,4 +57,20 @@ staging and verification convert CRLF to LF before hashing and copying
 lone carriage returns are rejected before stage output is created
 this is a transport fix, not a compiler optimization or guest proof
 
+r7 read-only source transport
+the only proposed guest write target is its disposable RAM drive
+the transport image carries only four pinned patched compiler files
+it contains a primary ASCII ISO9660 directory and a Joliet UCS-2BE directory
+the second directory matches TempleOS 5.03 ISO1FromName's paired-byte handling
+the file data is pinned independently from the stage receipt
+the image builder refuses drift and refuses to overwrite existing output
+
+python tools/guest_iso.py --stage <verified-stage> --out <new-iso-file>
+python -m unittest discover -s tests -v
+
+host tests inspect raw ISO sectors and use 7z readback where available
+host tests do not prove a guest mounted the ISO or used these bytes
+do not claim native compilation, semantic equivalence or speed before live proof
+preserve the original TempleOS ISO and stage; no merge or release on host proof
+
 reports are claims, not evidence
