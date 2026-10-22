@@ -1,5 +1,5 @@
 __pycache__/
-*.py
 *.py[cod]
+*.py linguist-vendored
 build/
 .stage/
