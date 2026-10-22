@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-from stage import BLOBS, PATCHES, run_git, stage
+from stage import BLOBS, PATCHES, canonical_native_bytes, run_git, stage
 
 @unittest.skipUnless(os.environ.get("DBOPT_UPSTREAM"), "set DBOPT_UPSTREAM for pinned upstream integration")
 class IntegrationTests(unittest.TestCase):
@@ -27,7 +27,7 @@ class IntegrationTests(unittest.TestCase):
                 self.assertEqual(
                     hashlib.sha256(data).hexdigest(), result["sha256"][rel])
             self.assertEqual((out / "Compiler" / "DBOptPass.HC").read_bytes(),
-                             native.read_bytes())
+                             canonical_native_bytes(native))
             self.assertEqual(
                 (out / "Compiler" / "OptPass6.HC").read_bytes(),
                 run_git(root, "show", f"{result['upstream_commit']}:Compiler/OptPass6.HC"))

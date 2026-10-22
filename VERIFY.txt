@@ -51,4 +51,10 @@ do not push source into a guest that cannot write output
 do not reuse an existing staging destination
 no benchmark result is claimed
 
+r3 canonical source staging
+Windows core.autocrlf may put CRLF in native/DBOptPass.HC
+staging and verification convert CRLF to LF before hashing and copying
+lone carriage returns are rejected before stage output is created
+this is a transport fix, not a compiler optimization or guest proof
+
 reports are claims, not evidence

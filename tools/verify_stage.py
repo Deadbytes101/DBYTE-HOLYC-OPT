@@ -6,7 +6,7 @@ import os
 from pathlib import Path, PurePosixPath
 import tarfile
 
-from stage import BLOBS, PATCHES, UPSTREAM, check_source, run_git, safe_member, splice_exact
+from stage import BLOBS, PATCHES, UPSTREAM, canonical_native_bytes, check_source, run_git, safe_member, splice_exact
 
 
 def digest(data):
@@ -38,9 +38,7 @@ def expected_files(upstream, native):
     added = "Compiler/DBOptPass.HC"
     if added in result:
         raise ValueError("source already contains native pass")
-    native_data = native.read_bytes()
-    if b"U0 DBOptPass(CCmpCtrl *cc)" not in native_data:
-        raise ValueError("native pass signature missing")
+    native_data = canonical_native_bytes(native)
     result[added] = digest(native_data)
     return result
 

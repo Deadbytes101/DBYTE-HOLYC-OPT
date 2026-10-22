@@ -61,6 +61,15 @@ def check_source(repo):
             raise ValueError("upstream blob drift: " + path)
     return head
 
+def canonical_native_bytes(native):
+    data = native.read_bytes().replace(b"\r\n", b"\n")
+    if b"\r" in data:
+        raise ValueError("native source has unsupported carriage return")
+    if b"U0 DBOptPass(CCmpCtrl *cc)" not in data:
+        raise ValueError("invalid native pass signature")
+    return data
+
+
 def stage(repo, out, native):
     repo, out, native = repo.resolve(), out.resolve(), native.resolve()
     if not repo.is_dir() or not native.is_file():
@@ -72,9 +81,7 @@ def stage(repo, out, native):
     for name, (old, new) in PATCHES.items():
         data = run_git(repo, "show", f"{UPSTREAM}:{name}")
         replacements[name] = splice_exact(data, old, new)
-    original_pass = native.read_bytes()
-    if b"U0 DBOptPass(CCmpCtrl *cc)" not in original_pass:
-        raise ValueError("invalid native pass signature")
+    original_pass = canonical_native_bytes(native)
     archive_bytes = run_git(repo, "archive", "--format=tar", UPSTREAM)
     with tarfile.open(fileobj=io.BytesIO(archive_bytes), mode="r:") as archive:
         members = archive.getmembers()
