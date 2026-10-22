@@ -1,0 +1,19 @@
+name: verify source gate
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  source-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: fetch exact source mirror
+        run: |
+          git clone --depth=1 --single-branch --branch archive https://github.com/cia-foundation/TempleOS.git upstream
+          test "$(git -C upstream rev-parse HEAD)" = "c26482bb6ad3f80106d28504ec5db3c6a360732c"
+      - name: verify source gate and staging
+        env:
+          DBOPT_UPSTREAM: upstream
+        run: python3 -m unittest discover -s tests -v
