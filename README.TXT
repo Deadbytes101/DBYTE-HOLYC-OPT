@@ -64,3 +64,8 @@ NO COSTUME RIGOR.
 VERSION
 
 0.0.1 FOUNDATION
+
+ENGINEERING STATUS
+native gate r1 is staged and host-tested, not guest-compiled
+see VERIFY.txt for the pinned source and verification steps
+no IR rewrite or performance benefit is claimed at r1

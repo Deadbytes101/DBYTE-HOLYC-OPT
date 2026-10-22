@@ -1,0 +1,46 @@
+DBYTE-HOLYC-OPT
+native gate r1
+
+this is the first integration gate, not a performance release
+
+the pinned upstream is cia-foundation/TempleOS
+commit c26482bb6ad3f80106d28504ec5db3c6a360732c
+the mirror is a byte reference, not an independent date authority
+
+DBOptPass is HolyC
+the compiler remains HolyC
+the original intermediate code and backend remain in use
+
+the new pass walks the post-pass-6 intermediate code
+it does not alter opcodes, operands, flags or links
+it is called before the original pass-7 sizing work
+
+three original files are patched in a fresh staged copy
+PrsLib.HC, Compiler.PRJ and CExts.HC
+DBOptPass.HC is the only new native file
+original upstream files are not edited
+the script refuses missing, duplicate and drifted anchors
+
+host verification
+python -m unittest discover -s tests -v
+
+pinned archive integration
+set DBOPT_UPSTREAM to the local pinned upstream clone
+python -m unittest discover -s tests -v
+
+generate a new stage
+python tools/stage.py --upstream <pinned-source> --out <new-directory>
+
+unproven
+native guest compiler build
+native guest execution
+baseline vs candidate differential equivalence
+IR rewrite and register allocation
+speed and code size improvements
+
+do not claim native optimization completed from host tests alone
+do not push source into a guest that cannot write output
+do not reuse an existing staging destination
+no benchmark result is claimed
+
+reports are claims, not evidence
