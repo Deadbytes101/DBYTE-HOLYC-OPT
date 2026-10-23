@@ -319,3 +319,19 @@ r18 loader resolution correction
 - No original ISO, compiler backend or worktree baseline was mutated.
 - Native guest input/readback, actual .Z loader execution, HolyC AOT,
   emitted semantics and performance are still UNVERIFIED.
+
+r19 host decompression provenance gate
+- Pinned original TempleOS loader: Kernel/Compress.HC, Kernel/KernelA.HH.
+- tools/temple_arc.py ports ArcExpandBuf, including bit-width progression
+  and early ArcEntryGet dictionary recycling at 12-bit width.
+- It checks exact compressed length, expansion bounds, dictionary reference
+  validity, and source SHA-256 after reading real RedSea extents.
+- Run: python -m tools.temple_arc --original <pinned-original-iso>
+  --candidate <pinned-r15-iso> --upstream <pinned-templeos-git>.
+- Original source set used by GUEST.PRJ: 33 import requests, 33 compressed
+  files; 25 byte-identical to the Git source. 8 files have exactly 57
+  0x1F bytes in the ISO where pinned Git has 0x20. No other mismatches.
+- These control-marker differences are reported separately. Do not
+  claim byte-for-byte equivalence for those eight sources.
+- Neither decompressor nor host unit tests provide a native HolyC compiler
+  build, semantic equivalence, guest file readback, or performance proof.
