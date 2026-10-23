@@ -190,3 +190,40 @@ r12 iso location: D:\Projects\DBYTE-HOLYC-OPT-evidence-r7\DBOPT_R12_REDSEA.ISO
 independent media audit PASS. native guest source read, patched AOT,
 semantic differential, executable byte shrink and benchmark UNVERIFIED.
 this is host verified only. no production merge or release.
+
+r13 guest compiler build entrypoint — 2026-10-23
+
+R12 delivered four pinned sources in /DBPATCH, but its Compiler.PRJ kept
+relative includes for dozens of stock compiler files that are not in DBPATCH.
+The pinned original TempleOS 5.03 boot ISO actually contains /Compiler and
+/Kernel trees with compressed .HC.Z / .HH.Z file records.
+
+R13 keeps those original trees byte-for-byte and adds GUEST.PRJ as the fifth
+file in /DBPATCH. the new guest-side entrypoint maps three patched imports to
+the actual /DBPATCH/CEXTS.HC, /DBPATCH/PRSLIB.HC and /DBPATCH/DBOPT.HC names.
+all unchanged compiler imports point to /Compiler. existing absolute kernel
+and compiler header imports stay rooted. Compiler.PRJ itself is preserved
+as a pinned reference, not recommended as the guest entrypoint.
+
+the source input and generated GUEST.PRJ are separately pinned. generator
+rejects unexpected import syntax or anchor drift. independent RedSea audit
+checks all five file extents, SHA256, allocations and original byte invariants.
+the real ISO host test checks every GUEST.PRJ include against original RedSea
+/Compiler and /Kernel directory records or the delivered /DBPATCH files.
+
+GUEST.PRJ SHA256:
+6885186129cd67705801f38aceb9cf93dc23a757c8d3cc0c06675e670d6e4231
+DBOPT_R13_REDSEA.ISO SHA256:
+87aaaf16fa5b360a2236425df863f17e8c2f97780e9a8cf8cca84bf46b6966ab
+
+audit usage:
+python -m tools.check_redsea --original <pinned-original.iso> --candidate <R13.iso> --profile r13
+python -m tools.check_redsea --original <pinned-original.iso> --candidate <R12.iso> --profile r12
+
+observed: real pinned Windows host suite 56/56 PASS, independent r12 and
+r13 profile audits PASS, original-media dependency path closure PASS.
+source and original boot ISO not mutated. existing QEMU untouched.
+
+not observed: guest reading /DBPATCH/GUEST.PRJ, HolyC #include execution,
+patched compiler native AOT, semantic differential or runtime benchmark.
+host evidence is not release permission. Draft PR only until native gates pass.
