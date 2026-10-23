@@ -289,3 +289,16 @@ D:\Projects\DBYTE-HOLYC-OPT-evidence-r15\R13-HISTORICAL-AUDIT.json
 Truth gate: guest source readback, actual guest HolyC AOT build,
 executed code equivalence, emitted x86-64 code size and benchmark
 remain UNVERIFIED. No production release or upstream merge.
+
+
+r17 RedSea compiler import-closure proof
+R17 introduces tools/guest_closure.py and tests/test_guest_closure.py.
+A read-only filesystem audit of the exact R15 ISO validates every
+36 #include requests in appended GUEST.PRJ against physical RedSea
+directory records from the pinned original boot ISO and appended patch.
+33 imports map to stock source (some stored as .HC.Z or .HH.Z).
+3 imports map to exact patched files in /DBPATCH.
+Negative tests reject missing, ambiguous and unsafe path components.
+This is FILE-PRESENCE proof only. Guest decompression and #include path
+resolution, patched HolyC AOT, executable semantic equivalence,
+and performance all remain UNVERIFIED.

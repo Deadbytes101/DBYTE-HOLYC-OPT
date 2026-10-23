@@ -70,7 +70,7 @@ native gate r1 is staged and host-tested, not guest-compiled
 see VERIFY.txt for the pinned source and verification steps
 no IR rewrite or performance benefit is claimed at r1
 
-CURRENT ENGINEERING GATE — r13
+CURRENT ENGINEERING GATE — r17
 native HolyC IR dead-move rewrite is implemented, not yet guest proven
 r13 adds /DBPATCH/GUEST.PRJ for absolute imports of the pinned compiler patch
 and stock /Compiler dependencies on the preserved TempleOS boot ISO
@@ -78,3 +78,9 @@ host unit tests and independent RedSea audits pass
 native AOT, differential semantics and measured optimization remain unverified
 do not call this a working or released optimizer until those gates pass
 see VERIFY.txt for exact evidence and SHA-256 records
+
+r17 checks all 36 guest compiler include paths against the pinned
+TempleOS RedSea ISO directories without modifying the boot media.
+this proves 33 stock and 3 patched file entries exist on disc.
+compressed source loading and native HolyC compiler AOT still require
+guest execution evidence before any optimizer release.
