@@ -11,8 +11,8 @@ DBOptPass is HolyC
 the compiler remains HolyC
 the original intermediate code and backend remain in use
 
-the new pass walks the post-pass-6 intermediate code
-it does not alter opcodes, operands, flags or links
+r1 gate: the pass walked post-pass-6 intermediate code only
+r1 gate: it did not alter opcodes, operands, flags or links
 it is called before the original pass-7 sizing work
 
 three original files are patched in a fresh staged copy
@@ -43,7 +43,7 @@ unproven
 native guest compiler build
 native guest execution
 baseline vs candidate differential equivalence
-IR rewrite and register allocation
+r1 gate: IR rewrite and register allocation were not implemented
 speed and code size improvements
 
 do not claim native optimization completed from host tests alone
@@ -126,3 +126,45 @@ python -m tools.check_redsea --original <pinned-TempleOS-ISO> --candidate <new-R
 A host directory and SHA readback is not a guest-side file read and
 cannot establish a built patched HolyC compiler or a useful optimizer.
 R10 is a verifier increment based on R9, not a compiler performance release.
+
+r11 native HolyC first IR rewrite
+backend evidence at pinned TempleOS commit c26482bb6ad3f80106d28504ec5db3c6a360732c:
+Compiler/BackLib.HC ICMov already skips same-register moves.
+The new pass instead removes a dead 64-bit register write when the
+immediately following 64-bit register move overwrites the same destination
+without reading its prior value. Exact flag and type guards reject all
+stack, memory, float, register conversion and pass-trace forms.
+The transformation uses OptSetNOP1 before OptPass789A. It does not change
+original assembler, x86-64 backend, compiler ABI, or upstream source.
+
+stage and integrity commands:
+python -m tools.stage --upstream <pinned-upstream> --out <new-stage>
+python tools/verify_stage.py --upstream <pinned-upstream> --stage <new-stage>
+python -m tools.guest_redsea --boot <original-iso> --stage <new-stage> --out <new-iso>
+python -m tools.check_redsea --original <original-iso> --candidate <new-iso>
+
+r11 host evidence 2026-10-23:
+focused TDD RED: new rewrite-source test failed against old read-only pass.
+focused GREEN: rewrite-specific tests 4/4 and stage tests 9/9.
+full pinned Windows suite 46/46 PASS.
+verified stage inventory: 687 files, SHA256
+bcd82a2d03e380e3f8916f39c4785a1c5af22e38eaf3f74f0ac482cc9a5c0d8b
+new native/DBOptPass.HC SHA256
+9939d5f25ff1689874bd240072acf84f944f8b16c0f26885a32b49f08be17002
+new R11 RedSea image SHA256
+b52c07eeb869dc8d9f57c07cabe30239443250f53968159ce4d98d98d3c45ad9
+independent RedSea audit PASS, four staged source pins match.
+
+no native HolyC AOT build has been observed for this R11 pass.
+Host Python instruction model is NOT native x86-64 guest execution proof.
+No measured byte shrink, runtime speedup or end-to-end semantics PASS.
+Do not merge or publish until native guest readback, stock-vs-hooked AOT,
+differential and benchmark gates pass.
+
+r11b refinement
+exclude RSP, RBP and invalid register IDs from dead-write matching
+because transient stack/frame register changes may be observable
+r11b source and media supersede the earlier unsealed r11 sample ISO
+r11b stage at D:\\Projects\\DBYTE-HOLYC-OPT-stage-r11b
+r11b image at D:\\Projects\\DBYTE-HOLYC-OPT-evidence-r7\\DBOPT_R11B_REDSEA.ISO
+no native guest compiler claim follows from these host checks

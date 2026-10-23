@@ -47,13 +47,14 @@ class StageTests(unittest.TestCase):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 safe_member(name)
 
-    def test_native_gate_is_read_only(self):
+    def test_native_rewrite_preserves_queue_and_backend(self):
         code = (Path(__file__).resolve().parents[1] / "native" / "DBOptPass.HC").read_text()
         self.assertIn("U0 DBOptPass(CCmpCtrl *cc)", code)
         self.assertIn("tmpi=tmpi->next;", code)
+        self.assertIn("OptSetNOP1(tmpi);", code)
         self.assertNotIn("OptFree(", code)
-        self.assertNotIn("OptSetNOP", code)
-        self.assertNotIn("tmpi->ic_code=", code)
+        self.assertNotIn("QueRem(", code)
+        self.assertNotRegex(code, r"tmpi->ic_code\s*=(?!=)")
 
 if __name__ == "__main__":
     unittest.main()
