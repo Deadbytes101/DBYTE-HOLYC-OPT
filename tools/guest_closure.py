@@ -20,13 +20,16 @@ def resolve_name(name, available):
     """Resolve the only candidates supported by this pinned source format."""
     if not _COMPONENT.fullmatch(name) or ".." in name:
         raise audit.AuditError("unsafe include component: " + repr(name))
-    choices = [name, name + ".Z"]
-    if "." not in name:
-        choices += [name + ".HC.Z", name + ".HH.Z", name + ".PRJ.Z"]
-    hits = [choice for choice in choices if choice in available]
-    if len(hits) != 1:
-        raise audit.AuditError("include missing or ambiguous: " + name)
-    return hits[0]
+    # Lex.HC #include calls ExtDft(name,"HC.Z") first.
+    # DskFile.HC FileRead then tries the exact name before ToggleZorNotZ.
+    # This is loader *priority*, not a general extension search.
+    first = name if "." in name else name + ".HC.Z"
+    second = first[:-2] if first.endswith(".Z") else first + ".Z"
+    if first in available:
+        return first
+    if second in available:
+        return second
+    raise audit.AuditError("include not present at native loader paths: " + name)
 
 
 def _directory(data, node):
@@ -92,9 +95,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--original", type=Path, required=True)
     parser.add_argument("--candidate", type=Path, required=True)
+    parser.add_argument("--upstream", type=Path)
     a = parser.parse_args()
-    print(json.dumps(check_closure(a.original.read_bytes(), a.candidate.read_bytes()),
-                     sort_keys=True, indent=2))
+    result = check_closure(a.original.read_bytes(), a.candidate.read_bytes())
+    if a.upstream is not None:
+        from tools.guest_loader_contract import verify
+        result["native_loader_source_contract"] = verify(a.upstream)
+    print(json.dumps(result, sort_keys=True, indent=2))
 
 
 if __name__ == "__main__":

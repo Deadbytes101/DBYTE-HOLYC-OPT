@@ -302,3 +302,20 @@ Negative tests reject missing, ambiguous and unsafe path components.
 This is FILE-PRESENCE proof only. Guest decompression and #include path
 resolution, patched HolyC AOT, executable semantic equivalence,
 and performance all remain UNVERIFIED.
+
+r18 loader resolution correction
+- R17's generic suffix candidate set was not the native #include algorithm
+  and could accept unrelated .HH.Z or bare file entries or reject an actual
+  first-choice file when both compressed and uncompressed names existed.
+- Compiler/Lex.HC uses ExtDft(name,"HC.Z") for each #include.
+- Kernel/BlkDev/DskFile.HC FileRead resolves exact name first, then
+  ToggleZorNotZ; its RS_ATTR_COMPRESSED branch calls ExpandBuf.
+- Kernel/BlkDev/DskStrA.HC defines both ExtDft and ToggleZorNotZ.
+- The checker now follows the same ordered candidates. 6 focused
+  negative/priority tests document the differences from R17.
+- tools/guest_loader_contract.py reads these three source objects from
+  the exact pinned upstream Git revision and verifies the source anchors.
+- tools/guest_closure.py --upstream enables a combined ISO+source audit.
+- No original ISO, compiler backend or worktree baseline was mutated.
+- Native guest input/readback, actual .Z loader execution, HolyC AOT,
+  emitted semantics and performance are still UNVERIFIED.

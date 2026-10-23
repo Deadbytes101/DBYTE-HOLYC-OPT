@@ -13,11 +13,12 @@ class GuestClosureTests(unittest.TestCase):
         self.assertEqual(resolve_name("Templates", names), "Templates.HC.Z")
         self.assertEqual(resolve_name("PrsLib", names), "PrsLib.HC.Z")
 
-    def test_missing_and_ambiguous_rejected(self):
+    def test_missing_and_native_suffix_precedence(self):
         with self.assertRaises(AuditError):
             resolve_name("Unknown", {"Templates.HC.Z"})
-        with self.assertRaises(AuditError):
-            resolve_name("Templates", {"Templates.HC.Z", "Templates.HH.Z"})
+        # The lexer supplies HC.Z for bare names, never HH.Z.
+        self.assertEqual(resolve_name("Templates",
+                         {"Templates.HC.Z", "Templates.HH.Z"}), "Templates.HC.Z")
 
     def test_unsafe_components_rejected(self):
         names = {"CEXTS.HC", "Templates.HC.Z"}
