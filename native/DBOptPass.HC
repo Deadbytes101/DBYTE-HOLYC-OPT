@@ -25,7 +25,6 @@ U0 DBOptPass(CCmpCtrl *cc)
         tmpi->res.reg!=REG_RSP &&
         tmpi->res.reg!=REG_RBP &&
         tmpi->arg1.reg!=tmpi->res.reg &&
-        tmpi->arg1.reg!=tmpi->next->arg1.reg &&
         tmpi->res.reg==tmpi->next->res.reg &&
         tmpi->next->arg1.reg!=tmpi->next->res.reg)
       OptSetNOP1(tmpi);

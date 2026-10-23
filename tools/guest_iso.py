@@ -15,7 +15,7 @@ SOURCE_SHA256 = {
     "Compiler/PrsLib.HC": "5539b9233b1120869fa18a1fa0dfab4e036e6b24d3dc69ca3a4ba37791cfa5e8",
     "Compiler/CExts.HC": "7169087e4064185e6ea703842a9a57003a0609973807aca191c574a265871e06",
     "Compiler/Compiler.PRJ": "c3339f08f451a2eef4d0afa32d05236b59b09f907ce70e44b649877f856ddb85",
-    "Compiler/DBOptPass.HC": "9939d5f25ff1689874bd240072acf84f944f8b16c0f26885a32b49f08be17002",
+    "Compiler/DBOptPass.HC": "ba1d234e27f9e60242511d20bcfbbd88643d56fbe4d8c2b4ad3c7de52261293a",
 }
 FILES = (
     ("Compiler/PrsLib.HC", "PRSLIB.HC"),
