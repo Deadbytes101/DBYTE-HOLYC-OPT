@@ -190,3 +190,26 @@ r12 iso location: D:\Projects\DBYTE-HOLYC-OPT-evidence-r7\DBOPT_R12_REDSEA.ISO
 independent media audit PASS. native guest source read, patched AOT,
 semantic differential, executable byte shrink and benchmark UNVERIFIED.
 this is host verified only. no production merge or release.
+
+r14 native 64-bit register identity move optimization
+upstream source pinned at c26482bb6ad3f80106d28504ec5db3c6a360732c
+R14 adds one conservative rule: a pure reg64 MOV from a register to
+itself is replaced by the original HolyC OptSetNOP1 primitive.
+The adjacent overwritten-register MOV rule from R12 is unchanged.
+RSP/RBP, memory, non-64-bit types, displacements, ic_data, nonexact
+integer flags, invalid register IDs and non-MOV opcodes are excluded.
+The host oracle proves only modelled register-value equivalence.
+TDD recorded missing source contract RED before implementation.
+Pinned Windows test suite: 53/53 PASS; focused self-move: 4/4 PASS.
+Full pinned source stage 687 files, inventory SHA256:
+c656f03d38d1d56d21535239ce4d5715d73a3d6effa7791ea51aad2c9f9e4e5b
+Canonical LF DBOptPass.HC staged SHA256:
+4be1688a2a0a720fe8f168c6603ff57c8f195f7d404ce23a77baac3b6d964abd
+RedSea R14 ISO SHA256:
+791d9d91a4b20b8124710c065379659eea47f1d35564d1cbba6fb7ef1ff0a9ce
+R14 ISO: D:\Projects\DBYTE-HOLYC-OPT-evidence-r14\DBOPT_R14_REDSEA.ISO
+Independent RedSea source/file/bitmap preservation audit PASS.
+Evidence log: D:\Projects\DBYTE-HOLYC-OPT-evidence-r14\R14-PINNED-HOST-TESTS.log
+NATIVE_GUEST_READ, HOLYC_AOT, SEMANTIC_DIFFERENTIAL,
+MACHINE_CODE_DELTA, PERFORMANCE_BENCHMARK: UNVERIFIED.
+This is a source/host gate, not a native optimizer release.

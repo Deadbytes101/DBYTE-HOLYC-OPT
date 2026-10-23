@@ -16,7 +16,7 @@ EXPECTED = {
     "PRSLIB.HC": ("Compiler/PrsLib.HC", "5539b9233b1120869fa18a1fa0dfab4e036e6b24d3dc69ca3a4ba37791cfa5e8"),
     "CEXTS.HC": ("Compiler/CExts.HC", "7169087e4064185e6ea703842a9a57003a0609973807aca191c574a265871e06"),
     "COMPILER.PRJ": ("Compiler/Compiler.PRJ", "c3339f08f451a2eef4d0afa32d05236b59b09f907ce70e44b649877f856ddb85"),
-    "DBOPT.HC": ("Compiler/DBOptPass.HC", "ba1d234e27f9e60242511d20bcfbbd88643d56fbe4d8c2b4ad3c7de52261293a"),
+    "DBOPT.HC": ("Compiler/DBOptPass.HC", "4be1688a2a0a720fe8f168c6603ff57c8f195f7d404ce23a77baac3b6d964abd"),
 }
 DIRECTORY_ATTR = 0x810
 FILE_ATTR = 0x800
