@@ -74,3 +74,37 @@ do not claim native compilation, semantic equivalence or speed before live proof
 preserve the original TempleOS ISO and stage; no merge or release on host proof
 
 reports are claims, not evidence
+
+r9 native RedSea source transport
+R8 showed that the R7 ISO9660/Joliet filesystem could not be traversed
+from stock TempleOS 5.03. FSt_ISO9660 is marked Not Supported
+by its own kernel even though the host ISO and 7z checks were valid.
+
+R9 clones the independently SHA-256-pinned original TempleOS boot ISO
+and adds a real RedSea /DBPATCH directory with four byte-pinned sources.
+It appends new allocation extents and changes only the existing RedSea
+bitmap, an empty root directory slot, RedSea volume sector count
+and two ISO volume size descriptor fields.
+The original ISO and existing executable and compiler file payloads stay unchanged.
+The builder never overwrites an existing output and rejects a changed source.
+
+python -m tools.guest_redsea --boot <TempleOS-5.03-ISO> --stage <verified-stage> --out <new-R9-ISO>
+python -m unittest discover -s tests -v
+
+R9 test scope: filesystem records, file extents, bitmap allocation,
+original byte-preservation, deterministic output, tamper rejection.
+A new QEMU guest booted this ISO to the first-run TempleOS install prompt;
+choosing No did not install to disk. Native /DBPATCH directory traversal,
+byte parity readback inside the guest, hooked compiler AOT,
+semantic differential and performance remain UNVERIFIED.
+Any report calling optimizer complete before those gates is incorrect.
+
+portable and pinned R9 verification
+without DBOPT_BOOT_ISO and DBOPT_STAGE, the four real-media integration
+checks are skipped; synthetic RedSea tests still run on Linux CI.
+set DBOPT_BOOT_ISO=<verified-original-TempleOS-5.03-ISO>
+set DBOPT_STAGE=<verified-full-stage>
+python -m unittest discover -s tests -v
+on Windows these pins produced 31/31 PASS, no skips on 23 Oct 2026.
+without these two paths: 27 discovered, 1 real-media class skipped.
+boot-only QEMU smoke is not evidence of successful native file reads.
