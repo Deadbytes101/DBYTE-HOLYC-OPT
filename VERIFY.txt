@@ -108,3 +108,21 @@ python -m unittest discover -s tests -v
 on Windows these pins produced 31/31 PASS, no skips on 23 Oct 2026.
 without these two paths: 27 discovered, 1 real-media class skipped.
 boot-only QEMU smoke is not evidence of successful native file reads.
+
+r10 independent RedSea image audit
+tools/check_redsea.py does NOT import the RedSea builder.
+It walks the actual root directory, DBPATCH directory and four source records.
+All source SHA256 pins and the boot ISO identity are independent constants.
+It verifies all RedSea allocation bits, including preservation of prior bits,
+zero-filled unallocated appended sectors, and zero source-sector padding.
+It rejects modifications to original boot/media bytes beyond explicitly
+allowed RedSea and ISO volume metadata and the single unused root slot.
+These checks proved three R9 verifier gaps: a modified original bitmap bit,
+hidden tail data, and modified padding each previously passed audit.
+Negative tests first reproduced all three false accepts; after the repair
+the full pinned Windows suite passes 42/42.
+The read-only check for an R9 image is:
+python -m tools.check_redsea --original <pinned-TempleOS-ISO> --candidate <new-RedSea-ISO>
+A host directory and SHA readback is not a guest-side file read and
+cannot establish a built patched HolyC compiler or a useful optimizer.
+R10 is a verifier increment based on R9, not a compiler performance release.

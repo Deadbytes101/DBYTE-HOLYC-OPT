@@ -7,6 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from tools import guest_redsea as g
+from tools import check_redsea as audit
 
 
 def sha(data):
@@ -89,6 +90,99 @@ class SyntheticRedSeaTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "identity mismatch"):
             g.build(self.boot, self.stage, output)
         self.assertFalse(output.exists())
+
+
+    def verified_candidate(self):
+        output = self.dir / "verified.iso"
+        g.build(self.boot, self.stage, output)
+        return output.read_bytes()
+
+    def audit(self, content):
+        expected = {name: (src, self.sources[src]) for src, name in g.FILES}
+        with patch.object(audit, "BASE_SHA256", sha(self.original)):
+            with patch.dict(audit.EXPECTED, expected, clear=True):
+                return audit.inspect(bytes(content), self.original)
+
+    def test_independent_reader_accepts_complete_redsea_image(self):
+        image = self.verified_candidate()
+        result = self.audit(image)
+        self.assertEqual(result["candidate_sha256"], sha(image))
+        self.assertEqual({f["name"] for f in result["files"]},
+                         {name for src, name in g.FILES})
+        self.assertEqual(result["native_guest_read"], "UNVERIFIED")
+        self.assertEqual(result["native_compiler"], "UNVERIFIED")
+
+    def test_independent_reader_rejects_bitmap_bit_removed(self):
+        image = bytearray(self.verified_candidate())
+        new_dir = len(self.original)//512
+        bit = new_dir - 97
+        image[89*512 + bit//8] &= ~(1 << bit%8)
+        with self.assertRaisesRegex(audit.AuditError, "bitmap allocation"):
+            self.audit(image)
+
+    def test_independent_reader_rejects_modified_original_boot_byte(self):
+        image = bytearray(self.verified_candidate())
+        image[12345] ^= 1
+        with self.assertRaisesRegex(audit.AuditError, "modified original"):
+            self.audit(image)
+
+    def test_independent_reader_rejects_wrong_source_content(self):
+        image = bytearray(self.verified_candidate())
+        image[(len(self.original)//512+1)*512] ^= 1
+        with self.assertRaisesRegex(audit.AuditError, "source SHA mismatch"):
+            self.audit(image)
+
+    def test_independent_reader_rejects_wrong_source_extent(self):
+        image = bytearray(self.verified_candidate())
+        parent = len(self.original)//512
+        a = parent*512+2*64+40
+        b = parent*512+3*64+40
+        image[b:b+8] = image[a:a+8]
+        with self.assertRaisesRegex(audit.AuditError, "extents overlap"):
+            self.audit(image)
+
+    def test_independent_reader_rejects_modified_descriptor_count(self):
+        image = bytearray(self.verified_candidate())
+        image[16*2048+80] ^= 1
+        with self.assertRaisesRegex(audit.AuditError, "ISO descriptor"):
+            self.audit(image)
+
+    def test_independent_reader_rejects_directory_name_corruption(self):
+        image = bytearray(self.verified_candidate())
+        parent = len(self.original)//512
+        image[parent*512+2*64+2] = ord("X")
+        with self.assertRaisesRegex(audit.AuditError, "patch file inventory"):
+            self.audit(image)
+
+    def test_independent_reader_rejects_root_metadata_corruption(self):
+        image = bytearray(self.verified_candidate())
+        root_insert = 98*512+22*64
+        image[root_insert] ^= 1
+        with self.assertRaisesRegex(audit.AuditError, "missing/misplaced"):
+            self.audit(image)
+
+
+    def test_independent_reader_detects_original_bitmap_damage(self):
+        image = bytearray(self.verified_candidate())
+        allocated_root_bit = 98-97
+        image[89*512] ^= 1 << allocated_root_bit
+        with self.assertRaisesRegex(audit.AuditError, "bitmap"):
+            self.audit(image)
+
+    def test_independent_reader_detects_hidden_nonzero_unused_tail(self):
+        image = bytearray(self.verified_candidate())
+        image[-1] = 0x7f
+        with self.assertRaisesRegex(audit.AuditError, "unallocated sector"):
+            self.audit(image)
+
+    def test_independent_reader_detects_file_padding_damage(self):
+        image = bytearray(self.verified_candidate())
+        parent_sector = len(self.original)//512
+        first_file = parent_sector + 1
+        first_file_bytes = len((self.stage / g.FILES[0][0]).read_bytes())
+        image[first_file*512 + first_file_bytes] = 0xa5
+        with self.assertRaisesRegex(audit.AuditError, "source padding"):
+            self.audit(image)
 
 
 if __name__ == "__main__":
