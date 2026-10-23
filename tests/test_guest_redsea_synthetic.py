@@ -25,8 +25,18 @@ class SyntheticRedSeaTests(unittest.TestCase):
         self.sources = {}
         for i, (src, name) in enumerate(g.FILES):
             data = bytes((0x41 + i,)) * (130 + 103*i)
+            if src == "Compiler/Compiler.PRJ":
+                data = (b'#include "Templates"\n#include "CExts"\n'
+                        b'#include "PrsLib"\n#include "OptPass6"\n'
+                        b'#include "DBOptPass"\n')
             (self.stage / src).write_bytes(data)
             self.sources[src] = sha(data)
+        from tools.guest_project import rewrite
+        guest = rewrite((self.stage / "Compiler/Compiler.PRJ").read_bytes())
+        self.sources["generated:Compiler/Compiler.PRJ"] = sha(guest)
+        self.guest_pin = patch.object(g, "GUEST_ENTRY_SHA256", sha(guest))
+        self.guest_pin.start()
+        self.addCleanup(self.guest_pin.stop)
         (self.stage / "DBOPT-STAGE.json").write_text(
             json.dumps({"upstream_commit": g.UPSTREAM, "sha256": self.sources}),
             encoding="utf-8")
@@ -68,7 +78,7 @@ class SyntheticRedSeaTests(unittest.TestCase):
         self.assertEqual(data[g.ROOT*g.S:g.ROOT*g.S+22*64],
                          self.original[g.ROOT*g.S:g.ROOT*g.S+22*64])
         self.assertEqual(g.i64(data, 88*512+16), len(data)//512-88)
-        self.assertEqual(len(receipt["files"]), 4)
+        self.assertEqual(len(receipt["files"]), 5)
         for row in receipt["files"]:
             off = row["absolute_sector"]*512
             self.assertEqual(sha(data[off:off+row["bytes"]]), self.sources[row["source"]])
@@ -99,6 +109,8 @@ class SyntheticRedSeaTests(unittest.TestCase):
 
     def audit(self, content):
         expected = {name: (src, self.sources[src]) for src, name in g.FILES}
+        expected["GUEST.PRJ"] = ("generated:Compiler/Compiler.PRJ",
+                                 self.sources["generated:Compiler/Compiler.PRJ"])
         with patch.object(audit, "BASE_SHA256", sha(self.original)):
             with patch.dict(audit.EXPECTED, expected, clear=True):
                 return audit.inspect(bytes(content), self.original)
@@ -108,7 +120,7 @@ class SyntheticRedSeaTests(unittest.TestCase):
         result = self.audit(image)
         self.assertEqual(result["candidate_sha256"], sha(image))
         self.assertEqual({f["name"] for f in result["files"]},
-                         {name for src, name in g.FILES})
+                         {name for src, name in g.FILES} | {"GUEST.PRJ"})
         self.assertEqual(result["native_guest_read"], "UNVERIFIED")
         self.assertEqual(result["native_compiler"], "UNVERIFIED")
 

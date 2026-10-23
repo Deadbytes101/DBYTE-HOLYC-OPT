@@ -9,6 +9,7 @@ import hashlib
 import json
 from pathlib import Path
 from tools.guest_iso import FILES, SOURCE_SHA256, UPSTREAM
+from tools.guest_project import rewrite as render_guest_project
 
 BASE_SHA256 = "5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26"
 S = 512
@@ -20,6 +21,7 @@ ROOT = 98
 RS_DIRECTORY = 0x810
 RS_FILE = 0x800
 GUEST_DIR = "DBPATCH"
+GUEST_ENTRY_SHA256 = "6885186129cd67705801f38aceb9cf93dc23a757c8d3cc0c06675e670d6e4231"
 VOL_DESC = (16, 18)
 
 
@@ -57,6 +59,15 @@ def get_files(stage):
         if not data or len(data) > 65536 or actual != SOURCE_SHA256[src] or receipt["sha256"][src] != actual:
             raise ValueError("staged source not byte-pinned: " + src)
         result.append((src, name, data, actual))
+    # A separate executable entrypoint resolves original compressed dependencies
+    # from /Compiler, and the three patched sources from /DBPATCH. Do not
+    # replace the original staged Compiler.PRJ or any boot ISO source file.
+    project_source = (stage / "Compiler" / "Compiler.PRJ").read_bytes()
+    guest_entry = render_guest_project(project_source)
+    entry_hash = digest(guest_entry)
+    if entry_hash != GUEST_ENTRY_SHA256:
+        raise ValueError("guest entrypoint source closure drift")
+    result.append(("generated:Compiler/Compiler.PRJ", "GUEST.PRJ", guest_entry, entry_hash))
     return result
 
 

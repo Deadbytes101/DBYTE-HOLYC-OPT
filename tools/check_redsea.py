@@ -18,6 +18,11 @@ EXPECTED = {
     "COMPILER.PRJ": ("Compiler/Compiler.PRJ", "c3339f08f451a2eef4d0afa32d05236b59b09f907ce70e44b649877f856ddb85"),
     "DBOPT.HC": ("Compiler/DBOptPass.HC", "ba1d234e27f9e60242511d20bcfbbd88643d56fbe4d8c2b4ad3c7de52261293a"),
 }
+EXPECTED_R12 = EXPECTED.copy()
+EXPECTED = {
+    **EXPECTED_R12,
+    "GUEST.PRJ": ("generated:Compiler/Compiler.PRJ", "6885186129cd67705801f38aceb9cf93dc23a757c8d3cc0c06675e670d6e4231"),
+}
 DIRECTORY_ATTR = 0x810
 FILE_ATTR = 0x800
 META_BOOT = 88
@@ -182,8 +187,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--original", type=Path, required=True)
     parser.add_argument("--candidate", type=Path, required=True)
+    parser.add_argument("--profile", choices=("r12", "r13"), default="r13")
     args = parser.parse_args()
-    print(json.dumps(inspect(args.candidate.read_bytes(), args.original.read_bytes()),
+    expected = EXPECTED_R12 if args.profile == "r12" else EXPECTED
+    print(json.dumps(inspect(args.candidate.read_bytes(), args.original.read_bytes(), expected=expected),
                      indent=2, sort_keys=True))
 
 
