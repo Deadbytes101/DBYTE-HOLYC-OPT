@@ -2,11 +2,12 @@
 import hashlib
 import json
 import os
+import re
 import tempfile
 import unittest
 from pathlib import Path
 
-from tools import guest_redsea
+from tools import guest_redsea, check_redsea
 
 BOOT = Path(os.environ.get("DBOPT_BOOT_ISO", "__UNCONFIGURED_REDSEA_BOOT_ISO__"))
 STAGE = Path(os.environ.get("DBOPT_STAGE", "__UNCONFIGURED_REDSEA_STAGE__"))
@@ -25,7 +26,7 @@ class RedSeaGuestTests(unittest.TestCase):
         receipt = guest_redsea.build(BOOT, STAGE, dst)
         return dst, receipt
 
-    def test_real_directory_and_four_exact_file_extents(self):
+    def test_real_directory_and_five_exact_file_extents(self):
         with tempfile.TemporaryDirectory() as root:
             iso, receipt = self.make_iso(root)
             content = iso.read_bytes()
@@ -58,6 +59,50 @@ class RedSeaGuestTests(unittest.TestCase):
                     bit = sector-guest_redsea.REDSEA_DATA_AREA
                     self.assertTrue(content[guest_redsea.REDSEA_BITMAP*512+bit//8] & (1 << bit%8))
             self.assertEqual(json.loads(iso.with_suffix(".json").read_text())["output_sha256"], guest_redsea.digest(content))
+
+    def test_guest_compiler_include_closure_matches_original_redsea(self):
+        root = check_redsea.entries(self.original, 98*512, 3*512)
+        originals = {}
+        for entry in root:
+            if entry["name"] in ("Compiler", "Kernel"):
+                sub = check_redsea.entries(
+                    self.original, entry["block"]*512, entry["size"])
+                originals[entry["name"]] = {item["name"] for item in sub}
+        self.assertEqual(set(originals), {"Compiler", "Kernel"})
+        delivered = {name: raw for src, name, raw, digest in self.files}
+        self.assertIn("GUEST.PRJ", delivered)
+        self.assertIn("COMPILER.PRJ", delivered)
+        guest = delivered["GUEST.PRJ"]
+        self.assertNotEqual(guest, delivered["COMPILER.PRJ"])
+        include_paths = re.findall(rb'(?m)^#include "([^"]+)"$', guest)
+        self.assertGreater(len(include_paths), 30)
+        observed_patch = set()
+        for include in include_paths:
+            path = include.decode("ascii")
+            if path.startswith("/DBPATCH/"):
+                base = path.split("/")[-1]
+                self.assertIn(base, delivered, path)
+                observed_patch.add(base)
+            else:
+                scope, base = path.strip("/").split("/")
+                self.assertIn(scope, originals, path)
+                physical = base + (".Z" if "." in base else ".HC.Z")
+                self.assertIn(physical, originals[scope], path)
+        self.assertEqual(observed_patch,
+                         {"PRSLIB.HC", "CEXTS.HC", "DBOPT.HC"})
+
+    def test_historical_four_file_media_is_still_auditable_explicitly(self):
+        legacy_path = Path(os.environ.get("DBOPT_LEGACY_REDSEA_ISO",
+                                          "__LEGACY_ISO_NOT_CONFIGURED__"))
+        if not legacy_path.is_file():
+            self.skipTest("historical pinned media not configured")
+        legacy = legacy_path.read_bytes()
+        result = check_redsea.inspect(legacy, self.original,
+                                      expected=check_redsea.EXPECTED_R12)
+        self.assertEqual(len(result["files"]), 4)
+        with self.assertRaisesRegex(check_redsea.AuditError,
+                                    "unexpected patch directory count"):
+            check_redsea.inspect(legacy, self.original)
 
     def test_original_boot_payload_mutations_are_bounded(self):
         with tempfile.TemporaryDirectory() as root:
@@ -93,6 +138,8 @@ class RedSeaGuestTests(unittest.TestCase):
             stage.mkdir()
             (stage / "DBOPT-STAGE.json").write_bytes((STAGE / "DBOPT-STAGE.json").read_bytes())
             for src, name, data, hash_value in self.files:
+                if src.startswith("generated:"):
+                    continue
                 path = stage / src
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(data)
