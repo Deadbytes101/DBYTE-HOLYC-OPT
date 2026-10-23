@@ -3,9 +3,12 @@
 These are host-side instruction semantics and source-contract tests only.
 They cannot establish that the native HolyC compiler builds or executes.
 """
+import hashlib
 import random
 import unittest
 from pathlib import Path
+
+from tools import check_redsea, guest_iso
 
 
 PASS = Path(__file__).resolve().parents[1] / "native" / "DBOptPass.HC"
@@ -30,7 +33,6 @@ def allowed(first, second):
             and 0 <= first["dst"] < REG_NUM
             and first["dst"] not in (REG_RSP, REG_RBP)
             and first["src"] != first["dst"]
-            and first["src"] != second["src"]
             and first["dst"] == second["dst"]
             and second["src"] != second["dst"])
 
@@ -70,7 +72,7 @@ class DeadWriteTests(unittest.TestCase):
         self.assertIn("tmpi->arg1.reg<REG_REGS_NUM", source)
         self.assertIn("tmpi->next->arg1.reg<REG_REGS_NUM", source)
         self.assertIn("tmpi->arg1.reg!=tmpi->res.reg", source)
-        self.assertIn("tmpi->arg1.reg!=tmpi->next->arg1.reg", source)
+        self.assertNotIn("tmpi->arg1.reg!=tmpi->next->arg1.reg", source)
         self.assertIn("tmpi->next->arg1.reg!=tmpi->next->res.reg", source)
         for frag in ("!tmpi->arg1.disp", "!tmpi->res.disp",
                      "!tmpi->next->arg1.disp", "!tmpi->next->res.disp",
@@ -89,6 +91,47 @@ class DeadWriteTests(unittest.TestCase):
             state = [rng.getrandbits(64) for _ in range(16)]
             self.assertEqual(execute(state, [first, second]),
                              execute(state, [second]))
+
+    def test_identical_source_mov_is_dead(self):
+        # mov R1,R0; mov R1,R0 has the same final machine state
+        # as the latter mov alone. The R11 guard missed this safe pair.
+        for dst in range(REG_NUM):
+            if dst in (REG_RSP, REG_RBP):
+                continue
+            for src in range(REG_NUM):
+                if src == dst:
+                    continue
+                first, second = mov(src, dst), mov(src, dst)
+                self.assertTrue(allowed(first, second), (src, dst))
+                state = [(r * 0x1020304050607) & ((1 << 64) - 1)
+                         for r in range(REG_NUM)]
+                self.assertEqual(execute(state, [first, second]),
+                                 execute(state, [second]))
+
+    def test_native_source_byte_pins_are_canonical(self):
+        canonical = PASS.read_bytes().replace(b"\r\n", b"\n")
+        self.assertNotIn(b"\r", canonical)
+        digest = hashlib.sha256(canonical).hexdigest()
+        self.assertEqual(guest_iso.SOURCE_SHA256["Compiler/DBOptPass.HC"], digest)
+        self.assertEqual(check_redsea.EXPECTED["DBOPT.HC"][1], digest)
+
+    def test_every_safe_pair_has_identical_register_state(self):
+        # Full 16-register product, not only random examples.
+        for dst in range(REG_NUM):
+            if dst in (REG_RSP, REG_RBP):
+                continue
+            for first_src in range(REG_NUM):
+                if first_src == dst:
+                    continue
+                for second_src in range(REG_NUM):
+                    if second_src == dst:
+                        continue
+                    first, second = mov(first_src, dst), mov(second_src, dst)
+                    self.assertTrue(allowed(first, second))
+                    state = [((reg + 1) * 0x1111111111111111) & ((1 << 64) - 1)
+                             for reg in range(REG_NUM)]
+                    self.assertEqual(execute(state, [first, second]),
+                                     execute(state, [second]))
 
     def test_unsafe_two_moves_are_not_rewritten(self):
         first, second = mov(1, 0), mov(2, 0)

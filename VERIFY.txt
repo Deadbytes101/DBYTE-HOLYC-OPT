@@ -168,3 +168,25 @@ r11b source and media supersede the earlier unsealed r11 sample ISO
 r11b stage at D:\\Projects\\DBYTE-HOLYC-OPT-stage-r11b
 r11b image at D:\\Projects\\DBYTE-HOLYC-OPT-evidence-r7\\DBOPT_R11B_REDSEA.ISO
 no native guest compiler claim follows from these host checks
+
+r12 same-source dead-mov refinement — 2026-10-23
+r11 rejected first.src == second.src even when second mov overwrites
+exactly the same destination and does not read it; this exclusion
+was unnecessary for the bounded pure 64-bit register semantics.
+removed only that extra exclusion. all other register, opcode, type,
+flags, displacement, data, RSP/RBP, and alias safety checks remain.
+test-first result: old native guard failed new source contract (RED),
+then updated native source passed focused tests 6/6 and pinned 49/49.
+exhaustive reg-state oracle covers all eligible source/dest pairs.
+new source test checks canonical LF bytes against two separate sha256 pins.
+upstream commit remains c26482bb6ad3f80106d28504ec5db3c6a360732c.
+verified stage: 687 files; inventory sha256:
+80f1a86867c7c4404d849261b9252654877e3b0f752adbc8bc4be69a4820cc3a
+staged native source LF sha256:
+ba1d234e27f9e60242511d20bcfbbd88643d56fbe4d8c2b4ad3c7de52261293a
+r12 RedSea ISO sha256:
+cfb3e6a8b36d3f0dc15f3fe98c49974444a89d36f5042f58c21a286ba9998ef6
+r12 iso location: D:\Projects\DBYTE-HOLYC-OPT-evidence-r7\DBOPT_R12_REDSEA.ISO
+independent media audit PASS. native guest source read, patched AOT,
+semantic differential, executable byte shrink and benchmark UNVERIFIED.
+this is host verified only. no production merge or release.
