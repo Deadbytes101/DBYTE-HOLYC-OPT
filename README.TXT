@@ -98,3 +98,12 @@ exact native TempleOS ArcExpandBuf dictionary replacement verified against
 57 positions, every ISO 0x1F against upstream ASCII space (0x20).
 this is a distinct on-disc editor-format difference, NOT byte identity.
 the kernel and compiler source provenance check still is NOT native AOT.
+
+r20 experimental register recopy optimization
+three pure 64-bit register MOV instructions can lose the third copy when
+the middle MOV does not change either original source or destination
+r20 has a separate HolyC candidate file, not a new boot ISO
+its exact guard conditions are checked by an exhaustive host register oracle
+NASM and GCC run a separate Win64 x86-64 executable for code size and timing
+original HolyC backend, staging hashes and guest media stay unchanged
+native HolyC build, real-world HolyC benchmark and semantic proof remain open

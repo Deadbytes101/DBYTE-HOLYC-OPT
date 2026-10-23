@@ -335,3 +335,33 @@ r19 host decompression provenance gate
   claim byte-for-byte equivalence for those eight sources.
 - Neither decompressor nor host unit tests provide a native HolyC compiler
   build, semantic equivalence, guest file readback, or performance proof.
+
+r20 redundant third-register-copy experiment
+- Parent: R19 commit 8cdddbf8dedb100d07e6355e6e2310d36371afa6
+- R20 candidate: native/DBOptPassR20.HC, deliberately not referenced
+  by the pinned guest compiler project or R15 ISO source manifest.
+- Pattern: MOV src,dst; MOV other,unrelated; MOV src,dst.
+  All three must be exact I64 integer register moves, no other IR
+  flags or side-effect fields. The intermediate destination must
+  differ from both original source and original destination.
+  RSP and RBP are excluded for every participating register.
+- The third MOV can be NOP only under that exact guard. The previous
+  R19 native pass remains unchanged and can be rebuilt as before.
+- Tests: tests/test_native_recopy_r20.py enumerates all 65,536
+  combinations of four register identities and tests 10,000
+  additional randomized register states. Negative cases include
+  clobbered source/destination, RSP/RBP and bad opcode/IR fields.
+- Host machine witness: NASM builds tools/r20_win64_witness.asm,
+  GCC links tools/r20_win64_bench.c, then tests/test_r20_machine_witness.py
+  runs actual Windows x86-64 instructions with preserved observable output.
+  The repeated test body shrinks from 9 to 6 instruction bytes.
+  QPC timing takes 15 samples per variant; no performance threshold is
+  asserted because CPU effects and scheduling vary.
+- In the *original* TempleOS source, Compiler/BackLib.HC ICMov already
+  skips same-register MOV encoding through goto move_done. Counting
+  self-MOV elimination as an independent code-size speedup is unsound.
+- The NASM witness proves a machine-level opportunity but it is NOT
+  HolyC-generated code. Whether this register pattern survives stock
+  passes or occurs in real HolyC programs is still unmeasured.
+- No live guest readback, native patched HolyC build, differential
+  program semantics, reproducible application benchmark or release.
