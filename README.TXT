@@ -90,3 +90,11 @@ priority: bare names default to HC.Z; explicit extensions remain intact;
 FileRead tries that exact path then its .Z toggled counterpart.
 source anchors are checked from the pinned original TempleOS Git commit.
 this is source-level verification only, not guest file read or native AOT.
+
+r19 compressed-source provenance (host-only)
+exact native TempleOS ArcExpandBuf dictionary replacement verified against
+33 actual compiler imports from the unmodified original RedSea ISO.
+25 expanded files match pinned upstream byte-for-byte; 8 differ in
+57 positions, every ISO 0x1F against upstream ASCII space (0x20).
+this is a distinct on-disc editor-format difference, NOT byte identity.
+the kernel and compiler source provenance check still is NOT native AOT.
